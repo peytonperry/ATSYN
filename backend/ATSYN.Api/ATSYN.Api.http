@@ -1,0 +1,6 @@
+@ATSYN.Api_HostAddress = http://localhost:5147
+
+GET {{ATSYN.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
