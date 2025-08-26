@@ -1,0 +1,13 @@
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/bin/Debug/net8.0/ATSYN.ServiceDefaults.deps.json
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/bin/Debug/net8.0/ATSYN.ServiceDefaults.dll
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/bin/Debug/net8.0/ATSYN.ServiceDefaults.pdb
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/obj/Debug/net8.0/ATSYN.ServiceDefaults.csproj.AssemblyReference.cache
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/obj/Debug/net8.0/ATSYN.ServiceDefaults.GeneratedMSBuildEditorConfig.editorconfig
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/obj/Debug/net8.0/ATSYN.ServiceDefaults.AssemblyInfoInputs.cache
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/obj/Debug/net8.0/ATSYN.ServiceDefaults.AssemblyInfo.cs
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/obj/Debug/net8.0/ATSYN.ServiceDefaults.csproj.CoreCompileInputs.cache
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/obj/Debug/net8.0/ATSYN.ServiceDefaults.sourcelink.json
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/obj/Debug/net8.0/ATSYN.ServiceDefaults.dll
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/obj/Debug/net8.0/refint/ATSYN.ServiceDefaults.dll
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/obj/Debug/net8.0/ATSYN.ServiceDefaults.pdb
+/Users/peytonperry/Downloads/ATSYN-app/ATSYN.ServiceDefaults/obj/Debug/net8.0/ref/ATSYN.ServiceDefaults.dll
