@@ -1685,6 +1685,22 @@
           }
         }
       },
+      "Scalar.AspNetCore/2.7.2": {
+        "type": "package",
+        "compile": {
+          "lib/net9.0/Scalar.AspNetCore.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net9.0/Scalar.AspNetCore.dll": {
+            "related": ".xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
       "Semver/3.0.0": {
         "type": "package",
         "dependencies": {
@@ -4022,6 +4038,25 @@
         "polly.ratelimiting.nuspec"
       ]
     },
+    "Scalar.AspNetCore/2.7.2": {
+      "sha512": "MtxRKvCqmzoH7LQe2GLfo2rAjYix+2G2GwTaKjLThySOPwU99vf0VefSWt5tOAEz/wS7qD87lm1Bu92oZyjr8w==",
+      "type": "package",
+      "path": "scalar.aspnetcore/2.7.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "icon.png",
+        "lib/net10.0/Scalar.AspNetCore.dll",
+        "lib/net10.0/Scalar.AspNetCore.xml",
+        "lib/net8.0/Scalar.AspNetCore.dll",
+        "lib/net8.0/Scalar.AspNetCore.xml",
+        "lib/net9.0/Scalar.AspNetCore.dll",
+        "lib/net9.0/Scalar.AspNetCore.xml",
+        "scalar.aspnetcore.2.7.2.nupkg.sha512",
+        "scalar.aspnetcore.nuspec"
+      ]
+    },
     "Semver/3.0.0": {
       "sha512": "9jZCicsVgTebqkAujRWtC9J1A5EQVlu0TVKHcgoCuv345ve5DYf4D1MjhKEnQjdRZo6x/vdv6QQrYFs7ilGzLA==",
       "type": "package",
@@ -4283,7 +4318,8 @@
     "net9.0": [
       "ATSYN.ServiceDefaults >= 1.0.0",
       "Aspire.Hosting.AppHost >= 9.4.1",
-      "Microsoft.AspNetCore.OpenApi >= 9.0.5"
+      "Microsoft.AspNetCore.OpenApi >= 9.0.5",
+      "Scalar.AspNetCore >= 2.7.2"
     ]
   },
   "packageFolders": {
@@ -4340,6 +4376,10 @@
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[9.0.5, )"
+          },
+          "Scalar.AspNetCore": {
+            "target": "Package",
+            "version": "[2.7.2, )"
           }
         },
         "imports": [

@@ -166,3 +166,4 @@
 /Users/peytonperry/Downloads/ATSYN-app/backend/ATSYN.Api/obj/Debug/net9.0/ATSYN.Api.pdb
 /Users/peytonperry/Downloads/ATSYN-app/backend/ATSYN.Api/obj/Debug/net9.0/ATSYN.Api.genruntimeconfig.cache
 /Users/peytonperry/Downloads/ATSYN-app/backend/ATSYN.Api/obj/Debug/net9.0/ref/ATSYN.Api.dll
+/Users/peytonperry/Downloads/ATSYN-app/backend/ATSYN.Api/bin/Debug/net9.0/Scalar.AspNetCore.dll

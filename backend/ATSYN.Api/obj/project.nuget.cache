@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "4mGYJKvMO+M=",
+  "dgSpecHash": "iiO9TDBH5is=",
   "success": true,
   "projectFilePath": "/Users/peytonperry/Downloads/ATSYN-app/backend/ATSYN.Api/ATSYN.Api.csproj",
   "expectedPackageFiles": [
@@ -86,6 +86,7 @@
     "/Users/peytonperry/.nuget/packages/polly.core/8.6.2/polly.core.8.6.2.nupkg.sha512",
     "/Users/peytonperry/.nuget/packages/polly.extensions/8.4.2/polly.extensions.8.4.2.nupkg.sha512",
     "/Users/peytonperry/.nuget/packages/polly.ratelimiting/8.4.2/polly.ratelimiting.8.4.2.nupkg.sha512",
+    "/Users/peytonperry/.nuget/packages/scalar.aspnetcore/2.7.2/scalar.aspnetcore.2.7.2.nupkg.sha512",
     "/Users/peytonperry/.nuget/packages/semver/3.0.0/semver.3.0.0.nupkg.sha512",
     "/Users/peytonperry/.nuget/packages/streamjsonrpc/2.22.11/streamjsonrpc.2.22.11.nupkg.sha512",
     "/Users/peytonperry/.nuget/packages/system.diagnostics.diagnosticsource/8.0.0/system.diagnostics.diagnosticsource.8.0.0.nupkg.sha512",
