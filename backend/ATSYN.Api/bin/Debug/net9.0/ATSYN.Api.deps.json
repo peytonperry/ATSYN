@@ -1968,12 +1968,6 @@
           }
         },
         "runtimeTargets": {
-          "runtimes/win/lib/net9.0/System.Diagnostics.EventLog.Messages.dll": {
-            "rid": "win",
-            "assetType": "runtime",
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.725.31616"
-          },
           "runtimes/win/lib/net9.0/System.Diagnostics.EventLog.dll": {
             "rid": "win",
             "assetType": "runtime",
@@ -1998,14 +1992,7 @@
         }
       },
       "System.Runtime.CompilerServices.Unsafe/6.0.0": {},
-      "System.Text.Json/9.0.8": {
-        "runtime": {
-          "lib/net9.0/System.Text.Json.dll": {
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.825.36511"
-          }
-        }
-      },
+      "System.Text.Json/9.0.8": {},
       "System.Threading.Channels/7.0.0": {},
       "System.Threading.RateLimiting/8.0.0": {},
       "YamlDotNet/16.3.0": {
