@@ -10,5 +10,5 @@ public class ATSYN_Api
 #pragma warning restore CS8981
 {
     private ATSYN_Api() { }
-    public static string ProjectPath => """/Users/peytonperry/Downloads/ATSYN-app/backend/ATSYN.Api""";
+    public static string ProjectPath => """C:\Users\Owner\ATSYN\backend\ATSYN.Api""";
 }
