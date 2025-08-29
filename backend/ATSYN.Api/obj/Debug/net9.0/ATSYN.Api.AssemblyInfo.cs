@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ATSYN.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a44267c4c5e8a0381c209e6e82e46b1ac0ba4957")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b57fb3745c51f279cf20079e9280ebe52c0ecc63")]
 [assembly: System.Reflection.AssemblyProductAttribute("ATSYN.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ATSYN.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
