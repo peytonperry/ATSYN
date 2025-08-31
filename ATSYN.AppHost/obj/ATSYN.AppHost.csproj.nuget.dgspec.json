@@ -61,6 +61,10 @@
               "target": "Package",
               "version": "[9.4.1, )",
               "autoReferenced": true
+            },
+            "Aspire.Hosting.SqlServer": {
+              "target": "Package",
+              "version": "[9.4.1, )"
             }
           },
           "imports": [

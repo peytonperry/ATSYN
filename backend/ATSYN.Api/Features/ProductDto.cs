@@ -40,9 +40,11 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasMaxLength(200);
             
         builder.Property(p => p.Description)
+            .IsRequired()
             .HasMaxLength(1000);
             
         builder.Property(p => p.Price)
+            .IsRequired()
             .HasColumnType("decimal(18,2)");
     }
 }
