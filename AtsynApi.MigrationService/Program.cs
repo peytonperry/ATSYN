@@ -5,13 +5,17 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.AddServiceDefaults(); 
 
-builder.Services.AddDbContext<ApplicationDbContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("sqldata"),
-        sql => sql.MigrationsAssembly("ATSYN.Data")));
 
 builder.Services.AddHostedService<Worker>();
 
-builder.AddSqlServerDbContext<ApplicationDbContext>("sqldata");
+builder.AddSqlServerDbContext<ApplicationDbContext>("sqldata", 
+    configureDbContextOptions: options =>
+    {
+        options.UseSqlServer(connectionString =>
+        {
+            connectionString.MigrationsAssembly("ATSYN.Data");
+        });
+    });
 
 
 var host = builder.Build();

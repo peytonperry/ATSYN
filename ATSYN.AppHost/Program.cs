@@ -15,7 +15,6 @@ var api = builder.AddProject<Projects.ATSYN_Api>("api")
     .WaitForCompletion(migrations)   
     .WithExternalHttpEndpoints();
 
-builder.Build().Run();
 
 var frontend = builder.AddNpmApp("frontend", "../frontend/ATSYN-client")
     .WithReference(api)
