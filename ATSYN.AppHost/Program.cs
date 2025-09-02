@@ -2,14 +2,19 @@ using Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var sqlServer = builder.AddSqlServer("sql")
-    .WithDataVolume();
+var sql = builder.AddSqlServer("sql").WithDataVolume();
+var db  = sql.AddDatabase("sqldata");
 
-var database = sqlServer.AddDatabase("atsyndb");
+var migrations = builder.AddProject<Projects.AtsynApi_MigrationService>("migrations")
+    .WithReference(db)
+    .WaitFor(db);
 
 var api = builder.AddProject<Projects.ATSYN_Api>("api")
-    .WithReference(database)
+    .WithReference(db)
+    .WithReference(migrations)
+    .WaitForCompletion(migrations)   
     .WithExternalHttpEndpoints();
+
 
 var frontend = builder.AddNpmApp("frontend", "../frontend/ATSYN-client")
     .WithReference(api)

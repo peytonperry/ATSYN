@@ -16,7 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\backend\ATSYN.Api\ATSYN.Api.csproj" />
+    <ProjectReference Include="..\ATSYN.Api\ATSYN.Api.csproj" />
+    <ProjectReference Include="..\AtsynApi.MigrationService\AtsynApi.MigrationService.csproj" />
   </ItemGroup>
 
 </Project>
