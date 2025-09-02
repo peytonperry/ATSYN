@@ -12,10 +12,12 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.4.1" />
     <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.4.1" />
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="9.4.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\backend\ATSYN.Api\ATSYN.Api.csproj" />
+    <ProjectReference Include="..\ATSYN.Api\ATSYN.Api.csproj" />
+    <ProjectReference Include="..\AtsynApi.MigrationService\AtsynApi.MigrationService.csproj" />
   </ItemGroup>
 
 </Project>
