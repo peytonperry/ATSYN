@@ -13,13 +13,13 @@ var api = builder.AddProject<Projects.ATSYN_Api>("api")
     .WithReference(db)
     .WithReference(migrations)
     .WaitForCompletion(migrations)   
-    .WithExternalHttpEndpoints();
-
+    .WithExternalHttpEndpoints()
+    .WaitFor(db);
 
 var frontend = builder.AddNpmApp("frontend", "../frontend/ATSYN-client")
     .WithReference(api)
     .WithEnvironment("BROWSER", "none")
-    .WithEnvironment("VITE_API_URL", api.GetEndpoint("https"))
+    .WithEnvironment("VITE_API_URL", api.GetEndpoint("https")).WaitFor(api)
     .WithHttpEndpoint(env: "PORT");
 
 builder.Build().Run();
