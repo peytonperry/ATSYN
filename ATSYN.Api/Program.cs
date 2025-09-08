@@ -10,7 +10,10 @@ builder.AddServiceDefaults();
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("sqldata");
 
-builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<User, ApplicationRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

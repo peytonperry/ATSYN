@@ -10,5 +10,5 @@ public class ATSYN_AppHost
 #pragma warning restore CS8981
 {
     private ATSYN_AppHost() { }
-    public static string ProjectPath => """C:\Users\stewa\ATSYN\ATSYN.AppHost""";
+    public static string ProjectPath => """/Users/peytonperry/Downloads/ATSYN-app/ATSYN.AppHost""";
 }

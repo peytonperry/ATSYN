@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ATSYN.Data.Entities.Users;
-//using ATSYN.Data.Entities;
 
 namespace ATSYN.Api.Controllers
 {
@@ -19,35 +18,49 @@ namespace ATSYN.Api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] UserDto dto)
+        public async Task<ActionResult> Register([FromBody] RegisterDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var user = new User
             {
-                Username = dto.Username,
-                Password = dto.Password
+                UserName = dto.Username, 
+                Email = dto.Username,     
             };
 
             var result = await userManager.CreateAsync(user, dto.Password);
 
             if (result.Succeeded)
             {
-                return Ok("User created");
+                return Ok(new { message = "User created successfully" });
             }
-            return BadRequest("Registration failed");
+
+            var errors = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest(new { 
+                message = "Registration failed", 
+                errors = errors 
+            });
         }
 
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var result = await signInManager.PasswordSignInAsync(dto.Username, dto.Password, false, false);
 
             if (result.Succeeded)
             {
-                return Ok("Login successful");
+                return Ok(new { message = "Login successful" });
             }
 
-            return BadRequest("Login failed");
+            return BadRequest(new { message = "Invalid username or password" });
         }
-
     }
 }
