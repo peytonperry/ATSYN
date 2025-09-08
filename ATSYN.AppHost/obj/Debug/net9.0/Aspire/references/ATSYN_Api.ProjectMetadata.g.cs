@@ -9,5 +9,5 @@ namespace Projects;
 public class ATSYN_Api : global::Aspire.Hosting.IProjectMetadata
 #pragma warning restore CS8981
 {
-    public string ProjectPath => """C:\Users\stewa\ATSYN\ATSYN.Api\ATSYN.Api.csproj""";
+    public string ProjectPath => """/Users/peytonperry/Downloads/ATSYN-app/ATSYN.Api/ATSYN.Api.csproj""";
 }

@@ -5,7 +5,7 @@ using ATSYN.Data.Entities;
 using ATSYN.Data.Entities.Users;
 namespace ATSYN.Data {
 
-    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>,int>
+    public class ApplicationDbContext : IdentityDbContext<User, ApplicationRole, int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
