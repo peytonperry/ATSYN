@@ -11,21 +11,21 @@ using System;
 using System.Reflection;
 
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("f34766ea-7869-4987-af11-755486d24d48")]
-[assembly: System.Reflection.AssemblyMetadata("dcpclipath", ("/Users/peytonperry/.nuget/packages/aspire.hosting.orchestration.osx-arm64/9.4.1/t" +
-    "ools/dcp"))]
-[assembly: System.Reflection.AssemblyMetadata("dcpextensionpaths", ("/Users/peytonperry/.nuget/packages/aspire.hosting.orchestration.osx-arm64/9.4.1/t" +
-    "ools/ext/"))]
-[assembly: System.Reflection.AssemblyMetadata("dcpbinpath", ("/Users/peytonperry/.nuget/packages/aspire.hosting.orchestration.osx-arm64/9.4.1/t" +
-    "ools/ext/bin/"))]
-[assembly: System.Reflection.AssemblyMetadata("apphostprojectpath", "/Users/peytonperry/Downloads/ATSYN-app/ATSYN.AppHost")]
+[assembly: System.Reflection.AssemblyMetadata("dcpclipath", ("C:\\Users\\stewa\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.4.1\\tools\\d" +
+    "cp.exe"))]
+[assembly: System.Reflection.AssemblyMetadata("dcpextensionpaths", ("C:\\Users\\stewa\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.4.1\\tools\\e" +
+    "xt\\"))]
+[assembly: System.Reflection.AssemblyMetadata("dcpbinpath", ("C:\\Users\\stewa\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.4.1\\tools\\e" +
+    "xt\\bin\\"))]
+[assembly: System.Reflection.AssemblyMetadata("apphostprojectpath", "C:\\Users\\stewa\\ATSYN\\ATSYN.AppHost")]
 [assembly: System.Reflection.AssemblyMetadata("apphostprojectname", "ATSYN.AppHost.csproj")]
-[assembly: System.Reflection.AssemblyMetadata("aspiredashboardpath", ("/Users/peytonperry/.nuget/packages/aspire.dashboard.sdk.osx-arm64/9.4.1/tools/Asp" +
-    "ire.Dashboard.dll"))]
-[assembly: System.Reflection.AssemblyMetadataAttribute("apphostprojectbaseintermediateoutputpath", "/Users/peytonperry/Downloads/ATSYN-app/ATSYN.AppHost/obj/")]
+[assembly: System.Reflection.AssemblyMetadata("aspiredashboardpath", ("C:\\Users\\stewa\\.nuget\\packages\\aspire.dashboard.sdk.win-x64\\9.4.1\\tools\\Aspire.Da" +
+    "shboard.exe"))]
+[assembly: System.Reflection.AssemblyMetadataAttribute("apphostprojectbaseintermediateoutputpath", "C:\\Users\\stewa\\ATSYN\\ATSYN.AppHost\\obj\\")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("ATSYN.AppHost")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+018f89a6496a1d454d468410977be2795b5ad61e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a7b87388955afe9407fbbe9682bdfe6cc954cf60")]
 [assembly: System.Reflection.AssemblyProductAttribute("ATSYN.AppHost")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ATSYN.AppHost")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
