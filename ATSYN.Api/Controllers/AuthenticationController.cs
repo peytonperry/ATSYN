@@ -27,8 +27,8 @@ namespace ATSYN.Api.Controllers
 
             var user = new User
             {
-                UserName = dto.Username, 
-                Email = dto.Username,     
+                Username = dto.Username,
+                Password = dto.Password
             };
 
             var result = await userManager.CreateAsync(user, dto.Password);

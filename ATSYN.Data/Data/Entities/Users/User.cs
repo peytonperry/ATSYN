@@ -4,8 +4,8 @@ namespace ATSYN.Data.Entities.Users
 {
     public class User : IdentityUser<int>
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public required string Username { get; set; }
+        public required string Password { get; set; }
     }
 
     public class ApplicationRole : IdentityRole<int>
