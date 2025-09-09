@@ -1,33 +1,41 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { Text, Paper, Container } from '@mantine/core';
+import { Carousel } from '@mantine/carousel';
+import { Image } from '@mantine/core';
+
+//for Carousel 
+const images = [
+  'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-1.png',
+  'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-2.png',
+  'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-3.png',
+  'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-4.png',
+  'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
+];
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  
+  const slides = images.map((url) => (
+    <Carousel.Slide key={url}>
+      <Image src={url} />
+    </Carousel.Slide>
+  ));
+  
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Container size="lg" mt="xl">
+        <Carousel withIndicators height={200}>
+          {slides}
+        </Carousel>
+        <Paper shadow="md" p="xl" radius="lg">
+          <Text ta="center" fz="xl" fw={700}>
+             Welcome to ATSYN 
+          </Text>
+          <Text ta="center" mt="md">
+            This is where your hero section, features, and client content will go.
+          </Text>
+        </Paper>   
+      </Container>
     </>
   )
 }

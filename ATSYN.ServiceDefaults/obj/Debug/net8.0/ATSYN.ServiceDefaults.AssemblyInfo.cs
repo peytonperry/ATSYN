@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ATSYN.ServiceDefaults")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6c7c7b060566bcae3cc59f3706003bc11b82d819")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ee1547f84821933438bf8ae96e1c09fbfd1423c1")]
 [assembly: System.Reflection.AssemblyProductAttribute("ATSYN.ServiceDefaults")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ATSYN.ServiceDefaults")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

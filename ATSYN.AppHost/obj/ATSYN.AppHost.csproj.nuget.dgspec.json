@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "/Users/peytonperry/Downloads/ATSYN-app/ATSYN.AppHost/ATSYN.AppHost.csproj": {}
+    "D:\\GitFork\\ATSYN\\ATSYN.AppHost\\ATSYN.AppHost.csproj": {}
   },
   "projects": {
-    "/Users/peytonperry/Downloads/ATSYN-app/ATSYN.AppHost/ATSYN.AppHost.csproj": {
+    "D:\\GitFork\\ATSYN\\ATSYN.AppHost\\ATSYN.AppHost.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/peytonperry/Downloads/ATSYN-app/ATSYN.AppHost/ATSYN.AppHost.csproj",
+        "projectUniqueName": "D:\\GitFork\\ATSYN\\ATSYN.AppHost\\ATSYN.AppHost.csproj",
         "projectName": "ATSYN.AppHost",
-        "projectPath": "/Users/peytonperry/Downloads/ATSYN-app/ATSYN.AppHost/ATSYN.AppHost.csproj",
-        "packagesPath": "/Users/peytonperry/.nuget/packages/",
-        "outputPath": "/Users/peytonperry/Downloads/ATSYN-app/ATSYN.AppHost/obj/",
+        "projectPath": "D:\\GitFork\\ATSYN\\ATSYN.AppHost\\ATSYN.AppHost.csproj",
+        "packagesPath": "C:\\Users\\brenn\\.nuget\\packages\\",
+        "outputPath": "D:\\GitFork\\ATSYN\\ATSYN.AppHost\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/peytonperry/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\brenn\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -44,7 +50,7 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
-            "Aspire.Dashboard.Sdk.osx-arm64": {
+            "Aspire.Dashboard.Sdk.win-x64": {
               "target": "Package",
               "version": "[9.4.1, )",
               "autoReferenced": true
@@ -57,7 +63,7 @@
               "target": "Package",
               "version": "[9.4.1, )"
             },
-            "Aspire.Hosting.Orchestration.osx-arm64": {
+            "Aspire.Hosting.Orchestration.win-x64": {
               "target": "Package",
               "version": "[9.4.1, )",
               "autoReferenced": true
@@ -83,7 +89,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
