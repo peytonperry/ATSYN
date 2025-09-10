@@ -14,6 +14,8 @@ public class Product
     public bool IsVisible { get; set; }
     public int ShippingTypeId { get; set; }
     public bool InStock { get; set; }
+    
+    public Category Category { get; set; } = null!;
 }
 
 public class ProductDto
@@ -27,6 +29,7 @@ public class ProductDto
     public bool IsVisible { get; set; }
     public int ShippingTypeId { get; set; }
     public bool InStock { get; set; }
+    public CategoryDto Category { get; set; } = null!;
 }
 
 public class ProductConfiguration : IEntityTypeConfiguration<Product>
@@ -47,5 +50,10 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .IsRequired()
             .HasColumnType("decimal(18,2)");
         builder.ToTable("Products");
+        
+        builder.HasOne(p => p.Category)
+            .WithMany()
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

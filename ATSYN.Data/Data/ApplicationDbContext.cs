@@ -11,6 +11,7 @@ public class ApplicationDbContext : DbContext
     }
     public DbSet<Product> Products { get; set; }
     public DbSet<TodoItem> TodoItems { get; set; }
+    public DbSet<Category> Categories { get; set; }
 }
 
 public class TodoItem

@@ -30,7 +30,11 @@ public class ProductController : ControllerBase
                 StockAmount = p.StockAmount,
                 IsVisible = p.IsVisible,
                 ShippingTypeId = p.ShippingTypeId,
-                InStock = p.InStock
+                InStock = p.InStock,
+                Category = new CategoryDto{
+                Id = p.CategoryId,
+                Name = p.Category.Name,
+            }
             })
             .ToListAsync();
 
@@ -57,7 +61,12 @@ public class ProductController : ControllerBase
             StockAmount = product.StockAmount,
             IsVisible = product.IsVisible,
             ShippingTypeId = product.ShippingTypeId,
-            InStock = product.InStock
+            InStock = product.InStock,
+            Category = new CategoryDto
+            {
+                Id = product.Category.Id,
+                Name = product.Category.Name
+            }
         };
 
         return Ok(productDto);
@@ -66,6 +75,14 @@ public class ProductController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ProductDto>> CreateProduct(ProductDto productDto)
     {
+        var categoryExists = await _context.Categories
+            .AnyAsync(c => c.Id == productDto.CategoryId);
+            
+        if (!categoryExists)
+        {
+            return BadRequest("Invalid CategoryId");
+        }
+        
         var product = new Product
         {
             Title = productDto.Title,
@@ -80,6 +97,28 @@ public class ProductController : ControllerBase
 
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
+        
+        var createdProduct = await _context.Products
+            .Include(p => p.Category)
+            .FirstOrDefaultAsync(p => p.Id == product.Id);
+
+        var resultDto = new ProductDto
+        {
+            Id = createdProduct!.Id,
+            Title = createdProduct.Title,
+            Description = createdProduct.Description,
+            Price = createdProduct.Price,
+            CategoryId = createdProduct.CategoryId,
+            StockAmount = createdProduct.StockAmount,
+            IsVisible = createdProduct.IsVisible,
+            ShippingTypeId = createdProduct.ShippingTypeId,
+            InStock = createdProduct.InStock,
+            Category = new CategoryDto
+            {
+                Id = createdProduct.Category.Id,
+                Name = createdProduct.Category.Name
+            }
+        };
 
         productDto.Id = product.Id;
         return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, productDto);
