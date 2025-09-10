@@ -1,126 +1,89 @@
-using ATSYN.Api.Features;
 using ATSYN.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ATSYN.Data.Entities;
 
-namespace ATSYN.Api.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class ProductController : ControllerBase
+namespace ATSYN.Api.Controller
 {
-    private readonly ApplicationDbContext _context;
 
-    public ProductController(ApplicationDbContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProductController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
-    {
-        var products = await _context.Products
-            .Select(p => new ProductDto
-            {
-                Id = p.Id,
-                Title = p.Title,
-                Description = p.Description,
-                Price = p.Price,
-                CategoryId = p.CategoryId,
-                StockAmount = p.StockAmount,
-                IsVisible = p.IsVisible,
-                ShippingTypeId = p.ShippingTypeId,
-                InStock = p.InStock,
-                Category = new CategoryDto{
-                Id = p.CategoryId,
-                Name = p.Category.Name,
-            }
-            })
-            .ToListAsync();
-
-        return Ok(products);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ProductDto>> GetProduct(int id)
-    {
-        var product = await _context.Products.FindAsync(id);
-        
-        if (product == null)
+        public ProductController(ApplicationDbContext context)
         {
-            return NotFound();
+            _context = context;
         }
 
-        var productDto = new ProductDto
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
         {
-            Id = product.Id,
-            Title = product.Title,
-            Description = product.Description,
-            Price = product.Price,
-            CategoryId = product.CategoryId,
-            StockAmount = product.StockAmount,
-            IsVisible = product.IsVisible,
-            ShippingTypeId = product.ShippingTypeId,
-            InStock = product.InStock,
-            Category = new CategoryDto
-            {
-                Id = product.Category.Id,
-                Name = product.Category.Name
-            }
-        };
+            var products = await _context.Products
+                .Select(p => new ProductDto
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    Description = p.Description,
+                    Price = p.Price,
+                    CategoryId = p.CategoryId,
+                    StockAmount = p.StockAmount,
+                    IsVisible = p.IsVisible,
+                    ShippingTypeId = p.ShippingTypeId,
+                    InStock = p.InStock
+                })
+                .ToListAsync();
 
-        return Ok(productDto);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<ProductDto>> CreateProduct(ProductDto productDto)
-    {
-        var categoryExists = await _context.Categories
-            .AnyAsync(c => c.Id == productDto.CategoryId);
-            
-        if (!categoryExists)
-        {
-            return BadRequest("Invalid CategoryId");
+            return Ok(products);
         }
-        
-        var product = new Product
-        {
-            Title = productDto.Title,
-            Description = productDto.Description,
-            Price = productDto.Price,
-            CategoryId = productDto.CategoryId,
-            StockAmount = productDto.StockAmount,
-            IsVisible = productDto.IsVisible,
-            ShippingTypeId = productDto.ShippingTypeId,
-            InStock = productDto.InStock
-        };
 
-        _context.Products.Add(product);
-        await _context.SaveChangesAsync();
-        
-        var createdProduct = await _context.Products
-            .Include(p => p.Category)
-            .FirstOrDefaultAsync(p => p.Id == product.Id);
-
-        var resultDto = new ProductDto
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ProductDto>> GetProduct(int id)
         {
-            Id = createdProduct!.Id,
-            Title = createdProduct.Title,
-            Description = createdProduct.Description,
-            Price = createdProduct.Price,
-            CategoryId = createdProduct.CategoryId,
-            StockAmount = createdProduct.StockAmount,
-            IsVisible = createdProduct.IsVisible,
-            ShippingTypeId = createdProduct.ShippingTypeId,
-            InStock = createdProduct.InStock,
-            Category = new CategoryDto
+            var product = await _context.Products.FindAsync(id);
+
+            if (product == null)
             {
-                Id = createdProduct.Category.Id,
-                Name = createdProduct.Category.Name
+                return NotFound();
             }
-        };
 
-        productDto.Id = product.Id;
-        return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, productDto);
+            var productDto = new ProductDto
+            {
+                Id = product.Id,
+                Title = product.Title,
+                Description = product.Description,
+                Price = product.Price,
+                CategoryId = product.CategoryId,
+                StockAmount = product.StockAmount,
+                IsVisible = product.IsVisible,
+                ShippingTypeId = product.ShippingTypeId,
+                InStock = product.InStock
+            };
+
+            return Ok(productDto);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ProductDto>> CreateProduct(ProductDto productDto)
+        {
+            var product = new Product
+            {
+                Title = productDto.Title,
+                Description = productDto.Description,
+                Price = productDto.Price,
+                CategoryId = productDto.CategoryId,
+                StockAmount = productDto.StockAmount,
+                IsVisible = productDto.IsVisible,
+                ShippingTypeId = productDto.ShippingTypeId,
+                InStock = productDto.InStock
+            };
+
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+
+            productDto.Id = product.Id;
+            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, productDto);
+        }
     }
 }

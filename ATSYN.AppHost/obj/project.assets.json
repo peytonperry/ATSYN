@@ -2,15 +2,15 @@
   "version": 3,
   "targets": {
     "net9.0": {
-      "Aspire.Dashboard.Sdk.osx-arm64/9.4.1": {
+      "Aspire.Dashboard.Sdk.win-x64/9.4.1": {
         "type": "package",
         "build": {
-          "buildTransitive/Aspire.Dashboard.Sdk.osx-arm64.props": {},
-          "buildTransitive/Aspire.Dashboard.Sdk.osx-arm64.targets": {}
+          "buildTransitive/Aspire.Dashboard.Sdk.win-x64.props": {},
+          "buildTransitive/Aspire.Dashboard.Sdk.win-x64.targets": {}
         },
         "buildMultiTargeting": {
-          "buildMultiTargeting/Aspire.Dashboard.Sdk.osx-arm64.props": {},
-          "buildMultiTargeting/Aspire.Dashboard.Sdk.osx-arm64.targets": {}
+          "buildMultiTargeting/Aspire.Dashboard.Sdk.win-x64.props": {},
+          "buildMultiTargeting/Aspire.Dashboard.Sdk.win-x64.targets": {}
         }
       },
       "Aspire.Hosting/9.4.1": {
@@ -178,13 +178,13 @@
           }
         }
       },
-      "Aspire.Hosting.Orchestration.osx-arm64/9.4.1": {
+      "Aspire.Hosting.Orchestration.win-x64/9.4.1": {
         "type": "package",
         "build": {
-          "buildTransitive/Aspire.Hosting.Orchestration.osx-arm64.targets": {}
+          "buildTransitive/Aspire.Hosting.Orchestration.win-x64.targets": {}
         },
         "buildMultiTargeting": {
-          "buildMultiTargeting/Aspire.Hosting.Orchestration.osx-arm64.targets": {}
+          "buildMultiTargeting/Aspire.Hosting.Orchestration.win-x64.targets": {}
         }
       },
       "Aspire.Hosting.SqlServer/9.4.1": {
@@ -1964,10 +1964,10 @@
     }
   },
   "libraries": {
-    "Aspire.Dashboard.Sdk.osx-arm64/9.4.1": {
-      "sha512": "/0uF20xKNjQuROGHZlhw/wWj2CY/EBYssuztjCD9zLyEW+Gik0K02lYOqbvF4Nmjkh54O26NRghguZ8LaclMgA==",
+    "Aspire.Dashboard.Sdk.win-x64/9.4.1": {
+      "sha512": "uTjcBB9UugN6i83ZSryOFg+uYLj8O9H8kMVzPpbwANUC6Xkay8woOADfX7zdhi3LNxa2RkuT9qi9ZOJyNKC3uA==",
       "type": "package",
-      "path": "aspire.dashboard.sdk.osx-arm64/9.4.1",
+      "path": "aspire.dashboard.sdk.win-x64/9.4.1",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
@@ -1975,18 +1975,17 @@
         "EULA.md",
         "Icon.png",
         "THIRD-PARTY-NOTICES.TXT",
-        "aspire.dashboard.sdk.osx-arm64.9.4.1.nupkg.sha512",
-        "aspire.dashboard.sdk.osx-arm64.nuspec",
-        "build/Aspire.Dashboard.Sdk.osx-arm64.props",
-        "build/Aspire.Dashboard.Sdk.osx-arm64.targets",
-        "buildMultiTargeting/Aspire.Dashboard.Sdk.osx-arm64.props",
-        "buildMultiTargeting/Aspire.Dashboard.Sdk.osx-arm64.targets",
-        "buildTransitive/Aspire.Dashboard.Sdk.osx-arm64.props",
-        "buildTransitive/Aspire.Dashboard.Sdk.osx-arm64.targets",
-        "data/UnixFilePermissions.xml",
-        "tools/Aspire.Dashboard",
+        "aspire.dashboard.sdk.win-x64.9.4.1.nupkg.sha512",
+        "aspire.dashboard.sdk.win-x64.nuspec",
+        "build/Aspire.Dashboard.Sdk.win-x64.props",
+        "build/Aspire.Dashboard.Sdk.win-x64.targets",
+        "buildMultiTargeting/Aspire.Dashboard.Sdk.win-x64.props",
+        "buildMultiTargeting/Aspire.Dashboard.Sdk.win-x64.targets",
+        "buildTransitive/Aspire.Dashboard.Sdk.win-x64.props",
+        "buildTransitive/Aspire.Dashboard.Sdk.win-x64.targets",
         "tools/Aspire.Dashboard.deps.json",
         "tools/Aspire.Dashboard.dll",
+        "tools/Aspire.Dashboard.exe",
         "tools/Aspire.Dashboard.runtimeconfig.json",
         "tools/Aspire.Dashboard.staticwebassets.endpoints.json",
         "tools/Aspire.Dashboard.xml",
@@ -2034,6 +2033,7 @@
         "tools/pt-BR/Aspire.Dashboard.resources.dll",
         "tools/ru/Aspire.Dashboard.resources.dll",
         "tools/tr/Aspire.Dashboard.resources.dll",
+        "tools/web.config",
         "tools/wwwroot/Aspire.Dashboard.modules.json",
         "tools/wwwroot/Aspire.Dashboard.styles.css",
         "tools/wwwroot/Components/Controls/AssistantChat.razor.js",
@@ -2161,27 +2161,26 @@
         "lib/net8.0/Aspire.Hosting.NodeJs.xml"
       ]
     },
-    "Aspire.Hosting.Orchestration.osx-arm64/9.4.1": {
-      "sha512": "eLHF8YZpi4frMlShB8YWHEKZLHMuGVGhOoRzqjlUB8cKBt7RLsc1cQqg0TVRHErKFfU42NB0vDGQ9ZubNOSoow==",
+    "Aspire.Hosting.Orchestration.win-x64/9.4.1": {
+      "sha512": "viY5JCGEqTjzDnlp7fy6lPcWCFjd5VfxAOyeDT5esHzEH85keC+8r9xTlT7jUc5jeukDZCg/Qh3xJ4hncoetAQ==",
       "type": "package",
-      "path": "aspire.hosting.orchestration.osx-arm64/9.4.1",
+      "path": "aspire.hosting.orchestration.win-x64/9.4.1",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
         "THIRD-PARTY-NOTICES.TXT",
-        "aspire.hosting.orchestration.osx-arm64.9.4.1.nupkg.sha512",
-        "aspire.hosting.orchestration.osx-arm64.nuspec",
-        "build/Aspire.Hosting.Orchestration.osx-arm64.targets",
-        "buildMultiTargeting/Aspire.Hosting.Orchestration.osx-arm64.targets",
-        "buildTransitive/Aspire.Hosting.Orchestration.osx-arm64.targets",
-        "data/UnixFilePermissions.xml",
+        "aspire.hosting.orchestration.win-x64.9.4.1.nupkg.sha512",
+        "aspire.hosting.orchestration.win-x64.nuspec",
+        "build/Aspire.Hosting.Orchestration.win-x64.targets",
+        "buildMultiTargeting/Aspire.Hosting.Orchestration.win-x64.targets",
+        "buildTransitive/Aspire.Hosting.Orchestration.win-x64.targets",
         "tools/EULA.rtf",
         "tools/NOTICE",
-        "tools/dcp",
-        "tools/ext/bin/dcpproc",
-        "tools/ext/dcpctrl"
+        "tools/dcp.exe",
+        "tools/ext/bin/dcpproc.exe",
+        "tools/ext/dcpctrl.exe"
       ]
     },
     "Aspire.Hosting.SqlServer/9.4.1": {
@@ -4622,32 +4621,39 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
-      "Aspire.Dashboard.Sdk.osx-arm64 >= 9.4.1",
+      "Aspire.Dashboard.Sdk.win-x64 >= 9.4.1",
       "Aspire.Hosting.AppHost >= 9.4.1",
       "Aspire.Hosting.NodeJs >= 9.4.1",
-      "Aspire.Hosting.Orchestration.osx-arm64 >= 9.4.1",
+      "Aspire.Hosting.Orchestration.win-x64 >= 9.4.1",
       "Aspire.Hosting.SqlServer >= 9.4.1"
     ]
   },
   "packageFolders": {
-    "/Users/peytonperry/.nuget/packages/": {}
+    "C:\\Users\\stewa\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/peytonperry/Downloads/ATSYN-app/ATSYN.AppHost/ATSYN.AppHost.csproj",
+      "projectUniqueName": "C:\\Users\\stewa\\ATSYN\\ATSYN.AppHost\\ATSYN.AppHost.csproj",
       "projectName": "ATSYN.AppHost",
-      "projectPath": "/Users/peytonperry/Downloads/ATSYN-app/ATSYN.AppHost/ATSYN.AppHost.csproj",
-      "packagesPath": "/Users/peytonperry/.nuget/packages/",
-      "outputPath": "/Users/peytonperry/Downloads/ATSYN-app/ATSYN.AppHost/obj/",
+      "projectPath": "C:\\Users\\stewa\\ATSYN\\ATSYN.AppHost\\ATSYN.AppHost.csproj",
+      "packagesPath": "C:\\Users\\stewa\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\stewa\\ATSYN\\ATSYN.AppHost\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/Users/peytonperry/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\stewa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4672,7 +4678,7 @@
       "net9.0": {
         "targetAlias": "net9.0",
         "dependencies": {
-          "Aspire.Dashboard.Sdk.osx-arm64": {
+          "Aspire.Dashboard.Sdk.win-x64": {
             "target": "Package",
             "version": "[9.4.1, )",
             "autoReferenced": true
@@ -4685,7 +4691,7 @@
             "target": "Package",
             "version": "[9.4.1, )"
           },
-          "Aspire.Hosting.Orchestration.osx-arm64": {
+          "Aspire.Hosting.Orchestration.win-x64": {
             "target": "Package",
             "version": "[9.4.1, )",
             "autoReferenced": true
@@ -4711,7 +4717,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

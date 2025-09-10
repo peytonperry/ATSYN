@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ATSYN.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250901224832_InitialSetup")]
-    partial class InitialSetup
+    [Migration("20250902022239_InitialCreateWithProducts")]
+    partial class InitialCreateWithProducts
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

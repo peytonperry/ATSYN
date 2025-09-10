@@ -2,7 +2,7 @@ using Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var sql = builder.AddSqlServer("sql").WithDataVolume();
+var sql = builder.AddSqlServer("sql", port: 1433).WithDataVolume();
 var db  = sql.AddDatabase("sqldata");
 
 var migrations = builder.AddProject<Projects.AtsynApi_MigrationService>("migrations")
