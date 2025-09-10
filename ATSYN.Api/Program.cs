@@ -8,7 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.AddSqlServerDbContext<ApplicationDbContext>("sqldata");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer("Server=127.0.0.1,52984;Database=sqldata;User Id=sa;Password=A0uTh9jkFW968r6SMjc5w2;TrustServerCertificate=True;MultipleActiveResultSets=true"));
 
 builder.Services.AddIdentity<User, ApplicationRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
