@@ -1,5 +1,6 @@
 using ATSYN.Api.Features;
 using ATSYN.Data;
+using ATSYN.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,8 +16,7 @@ public class CategoryController : ControllerBase
     {
         _context = context;
     }
-
-    // GET: api/Category
+    
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories()
     {
@@ -30,8 +30,7 @@ public class CategoryController : ControllerBase
 
         return Ok(categories);
     }
-
-    // GET: api/Category/5
+    
     [HttpGet("{id}")]
     public async Task<ActionResult<CategoryDto>> GetCategory(int id)
     {
@@ -50,8 +49,7 @@ public class CategoryController : ControllerBase
 
         return Ok(categoryDto);
     }
-
-    // GET: api/Category/5/products
+    
     [HttpGet("{id}/products")]
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetCategoryProducts(int id)
     {
@@ -86,12 +84,11 @@ public class CategoryController : ControllerBase
 
         return Ok(products);
     }
-
-    // POST: api/Category
+    
     [HttpPost]
     public async Task<ActionResult<CategoryDto>> CreateCategory(CategoryDto categoryDto)
     {
-        // Check if category name already exists
+       
         var existingCategory = await _context.Categories
             .FirstOrDefaultAsync(c => c.Name.ToLower() == categoryDto.Name.ToLower());
             
@@ -111,8 +108,7 @@ public class CategoryController : ControllerBase
         categoryDto.Id = category.Id;
         return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, categoryDto);
     }
-
-    // PUT: api/Category/5
+    
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateCategory(int id, CategoryDto categoryDto)
     {
@@ -128,7 +124,7 @@ public class CategoryController : ControllerBase
             return NotFound();
         }
 
-        // Check if another category with the same name exists (excluding current category)
+    
         var existingCategory = await _context.Categories
             .FirstOrDefaultAsync(c => c.Name.ToLower() == categoryDto.Name.ToLower() && c.Id != id);
             
@@ -158,7 +154,7 @@ public class CategoryController : ControllerBase
         return NoContent();
     }
 
-    // DELETE: api/Category/5
+   
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCategory(int id)
     {
@@ -169,7 +165,7 @@ public class CategoryController : ControllerBase
             return NotFound();
         }
 
-        // Check if category has associated products
+        
         var hasProducts = await _context.Products.AnyAsync(p => p.CategoryId == id);
         
         if (hasProducts)

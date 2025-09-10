@@ -1,3 +1,4 @@
+using ATSYN.Api.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,6 +16,7 @@ namespace ATSYN.Data.Entities
         public bool IsVisible { get; set; }
         public int ShippingTypeId { get; set; }
         public bool InStock { get; set; }
+        public Category Category { get; set; }
     }
 
     public class ProductDto
@@ -28,6 +30,7 @@ namespace ATSYN.Data.Entities
         public bool IsVisible { get; set; }
         public int ShippingTypeId { get; set; }
         public bool InStock { get; set; }
+        public CategoryDto Category { get; set; }
     }
 
     public class ProductConfiguration : IEntityTypeConfiguration<Product>
@@ -48,6 +51,10 @@ namespace ATSYN.Data.Entities
                 .IsRequired()
                 .HasColumnType("decimal(18,2)");
             builder.ToTable("Products");
+            builder.HasOne(p => p.Category)
+                .WithMany()
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
