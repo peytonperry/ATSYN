@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ATSYN.Data;
+using ATSYN.Data.Data;
 
 public class Worker(IServiceProvider services, IHostApplicationLifetime lifetime) : BackgroundService
 {
