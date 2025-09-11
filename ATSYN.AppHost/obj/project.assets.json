@@ -4624,7 +4624,7 @@
       "Aspire.Dashboard.Sdk.win-x64 >= 9.4.1",
       "Aspire.Hosting.AppHost >= 9.4.1",
       "Aspire.Hosting.NodeJs >= 9.4.1",
-      "Aspire.Hosting.Orchestration.osx-arm64 >= 9.4.1",
+      "Aspire.Hosting.Orchestration.win-x64 >= 9.4.1",
       "Aspire.Hosting.SqlServer >= 9.4.1"
     ]
   },

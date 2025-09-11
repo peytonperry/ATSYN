@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@mantine/core": "^8.3.1",
+    "@mantine/hooks": "^8.3.1",
+    "@tabler/icons-react": "^3.34.1"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
+}
