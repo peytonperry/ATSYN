@@ -1,3 +1,5 @@
+using System.Reflection;
+using ATSYN.Api.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
@@ -5,25 +7,20 @@ using ATSYN.Data.Entities;
 using ATSYN.Data.Entities.Users;
 namespace ATSYN.Data {
 
-    public class ApplicationDbContext : IdentityDbContext<User, ApplicationRole, int>
-    {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
-        }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<TodoItem> TodoItems { get; set; }
+namespace ATSYN.Data.Data;  
 
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-        }
-}
-
-public class TodoItem
+public class ApplicationDbContext : DbContext
+{
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
-        public int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public bool IsCompleted { get; set; }
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(ApplicationDbContext))!);
+    }
 }
