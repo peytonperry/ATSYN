@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ATSYN.Api.Controllers;
 
+[ApiController]
+[Route("api/[controller]")]
 public class AuthController : ControllerBase 
 {
     private readonly UserManager<IdentityUser> _userManager;
