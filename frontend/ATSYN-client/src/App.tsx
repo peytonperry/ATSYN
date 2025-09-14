@@ -1,12 +1,39 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/Homepage.tsx';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import { Header } from "./components/Header";
+import HomePage from "./pages/Homepage";
+import AuthPage from "./pages/Login-Signup-page.tsx";
+
+function AppContent() {
+  const location = useLocation();
+
+  const routesWithoutHeader = ["/login", "/signup", "/auth"];
+
+  const shouldHideHeader = routesWithoutHeader.includes(location.pathname);
+
+  return (
+    <>
+      {!shouldHideHeader && (
+        <Header callToActionTitle="Get Started" callToActionUrl="/signup" />
+      )}
+      <Routes>
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/login" element={<AuthPage />} />
+        <Route path="/signup" element={<AuthPage />} />
+        <Route path="/" element={<HomePage />} />
+      </Routes>
+    </>
+  );
+}
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-      </Routes>
+      <AppContent />
     </Router>
   );
 }
