@@ -8,7 +8,15 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
     public ApplicationDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        optionsBuilder.UseSqlServer("Server=localhost;Database=ATSYN_Design;Trusted_Connection=true;TrustServerCertificate=true;");
+        var connectionString = string.Empty;
+        
+#if OS_WINDOWS
+        connectionString = "Server=localhost;Database=ATSYN_Design;Trusted_Connection=true;TrustServerCertificate=true;"
+#else
+        connectionString = "Server=127.0.0.1,1433;Database=ATSYN_Design;Trusted_Connection=true;Username=sa;Password=YourStrongP@assword";
+#endif
+        
+        optionsBuilder.UseSqlServer(connectionString);
         return new ApplicationDbContext(optionsBuilder.Options);
     }
 }

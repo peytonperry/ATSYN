@@ -1,5 +1,6 @@
 using ATSYN.Api.Features;
 using ATSYN.Data;
+using ATSYN.Data.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,7 @@ public class ProductController : ControllerBase
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
     {
         var products = await _context.Products
+            .Include(p => p.Category) 
             .Select(p => new ProductDto
             {
                 Id = p.Id,
@@ -30,7 +32,45 @@ public class ProductController : ControllerBase
                 StockAmount = p.StockAmount,
                 IsVisible = p.IsVisible,
                 ShippingTypeId = p.ShippingTypeId,
-                InStock = p.InStock
+                InStock = p.InStock,
+                Category = new CategoryDto
+                {
+                    Id = p.Category.Id,
+                    Name = p.Category.Name
+                }
+            })
+            .ToListAsync();
+
+        return Ok(products);
+    }
+    [HttpGet("category/{categoryId}")]
+    public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsByCategory(int categoryId)
+    {
+        var categoryExists = await _context.Categories.AnyAsync(c => c.Id == categoryId);
+        if (!categoryExists)
+        {
+            return NotFound($"Category with ID {categoryId} not found.");
+        }
+
+        var products = await _context.Products
+            .Include(p => p.Category)
+            .Where(p => p.CategoryId == categoryId)
+            .Select(p => new ProductDto
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Description = p.Description,
+                Price = p.Price,
+                CategoryId = p.CategoryId,
+                StockAmount = p.StockAmount,
+                IsVisible = p.IsVisible,
+                ShippingTypeId = p.ShippingTypeId,
+                InStock = p.InStock,
+                Category = new CategoryDto
+                {
+                    Id = p.Category.Id,
+                    Name = p.Category.Name
+                }
             })
             .ToListAsync();
 
@@ -40,7 +80,9 @@ public class ProductController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ProductDto>> GetProduct(int id)
     {
-        var product = await _context.Products.FindAsync(id);
+        var product = await _context.Products
+            .Include(p => p.Category) 
+            .FirstOrDefaultAsync(p => p.Id == id);
         
         if (product == null)
         {
@@ -57,7 +99,12 @@ public class ProductController : ControllerBase
             StockAmount = product.StockAmount,
             IsVisible = product.IsVisible,
             ShippingTypeId = product.ShippingTypeId,
-            InStock = product.InStock
+            InStock = product.InStock,
+            Category = new CategoryDto
+            {
+                Id = product.Category.Id,
+                Name = product.Category.Name
+            }
         };
 
         return Ok(productDto);
@@ -66,6 +113,14 @@ public class ProductController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ProductDto>> CreateProduct(ProductDto productDto)
     {
+        var categoryExists = await _context.Categories
+            .AnyAsync(c => c.Id == productDto.CategoryId);
+            
+        if (!categoryExists)
+        {
+            return BadRequest($"Category with ID {productDto.CategoryId} does not exist.");
+        }
+
         var product = new Product
         {
             Title = productDto.Title,
@@ -81,7 +136,98 @@ public class ProductController : ControllerBase
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
 
-        productDto.Id = product.Id;
-        return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, productDto);
+        var createdProduct = await _context.Products
+            .Include(p => p.Category)
+            .FirstAsync(p => p.Id == product.Id);
+
+        var responseDto = new ProductDto
+        {
+            Id = createdProduct.Id,
+            Title = createdProduct.Title,
+            Description = createdProduct.Description,
+            Price = createdProduct.Price,
+            CategoryId = createdProduct.CategoryId,
+            StockAmount = createdProduct.StockAmount,
+            IsVisible = createdProduct.IsVisible,
+            ShippingTypeId = createdProduct.ShippingTypeId,
+            InStock = createdProduct.InStock,
+            Category = new CategoryDto
+            {
+                Id = createdProduct.Category.Id,
+                Name = createdProduct.Category.Name
+            }
+        };
+
+        return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, responseDto);
+    }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateProduct(int id, ProductDto productDto)
+    {
+        if (id != productDto.Id)
+        {
+            return BadRequest("ID mismatch");
+        }
+
+        var product = await _context.Products.FindAsync(id);
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        if (product.CategoryId != productDto.CategoryId)
+        {
+            var categoryExists = await _context.Categories
+                .AnyAsync(c => c.Id == productDto.CategoryId);
+                
+            if (!categoryExists)
+            {
+                return BadRequest($"Category with ID {productDto.CategoryId} does not exist.");
+            }
+        }
+
+        product.Title = productDto.Title;
+        product.Description = productDto.Description;
+        product.Price = productDto.Price;
+        product.CategoryId = productDto.CategoryId;
+        product.StockAmount = productDto.StockAmount;
+        product.IsVisible = productDto.IsVisible;
+        product.ShippingTypeId = productDto.ShippingTypeId;
+        product.InStock = productDto.InStock;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!await ProductExists(id))
+            {
+                return NotFound();
+            }
+            throw;
+        }
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProduct(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    private async Task<bool> ProductExists(int id)
+    {
+        return await _context.Products.AnyAsync(e => e.Id == id);
     }
 }
