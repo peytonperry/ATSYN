@@ -25,7 +25,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ATSYN.AppHost")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9dad1699156620f695311f6734ad50c7c64db64f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0f22225fdfc05d2b0c4f8ddb8d78341b5abee89c")]
 [assembly: System.Reflection.AssemblyProductAttribute("ATSYN.AppHost")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ATSYN.AppHost")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
