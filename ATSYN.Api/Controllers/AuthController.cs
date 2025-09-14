@@ -101,18 +101,6 @@ public class AuthController : ControllerBase
             EmailConfirmed = user.EmailConfirmed
         });
     }
-
-    [HttpGet("test-auth")]
-    [Authorize]
-    public IActionResult TestAuth()
-    {
-        return Ok(new
-        {
-            Message = "You are authenticated!",
-            UserId = User.FindFirst("sub")?.Value ?? User.FindFirst("id")?.Value,
-            Email = User.FindFirst("email")?.Value
-        });
-    }
     
     public class RegisterDto
     {
