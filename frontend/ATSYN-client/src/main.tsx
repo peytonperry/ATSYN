@@ -11,7 +11,6 @@ import '@mantine/carousel/styles.css';
 
 const theme = createTheme({
   ...DEFAULT_THEME,
-  /** Put your mantine theme override here */
 });
 
 createRoot(document.getElementById('root')!).render(

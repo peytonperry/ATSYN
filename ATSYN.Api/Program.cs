@@ -3,6 +3,7 @@ using ATSYN.Data.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,13 +26,33 @@ builder.Services.AddIdentity<IdentityUser,  IdentityRole>(options =>
     options.User.RequireUniqueEmail = true;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>();
+//codegen
+builder.Services
+  .AddControllers()
+  .AddJsonOptions(options =>
+  {
+      options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+  });
+//more codegen stuff
+builder.Services.AddMvc();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.CustomOperationIds(e => $"{e.ActionDescriptor.RouteValues["action"]}");
+
+    options.NonNullableReferenceTypesAsRequired();
+    options.SupportNonNullableReferenceTypes();
+    options.DescribeAllParametersInCamelCase();
+});
 
 var app = builder.Build();
+
+app.MapScalarApiReference();
 
 app.MapDefaultEndpoints();
 
 app.MapOpenApi();
-app.MapScalarApiReference();
+
 
 app.MapControllers();
 app.UseAuthentication();
