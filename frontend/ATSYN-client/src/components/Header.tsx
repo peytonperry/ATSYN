@@ -5,10 +5,14 @@ import {
   Container,
   Flex,
   Group,
-  Text
-} from '@mantine/core';
-import type { ContainerProps, MantineBreakpoint, MantineRadius } from '@mantine/core';
-import classes from './Header.module.css';
+  Text,
+} from "@mantine/core";
+import type {
+  ContainerProps,
+  MantineBreakpoint,
+  MantineRadius,
+} from "@mantine/core";
+import classes from "./Header.module.css";
 
 export type HeaderLink = {
   label: string;
@@ -16,10 +20,10 @@ export type HeaderLink = {
 };
 
 const HEADER_LINKS: HeaderLink[] = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
-  { label: 'Products', href: '/products' },
-  { label: 'Contact', href: '/contact' },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Products", href: "/products" },
+  { label: "Contact", href: "/contact" },
 ];
 
 type HeaderProps = ContainerProps & {
@@ -36,14 +40,14 @@ type HeaderProps = ContainerProps & {
 
 export const Header = ({
   style,
-  breakpoint = 'xs',
+  breakpoint = "xs",
   logo = (
     <Text fw="bold" fz={24} mx="xs">
       ATSYN
     </Text>
   ),
-  callToActionTitle = 'Get Started',
-  callToActionUrl = '#',
+  callToActionTitle = "Get Started",
+  callToActionUrl = "#",
   callToActionIcon,
   links = HEADER_LINKS,
   onMenuToggle,
@@ -56,13 +60,24 @@ export const Header = ({
     className={classes.container}
     component="header"
     style={{ borderRadius: radius, ...style }}
-    w={{ base: '100%', [breakpoint]: 'fit-content' }}
+    w={{ base: "100%", [breakpoint]: "fit-content" }}
     //h={h}
     {...containerProps}
   >
-    <Flex justify="space-between" align="center" h="100%" gap="xs" wrap="nowrap">
+    <Flex
+      justify="space-between"
+      align="center"
+      h="100%"
+      gap="xs"
+      wrap="nowrap"
+    >
       <Group gap={0} style={{ flexShrink: 0 }}>
-        <Burger size="sm" opened={isMenuOpen} onClick={onMenuToggle} hiddenFrom={breakpoint} />
+        <Burger
+          size="sm"
+          opened={isMenuOpen}
+          onClick={onMenuToggle}
+          hiddenFrom={breakpoint}
+        />
         {logo}
       </Group>
 
@@ -78,7 +93,12 @@ export const Header = ({
         className={classes.linkContainer}
       >
         {links.map((link) => (
-          <Anchor key={link.href} className={classes.link} href={link.href} td="none">
+          <Anchor
+            key={link.href}
+            className={classes.link}
+            href={link.href}
+            td="none"
+          >
             {link.label}
           </Anchor>
         ))}
