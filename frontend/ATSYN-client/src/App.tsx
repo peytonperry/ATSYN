@@ -1,3 +1,4 @@
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -32,6 +33,12 @@ function AppContent() {
   );
 }
 
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
 
-
-export default AppContent;
+export default App;
