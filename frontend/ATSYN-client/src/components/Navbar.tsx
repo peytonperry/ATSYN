@@ -1,14 +1,37 @@
 import { Container, Group, Button  } from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
 
 function NavBar(){
+    const navigate = useNavigate();
+
     return(
-    <Container fluid h={50}>
-        <Group>
-            <Button variant="light" color="rgba(0, 0, 0, 1)" size="md">Home</Button>
-            <Button variant="light" color="rgba(0, 0, 0, 1)" size="md">About</Button>
-            <Button variant="light" color="rgba(0, 0, 0, 1)" size="md">Products</Button>
-            <Button variant="light" color="rgba(0, 0, 0, 1)" size="md">Contact</Button>
-            <Button variant="light" color="rgba(0, 0, 0, 1)" size="md">Login/Sign Up</Button>
+    <Container fluid h={50} bg='dark.9' py="3.5px">
+        <Group justify="center">
+            <Button variant="filled" color="#0F52BA" size="md"
+            onClick={() => navigate('/')}
+            >
+                Home
+            </Button>
+            <Button variant="filled" color="#0F52BA" size="md"
+            onClick={() => navigate('/about')}
+            >
+                About
+            </Button>
+            <Button variant="filled" color="#0F52BA" size="md"
+            onClick={() => navigate('/products')}
+            >
+                Products
+            </Button>
+            <Button variant="filled" color="#0F52BA" size="md"
+            onClick={() => navigate('/contact')}
+            >
+                Contact
+            </Button>
+            <Button variant="filled" color="#0F52BA" size="md"
+            onClick={() => navigate('/login')}
+            >
+                Login/Sign Up
+            </Button>
         </Group>
     </Container>
     );

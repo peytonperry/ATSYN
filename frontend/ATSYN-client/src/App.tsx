@@ -7,6 +7,7 @@ import {
 import { Header } from "./components/Header";
 import HomePage from "./pages/Homepage";
 import AuthPage from "./pages/Login-Signup-page.tsx";
+import NavBar from './components/Navbar.tsx'
 
 function AppContent() {
   const location = useLocation();
@@ -18,7 +19,10 @@ function AppContent() {
   return (
     <>
       {!shouldHideHeader && (
-        <Header callToActionTitle="Get Started" callToActionUrl="/signup" />
+        <>
+          {/* <Header callToActionTitle="Get Started" callToActionUrl="/signup" /> */}
+          <NavBar />
+        </>
       )}
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
