@@ -15,6 +15,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "https://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+
+
 builder.Services.AddIdentity<IdentityUser,  IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -52,6 +64,8 @@ app.MapScalarApiReference();
 app.MapDefaultEndpoints();
 
 app.MapOpenApi();
+
+app.UseCors("AllowReactApp");
 
 
 app.MapControllers();
