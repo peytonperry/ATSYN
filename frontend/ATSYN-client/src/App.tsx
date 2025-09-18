@@ -1,43 +1,45 @@
-import { useEffect, useState } from 'react'
-import './App.css'
-import { Text, Paper, Container } from '@mantine/core';
-import { Carousel } from '@mantine/carousel';
-import { Image } from '@mantine/core';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import { Header } from "./components/Header";
+import HomePage from "./pages/Homepage";
+import AuthPage from "./pages/Login-Signup-page.tsx";
+import NavBar from './components/Navbar.tsx'
 
-//for Carousel 
-const images = [
-  'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-1.png',
-  'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-2.png',
-  'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-3.png',
-  'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-4.png',
-  'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-5.png',
-];
+function AppContent() {
+  const location = useLocation();
 
-function App() {
-  
-  const slides = images.map((url) => (
-    <Carousel.Slide key={url}>
-      <Image src={url} />
-    </Carousel.Slide>
-  ));
-  
+  const routesWithoutHeader = ["/login", "/signup", "/auth"];
+
+  const shouldHideHeader = routesWithoutHeader.includes(location.pathname);
+
   return (
     <>
-      <Container size="lg" mt="xl">
-        <Carousel withIndicators height={200}>
-          {slides}
-        </Carousel>
-        <Paper shadow="md" p="xl" radius="lg">
-          <Text ta="center" fz="xl" fw={700}>
-             Welcome to ATSYN 
-          </Text>
-          <Text ta="center" mt="md">
-            This is where your hero section, features, and client content will go.
-          </Text>
-        </Paper>   
-      </Container>
+      {!shouldHideHeader && (
+        <>
+          {/* <Header callToActionTitle="Get Started" callToActionUrl="/signup" /> */}
+          <NavBar />
+        </>
+      )}
+      <Routes>
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/login" element={<AuthPage />} />
+        <Route path="/signup" element={<AuthPage />} />
+        <Route path="/" element={<HomePage />} />
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
+export default App;

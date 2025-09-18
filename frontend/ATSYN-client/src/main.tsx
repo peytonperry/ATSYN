@@ -4,21 +4,22 @@ import './index.css'
 import App from './App.tsx'
 import '@mantine/core/styles.css';
 import { createTheme, MantineProvider, DEFAULT_THEME } from '@mantine/core';
-import { Header } from './components/Header';
 import '@mantine/carousel/styles.css';
+
+
 
 
 
 const theme = createTheme({
   ...DEFAULT_THEME,
   /** Put your mantine theme override here */
+  
 });
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <MantineProvider theme={theme}>
-      <Header callToActionTitle="Get Started" callToActionUrl="/signup" />
+    <MantineProvider theme={theme} defaultColorScheme="dark">
           <App />
     </MantineProvider>
-  </StrictMode>,
-)
+  </StrictMode>
+);

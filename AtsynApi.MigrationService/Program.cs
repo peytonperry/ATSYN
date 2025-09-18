@@ -1,4 +1,5 @@
 using ATSYN.Data;
+using ATSYN.Data.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = Host.CreateApplicationBuilder(args);
