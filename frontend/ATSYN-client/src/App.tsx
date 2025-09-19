@@ -8,6 +8,7 @@ import { Header } from "./components/Header";
 import HomePage from "./pages/Homepage";
 import AuthPage from "./pages/Login-Signup-page.tsx";
 import NavBar from './components/Navbar.tsx'
+import ProductPage from "./pages/productPage.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -29,6 +30,7 @@ function AppContent() {
         <Route path="/login" element={<AuthPage />} />
         <Route path="/signup" element={<AuthPage />} />
         <Route path="/" element={<HomePage />} />
+        <Route path="/productpage" element={<ProductPage/>}/>
       </Routes>
     </>
   );
