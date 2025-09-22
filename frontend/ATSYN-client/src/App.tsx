@@ -8,6 +8,7 @@ import { Header } from "./components/Header";
 import HomePage from "./pages/Homepage";
 import AuthPage from "./pages/Login-Signup-page.tsx";
 import NavBar from './components/Navbar.tsx'
+import ContactPage from "./pages/Contact-Page.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -25,6 +26,7 @@ function AppContent() {
         </>
       )}
       <Routes>
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/signup" element={<AuthPage />} />
