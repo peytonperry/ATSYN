@@ -1,7 +1,7 @@
 import { Container, Grid, Image, Title, Text, Select } from "@mantine/core";
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
 import { apiService } from "../config/api";
+import { useParams } from "react-router-dom";
 
 interface Category {
   id: number;
@@ -20,34 +20,38 @@ interface Product {
   inStock: boolean;
   imageUrl: string;
   category: Category;
-};
+}
 
 function ProductDetailPage() {
-
-  const [product, setProduct] = useState<Product[]>([]);
+  const [product, setProduct] = useState<Product>([]);
   const [loading, setLoading] = useState(true);
+  const { id } = useParams();
 
   const fetchData = async () => {
     try {
-      const data: Product[] = await apiService.get("/api/Product/{id");
+      const data: Product = await apiService.get(`/api/Product/${id}`);
       console.log(data);
       setProduct(data);
-
       setLoading(false);
-    }
-    catch (error) {
+
+
+    } catch (error) {
       setLoading(false);
       console.error("API call failed:", error);
     }
-  }
+  };
+
   /*const [quantity, setQuantity] = useState<string | null>("1");
-  const quantityOptions = Array.from(
-    { length: Math.min(singleProduct.stockAmount, 10) },
+
+  const quantityOptions = product ? Array.from(
+    { length: Math.min(product.stockAmount, 10) },
     (_, i) => ({
       value: String(i + 1),
       label: String(i + 1),
     })
   );*/
+
+  fetchData();
 
   return (
     <Container>
@@ -61,14 +65,14 @@ function ProductDetailPage() {
             {product.title}
           </Title>
           <Text size="xl" mb="md">
-            {productSample.price}
+            {product.price}
           </Text>
           <Text size="lg" mb="md">
-            {productSample.description}
+            {product.description}
           </Text>
         </Grid.Col>
         <Grid.Col span={4}>
-          <Select data={quantityOptions} />
+          <Select />
         </Grid.Col>
       </Grid>
     </Container>
