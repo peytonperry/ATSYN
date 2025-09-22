@@ -8,7 +8,7 @@ import {
 import { Header } from "./components/Header";
 import HomePage from "./pages/Homepage";
 import AuthPage from "./pages/Login-Signup-page.tsx";
-import ProductPage from "./pages/Product-Page.tsx";
+import ProductPage from "./pages/Products/Product-Page.tsx";
 import NavBar from './components/Navbar.tsx'
 
 function AppContent() {
