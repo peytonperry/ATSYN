@@ -1,6 +1,4 @@
-//import { useState } from "react";
-//import "./admin-navigation.css"
-import { useDisclosure } from "@mantine/hooks";
+import "./AdminNavigation.css"
 import { useState } from "react";
 import {
   AppShell,
@@ -8,13 +6,11 @@ import {
   Text,
   UnstyledButton,
   ThemeIcon,
-  Burger,
 } from "@mantine/core";
 import {
   IconLayoutDashboard,
   IconUsers,
   IconSettings,
-  IconShoppingCart,
 } from "@tabler/icons-react";
 
 
@@ -26,8 +22,7 @@ function AdminNavigation() {
     
     const links = [
         { label: "Dashboard", icon: IconLayoutDashboard },
-        { label: "Users", icon: IconUsers },
-        { label: "Orders", icon: IconShoppingCart },
+        { label: "Customers", icon: IconUsers },
         { label: "Settings", icon: IconSettings },
     ];
 
@@ -37,7 +32,7 @@ function AdminNavigation() {
 
        <AppShell
           header={{ height: 60 }}
-          navbar={{ width: 260, breakpoint: 'sm', collapsed: { mobile: false } }}
+          navbar={{ width: 200, breakpoint: 'sm', collapsed: { mobile: false } }}
           >
               <AppShell.Header>
                   <Group p="md">
