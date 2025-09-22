@@ -14,6 +14,7 @@ public class Product
     public bool IsVisible { get; set; }
     public int ShippingTypeId { get; set; }
     public bool InStock { get; set; }
+    public string ImageUrl { get; set; } = string.Empty;
     public Category Category { get; set; }
 }
 
@@ -28,6 +29,7 @@ public class ProductDto
     public bool IsVisible { get; set; }
     public int ShippingTypeId { get; set; }
     public bool InStock { get; set; }
+    public string ImageUrl { get; set; } = string.Empty;
     public CategoryDto Category { get; set; }
 }
 
