@@ -5,12 +5,12 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { Header } from "./components/Header";
+//import { Header } from "./components/Header";
 import HomePage from "./pages/Homepage";
 import AuthPage from "./pages/Login-Signup-page.tsx";
 import ProductPage from "./pages/Products/Product-Page.tsx";
 import NavBar from './components/Navbar.tsx'
-import ProductPage from "./pages/productPage.tsx";
+import ProductDetailPage from "./pages/ProductDetail.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -33,7 +33,7 @@ function AppContent() {
         <Route path="/signup" element={<AuthPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductPage/>}/>
-        <Route path="/productpage" element={<ProductPage/>}/>
+        <Route path="/product/:id" element={<ProductDetailPage/>} />
       </Routes>
     </>
   );
