@@ -13,7 +13,11 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     public DbSet<Category> Categories { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Brand> Brands { get; set; }
     public DbSet<OrderStatusHistory> OrderStatusHistory { get; set; }
+    public DbSet<ProductAttribute> ProductAttributes { get; set; }
+    public DbSet<AttributeOption> AttributeOptions { get; set; }
+    public DbSet<ProductAttributeValue> ProductAttributeValues { get; set; }
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {

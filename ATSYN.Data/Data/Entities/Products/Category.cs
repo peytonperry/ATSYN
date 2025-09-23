@@ -7,11 +7,14 @@ public sealed class Category
 {
     public int Id { get; init; }
     public required string Name { get; init; }
+    public ICollection<Product> Products { get; set; } = new List<Product>();
+    public ICollection<ProductAttribute> Attributes { get; set; } = new List<ProductAttribute>();
 }
 public sealed class CategoryDto
 {
     public int Id { get; init; }
     public required string Name { get; init; }
+    public List<ProductAttributeDto> Attributes { get; init; } = new();
 }
 public sealed class CreateCategoryDto
 {
