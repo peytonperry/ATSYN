@@ -15,7 +15,6 @@ const AppShell = () => {
 
       <div className="app-main">
         <header className="app-header">
-
         <Header />
         </header>
 

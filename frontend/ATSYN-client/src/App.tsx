@@ -1,4 +1,3 @@
-import { Header } from "./components/Header";
 
 import {
   BrowserRouter as Router,
@@ -13,12 +12,13 @@ import ProductPage from "./pages/Products/Product-Page.tsx";
 import NavBar from "./components/Navbar.tsx";
 import ContactPage from "./pages/Contact-page.tsx";
 
-// Admin
+// Admin Routes 
 import AppShell from "./pages/admin/admincomponents/Appshell.tsx"; 
 import Dashboard from "./pages/admin/adminpages/Dashboard.tsx";
 import Customers from "./pages/admin/adminpages/Customers.tsx";
 import Reports from "./pages/admin/adminpages/Reports.tsx";
 import Settings from "./pages/admin/adminpages/Settings.tsx";
+import ProductManagement from "./pages/admin/adminpages/dashboardpages/ProductManagement.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -53,20 +53,13 @@ function AppContent() {
           <Route path="Customers" element={<Customers />} />    
           <Route path="Reports" element={<Reports />} />
           <Route path="Settings" element={<Settings />} />
+          <Route path="products" element={<ProductManagement />} />
         </Route>
       </Routes>
     </>
   );
 }
 
-//*Use this structure for nested routes for the admin panel 
-
-        // <Route path="/admin" element={<AppShell />}>
-        //   <Route index element={<Dashboard />} /> {/* /admin */}
-        //   <Route path="users" element={<Users />} /> {/* /admin/users */}
-        //   <Route path="reports" element={<Reports />} /> {/* /admin/reports */}
-        //   <Route path="settings" element={<Settings />} /> {/* /admin/settings */}
-        // </Route>
 
 function App() {
   return (

@@ -22,7 +22,7 @@ const Sidebar = () =>{
               <NavLink
                 to={item.path}
                 className={({ isActive }) =>
-                  'sidebar-link ${isActive ? "active" : ""}'
+                  `sidebar-link ${isActive ? "active" : ""}`
                 }
               >
                 {item.name}
