@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://192.168.69.21:5173", "http://172.26.187.144:5173")
+        policy.WithOrigins("http://localhost:5173", "https://192.168.69.21:5173", "http://172.23.202.192:5173")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

@@ -1,5 +1,5 @@
 import { Container, Group, Button } from "@mantine/core";
-import { IconBoxAlignRightFilled } from "@tabler/icons-react";
+//import { IconBoxAlignRightFilled } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 
 function NavBar() {
