@@ -13,6 +13,10 @@
   justify-content: space-between;
   box-sizing: border-box;
 }
+.nav-name{
+    font-weight: 400;
+    font-size: 22px;
+}
 
 .navbar-center {
   display: flex;
