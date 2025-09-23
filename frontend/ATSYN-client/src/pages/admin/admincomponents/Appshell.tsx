@@ -20,7 +20,7 @@ const AppShell = () => {
         </header>
 
         <main className="app-content">
-          <Outlet /> {/* Route content goes here */}
+          <Outlet /> 
         </main>
       </div>
     </div>

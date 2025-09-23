@@ -10,14 +10,13 @@ import HomePage from "./pages/Homepage";
 import AuthPage from "./pages/Login-Signup-page.tsx";
 import ProductPage from "./pages/Products/Product-Page.tsx";
 import NavBar from './components/Navbar.tsx'
-import AdminNavigation from "./pages/admin/AdminNavigation.tsx";
 
 // Admin
-import AppShell from "./pages/admin/AppShellComponents/Appshell.tsx"; 
-import Dashboard from "./pages/admin/AppShellPages/Dashboard.tsx";
-// import Customers from "./pages/admin/Customers.tsx";
-// import Reports from "./pages/admin/Reports.tsx";
-// import Settings from "./pages/admin/Settings.tsx";
+import AppShell from "./pages/admin/admincomponents/Appshell.tsx"; 
+import Dashboard from "./pages/admin/adminpages/Dashboard.tsx";
+import Customers from "./pages/admin/adminpages/Customers.tsx";
+import Reports from "./pages/admin/adminpages/Reports.tsx";
+import Settings from "./pages/admin/adminpages/Settings.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -40,14 +39,12 @@ function AppContent() {
         <Route path="/signup" element={<AuthPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductPage/>}/>
-        <Route path="/admin" element={<AdminNavigation />} />
 
-        {/* Admin routes wrapped inside AppShell */}
         <Route path="/admin" element={<AppShell />}>
           <Route index element={<Dashboard />} />      
-          {/* <Route path="customers" element={<Customers />} />    
-          <Route path="reports" element={<Reports />} />
-          <Route path="settings" element={<Settings />} /> */}
+          <Route path="Customers" element={<Customers />} />    
+          <Route path="Reports" element={<Reports />} />
+          <Route path="Settings" element={<Settings />} />
         </Route>
       </Routes>
     </>
