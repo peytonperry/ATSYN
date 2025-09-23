@@ -1,15 +1,15 @@
-import React from 'react';
-import background from '../Homepage/ATSYN_Logo.png'
+import React from "react";
+import backgroundimage from './ATSYN_Logo.png'
 const HomePage = () => {
   return (
     <div className="homepage-wrapper">
-      <div 
+      <div
         className="background-image"
         style={{
-          backgroundImage: `url(${background})` 
+          backgroundImage: `url(${backgroundimage})`,
         }}
       ></div>
-      
+
       <div className="dark-overlay"></div>
 
       <div className="main-content">
