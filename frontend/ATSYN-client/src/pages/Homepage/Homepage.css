@@ -6,19 +6,20 @@
   background: #1a1a1a;
   position: relative;
   overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
 }
 
 .background-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  z-index: 1;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100vh !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  z-index: 1 !important;
 }
 
 .dark-overlay {
@@ -27,7 +28,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to top, rgba(0,0,0,0.4), transparent, rgba(0,0,0,0.2));
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.4),
+    transparent,
+    rgba(0, 0, 0, 0.2)
+  );
   z-index: 2;
 }
 
@@ -62,7 +68,7 @@
   color: #ffffff !important;
   line-height: 0.9 !important;
   letter-spacing: -2px !important;
-  text-shadow: 2px 2px 8px rgba(0,0,0,0.7) !important;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7) !important;
   margin: 0 !important;
   max-width: 800px !important;
   background: none !important;
@@ -75,11 +81,11 @@
   .hero-title {
     font-size: 4rem;
   }
-  
+
   .main-content {
     padding-left: 40px;
   }
-  
+
   .tagline-text {
     right: 40px;
     font-size: 16px;
@@ -90,14 +96,14 @@
   .hero-title {
     font-size: 3rem;
   }
-  
+
   .main-content {
     padding-left: 20px;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
   }
-  
+
   .tagline-text {
     position: static;
     margin-bottom: 20px;
