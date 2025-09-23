@@ -6,10 +6,12 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import HomePage from "./pages/Homepage";
+import { Header } from "./components/Header";
+import HomePage from "./pages/Homepage/Homepage.tsx";
 import AuthPage from "./pages/Login-Signup-page.tsx";
 import ProductPage from "./pages/Products/Product-Page.tsx";
-import NavBar from './components/Navbar.tsx'
+import NavBar from "./components/Navbar.tsx";
+import ContactPage from "./pages/Contact-page.tsx";
 
 // Admin
 import AppShell from "./pages/admin/admincomponents/Appshell.tsx"; 
@@ -24,6 +26,12 @@ function AppContent() {
   const routesWithoutHeader = ["/login", "/signup", "/auth"];
 
   const shouldHideHeader = routesWithoutHeader.includes(location.pathname);
+
+  if (location.pathname !== "/") {
+    import("./index.css");
+  }else if (location.pathname == "/"){
+    import("./pages/Homepage/Homepage.css")
+  }
 
   return (
     <>
