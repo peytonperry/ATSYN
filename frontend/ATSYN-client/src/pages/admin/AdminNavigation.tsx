@@ -12,6 +12,7 @@ import {
   IconUsers,
   IconSettings,
 } from "@tabler/icons-react";
+import { useParams } from "react-router-dom";
 
 
 function AdminNavigation() {

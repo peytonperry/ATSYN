@@ -9,11 +9,9 @@
     "react-router-dom": "^7.9.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^5.0.2"
+    "@vitejs/plugin-react": "^5.0.2",
     "@radix-ui/themes": "^3.2.1",
-    "zod": "^4.1.8"
-  },
-  "devDependencies": {
+    "zod": "^4.1.8",
     "@hey-api/client-fetch": "latest",
     "@hey-api/openapi-ts": "latest",
     "@types/node": "^20.0.0"
