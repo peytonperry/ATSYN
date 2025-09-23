@@ -9,6 +9,42 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+/* If the image is a logo that should repeat or be smaller, use this instead:
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+*/
+
+.dark-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.4), transparent, rgba(0,0,0,0.2));
+  z-index: 2;
+}
+
 .main-content {
   position: relative;
   width: 100%;
@@ -17,6 +53,7 @@
   align-items: center;
   justify-content: flex-start;
   padding-left: 60px;
+  z-index: 3;
 }
 
 .bg-animations {
@@ -35,63 +72,6 @@
   opacity: 0.8;
 }
 
-.shape-1 {
-  top: 5%;
-  left: 20%;
-  width: 400px;
-  height: 400px;
-  background: linear-gradient(45deg, #06b6d4, #14b8a6, #10b981);
-  animation: rotate-slow 25s linear infinite;
-}
-
-.shape-2 {
-  top: 20%;
-  right: 15%;
-  width: 350px;
-  height: 350px;
-  background: linear-gradient(-45deg, #8b5cf6, #ec4899, #f43f5e);
-  animation: float-bounce 12s ease-in-out infinite;
-}
-
-.shape-3 {
-  bottom: 30%;
-  left: 45%;
-  width: 280px;
-  height: 280px;
-  background: linear-gradient(90deg, #f59e0b, #eab308, #f97316);
-  animation: drift-float 18s ease-in-out infinite;
-  opacity: 0.6;
-}
-
-.shape-4 {
-  top: 45%;
-  left: 30%;
-  width: 220px;
-  height: 220px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
-  animation: gentle-spin 20s linear infinite;
-  opacity: 0.5;
-}
-
-.shape-5 {
-  bottom: 20%;
-  right: 25%;
-  width: 180px;
-  height: 180px;
-  background: linear-gradient(-45deg, #10b981, #06b6d4, #3b82f6);
-  animation: reverse-spin 22s linear infinite;
-  opacity: 0.4;
-}
-
-.shape-6 {
-  top: 70%;
-  left: 15%;
-  width: 250px;
-  height: 250px;
-  background: linear-gradient(45deg, #f43f5e, #d946ef, #8b5cf6);
-  animation: wave-motion 16s ease-in-out infinite;
-  opacity: 0.3;
-}
 
 .text-content {
   position: relative;
@@ -101,14 +81,14 @@
 
 .tagline-text {
   color: #ffffff;
-  font-size: 18px;
+  font-size: 25px;
   font-weight: 400;
   margin-top: 20px;
   margin-left: 8px;
 }
 
 .hero-title {
-  font-size: 5rem !important;
+  font-size: 6rem !important;
   font-weight: 900 !important;
   color: #ffffff !important;
   line-height: 0.9 !important;
