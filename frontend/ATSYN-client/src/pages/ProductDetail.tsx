@@ -36,6 +36,7 @@ interface Product {
 function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [shippingOption, setShippingOption] = useState("shipping");
   const { id } = useParams();
 
   const fetchData = async () => {
@@ -66,57 +67,58 @@ function ProductDetailPage() {
   return (
     <Container size="xl">
       <Grid>
+        {/* Left */}
         <Grid.Col span={{ base: 12, md: 5 }}>
           <Image src={product?.imageUrl} radius="sm" fit="contain" h={400} />
         </Grid.Col>
-        {/* Left */}
+
+        {/* Middle*/}
         <Grid.Col span={{ base: 12, md: 4 }}>
           <Stack gap="md">
             <Title order={1}>{product?.title}</Title>
             <Text size="md">{product?.description}</Text>
           </Stack>
         </Grid.Col>
-        {/* Middle*/}
+
+        {/* Right */}
         <Grid.Col span={{ base: 12, md: 3 }}>
           <Paper withBorder p="md" radius="md">
             <Stack gap="md">
               <Text size="xl" fw={700}>
                 ${product?.price}
               </Text>
-              <Text size="sm">Free Returns</Text>
-              <Text size="sm">Free Delivery</Text>
+              <Text size="sm">Free Returns</Text> {/* Will change */}
+              <Text size="sm">Free Delivery</Text> {/* Will change */}
+              <div>
+                <Text size="sm">Quantity:</Text>
+                <Select
+                  value={quantity}
+                  onChange={setQuantity}
+                  data={quantityOptions}
+                />
+              </div>
+              <div>
+                <Text size="sm" mb="xs">
+                  Shipping:
+                </Text>
+                <Radio.Group
+                  value={shippingOption}
+                  onChange={setShippingOption}
+                >
+                  <Stack>
+                    <Radio value="shipping" label="Shipping" />
+                    <Radio value="delivery" label="Local delivery" />
+                    <Radio value="pickup" label="Store Pickup" />
+                  </Stack>
+                </Radio.Group>
+                {/* Quantity of items and shipping option will need to be in a form*/}
+              </div>
+              <Button className="btn" fullWidth size="md" variant="outline">
+                Add to Cart
+              </Button>
             </Stack>
-
-            <div>
-              <Text size="sm">Quantity:</Text>
-              <Select
-                value={quantity}
-                onChange={setQuantity}
-                data={quantityOptions}
-              />
-            </div>
-
-            <div>
-              <Text size="sm" mb="xs">
-                Shipping:
-              </Text>
-              <Radio.Group value="shipping" name="ShippingOptions">
-                <Stack>
-                  <Radio label="Shipping" />
-                  <Radio label="Local delivery" />
-                  <Radio label="Store Pickup" />
-                </Stack>
-              </Radio.Group>
-            </div>
-            <Button fullWidth size="md" variant="outline">
-              Add to Cart
-            </Button>
-            <Button fullWidth size="md" variant="outline">
-              Buy Now
-            </Button>
           </Paper>
         </Grid.Col>
-        {/* Right */}
       </Grid>
     </Container>
   );
