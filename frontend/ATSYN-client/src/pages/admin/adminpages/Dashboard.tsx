@@ -8,7 +8,7 @@ const Dashboard = () => {
     <div className="dashboard-container">
       <Card
         className="dashboard-card"
-        onClick={() => navigate("/admin/products")}
+        onClick={() => navigate("/admin/productmanagement")}
         style = {{ cursor: "pointer" }}
       >
         <Card.Section>

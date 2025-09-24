@@ -19,6 +19,8 @@ import Customers from "./pages/admin/adminpages/Customers.tsx";
 import Reports from "./pages/admin/adminpages/Reports.tsx";
 import Settings from "./pages/admin/adminpages/Settings.tsx";
 import ProductManagement from "./pages/admin/adminpages/dashboardpages/ProductManagement.tsx";
+import AllProducts from "./pages/admin/adminpages/dashboardpages/pmcomponents/AllProducts.tsx";
+import CreateProduct from "./pages/admin/adminpages/dashboardpages/pmcomponents/CreateProduct.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -53,7 +55,9 @@ function AppContent() {
           <Route path="Customers" element={<Customers />} />    
           <Route path="Reports" element={<Reports />} />
           <Route path="Settings" element={<Settings />} />
-          <Route path="products" element={<ProductManagement />} />
+          <Route path="productmanagement" element={<ProductManagement />} />
+          <Route path="all-products" element={<AllProducts />} />
+          <Route path="create-product" element={<CreateProduct />} />
         </Route>
       </Routes>
     </>

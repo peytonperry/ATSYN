@@ -14,7 +14,7 @@ const Sidebar = () =>{
 
     return (
       <aside className="sidebar">
-      <h2 className="sidebar-title">Admin</h2>
+      <h2 className="sidebar-title">Admin Portal</h2>
       <nav>
         <ul className="sidebar-nav">
           {navItems.map((item) => (
