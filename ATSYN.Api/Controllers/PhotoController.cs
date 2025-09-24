@@ -1,10 +1,9 @@
-﻿using ATSYN.Api.Features;
-using ATSYN.Data;
+﻿using ATSYN.Data;
 using Microsoft.AspNetCore.Mvc;
 using ATSYN.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Runtime.InteropServices;
+using ATSYN.Data.Data.Entities.Photo;
 
 namespace ATSYN.Api.Controllers;
 
@@ -12,7 +11,7 @@ namespace ATSYN.Api.Controllers;
 [Route("api/[controller]")]
 public class PhotoController : ControllerBase
 {
-    private readonly ApplicationDbContext _context; // Replace with your actual DbContext name
+    private readonly ApplicationDbContext _context;
     private readonly ILogger<PhotoController> _logger;
 
     public PhotoController(ApplicationDbContext context, ILogger<PhotoController> logger)
@@ -22,9 +21,9 @@ public class PhotoController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public async Task<IActionResult> UploadPhoto([FromForm] CreatePhotoDto dto, [FromForm] IFormFile file)
+    public async Task<IActionResult> UploadPhoto([FromForm] CreatePhotoUploadDto dto)
     {
-        if (file == null || file.Length == 0)
+        if (dto.File == null || dto.File.Length == 0)
             return BadRequest("No file uploaded");
 
         var product = await _context.Products.FindAsync(dto.ProductId);
@@ -32,16 +31,16 @@ public class PhotoController : ControllerBase
             return NotFound("Product not found");
 
         var allowedTypes = new[] { "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp" };
-        if (!allowedTypes.Contains(file.ContentType.ToLower()))
+        if (!allowedTypes.Contains(dto.File.ContentType.ToLower()))
             return BadRequest("Invalid file type");
 
-        if (file.Length > 5 * 1024 * 1024)
+        if (dto.File.Length > 5 * 1024 * 1024)
             return BadRequest("File too large");
 
         try
         {
             using var memoryStream = new MemoryStream();
-            await file.CopyToAsync(memoryStream);
+            await dto.File.CopyToAsync(memoryStream);
 
             if (dto.IsPrimary)
             {
@@ -50,17 +49,15 @@ public class PhotoController : ControllerBase
                     .ToListAsync();
 
                 foreach (var photo in existingPrimary)
-                {
                     photo.IsPrimary = false;
-                }
             }
 
             var newPhoto = new Photo
             {
-                FileName = file.FileName,
+                FileName = dto.File.FileName,
                 ImageData = memoryStream.ToArray(),
-                ContentType = file.ContentType,
-                FileSize = file.Length,
+                ContentType = dto.File.ContentType,
+                FileSize = dto.File.Length,
                 ProductId = dto.ProductId,
                 IsPrimary = dto.IsPrimary,
                 DisplayOrder = dto.DisplayOrder,
@@ -80,7 +77,7 @@ public class PhotoController : ControllerBase
                 IsPrimary = newPhoto.IsPrimary,
                 DisplayOrder = newPhoto.DisplayOrder,
                 AltText = newPhoto.AltText,
-                ImageUrl = $"/api/photos/{newPhoto.Id}"
+                ImageUrl = $"/api/Photo/{newPhoto.Id}"
             });
         }
         catch (Exception ex)
@@ -117,7 +114,7 @@ public class PhotoController : ControllerBase
                 IsPrimary = p.IsPrimary,
                 DisplayOrder = p.DisplayOrder,
                 AltText = p.AltText,
-                ImageUrl = $"/api/photos/{p.Id}"
+                ImageUrl = $"/api/Photo/{p.Id}"  // Fixed to match GET endpoint
             })
             .ToListAsync();
 

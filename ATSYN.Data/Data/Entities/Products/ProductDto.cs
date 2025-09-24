@@ -1,3 +1,4 @@
+using ATSYN.Data.Data.Entities.Photo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,11 +1,6 @@
 ﻿using ATSYN.Api.Features;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ATSYN.Api.Features;
+namespace ATSYN.Data.Data.Entities.Photo;
 
 public class Photo
 {

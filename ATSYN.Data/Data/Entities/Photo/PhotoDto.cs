@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 
-namespace ATSYN.Api.Features;
+namespace ATSYN.Data.Data.Entities.Photo;
+
 
 public class PhotoDto
 {
@@ -25,4 +22,14 @@ public class CreatePhotoDto
     public bool IsPrimary { get; init; } = false;
     public int DisplayOrder { get; init; } = 0;
     public string AltText { get; init; } = string.Empty;
+}
+
+public class CreatePhotoUploadDto
+{
+    public required int ProductId { get; init; }
+    public bool IsPrimary { get; init; } = false;
+    public int DisplayOrder { get; init; } = 0;
+    public string AltText { get; init; } = string.Empty;
+
+    public required IFormFile File { get; init; }
 }

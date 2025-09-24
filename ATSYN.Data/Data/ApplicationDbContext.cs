@@ -1,6 +1,6 @@
 using System.Reflection;
 using ATSYN.Api.Features;
-using ATSYN.Data.Entities;
+using ATSYN.Data.Data.Entities.Photo;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

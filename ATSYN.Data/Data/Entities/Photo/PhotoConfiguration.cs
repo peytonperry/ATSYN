@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ATSYN.Api.Features;
+namespace ATSYN.Data.Data.Entities.Photo;
 
 public class PhotoConfiguration : IEntityTypeConfiguration<Photo>
 {
