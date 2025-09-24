@@ -20,6 +20,10 @@ public class Product
     public Category Category { get; set; } = null!;
     public Brand? Brand { get; set; }
     public ICollection<ProductAttributeValue> AttributeValues { get; set; } = new List<ProductAttributeValue>();
+
+    public ICollection<Photo> Photos { get; set; } = new List<Photo>();
+    public Photo? PrimaryPhoto => Photos.FirstOrDefault(p => p.IsPrimary)
+                                ?? Photos.OrderBy(p => p.DisplayOrder).FirstOrDefault();
 }
 
 public class ProductDto
@@ -129,5 +133,10 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             
         builder.HasIndex(p => p.InStock)
             .HasDatabaseName("IX_Products_InStock");
+
+        builder.HasMany(p => p.Photos)
+        .WithOne(ph => ph.Product)
+        .HasForeignKey(ph => ph.ProductId)
+        .OnDelete(DeleteBehavior.Cascade);
     }
 }
