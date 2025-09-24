@@ -22,8 +22,8 @@ function AppContent() {
 
   if (location.pathname !== "/") {
     import("./index.css");
-  }else if (location.pathname == "/"){
-    import("./pages/Homepage/Homepage.css")
+  } else if (location.pathname == "/") {
+    import("./pages/Homepage/Homepage.css");
   }
 
   return (
@@ -41,7 +41,7 @@ function AppContent() {
         <Route path="/signup" element={<AuthPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductPage />} />
-        <Route path="/cart" element={<CartPage/>} />
+        <Route path="/cart" element={<CartPage />} />
       </Routes>
     </>
   );
@@ -50,9 +50,9 @@ function AppContent() {
 function App() {
   return (
     <CartProvider>
-    <Router>
-      <AppContent />
-    </Router>
+      <Router>
+        <AppContent />
+      </Router>
     </CartProvider>
   );
 }
