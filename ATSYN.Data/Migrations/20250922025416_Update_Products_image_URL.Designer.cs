@@ -4,6 +4,7 @@ using ATSYN.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ATSYN.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250922025416_Update_Products_image_URL")]
+    partial class Update_Products_image_URL
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,55 +24,6 @@ namespace ATSYN.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ATSYN.Api.Features.AttributeOption", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AttributeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AttributeId", "Value")
-                        .IsUnique()
-                        .HasDatabaseName("IX_AttributeOptions_AttributeId_Value");
-
-                    b.ToTable("AttributeOptions", (string)null);
-                });
-
-            modelBuilder.Entity("ATSYN.Api.Features.Brand", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Brands", (string)null);
-                });
 
             modelBuilder.Entity("ATSYN.Api.Features.Category", b =>
                 {
@@ -99,9 +53,6 @@ namespace ATSYN.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BrandId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
@@ -112,8 +63,7 @@ namespace ATSYN.Data.Migrations
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("InStock")
                         .HasColumnType("bit");
@@ -137,85 +87,9 @@ namespace ATSYN.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BrandId")
-                        .HasDatabaseName("IX_Products_BrandId");
-
-                    b.HasIndex("CategoryId")
-                        .HasDatabaseName("IX_Products_CategoryId");
-
-                    b.HasIndex("InStock")
-                        .HasDatabaseName("IX_Products_InStock");
-
-                    b.HasIndex("IsVisible")
-                        .HasDatabaseName("IX_Products_IsVisible");
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products", (string)null);
-                });
-
-            modelBuilder.Entity("ATSYN.Api.Features.ProductAttribute", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsRequired")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId", "Name")
-                        .IsUnique()
-                        .HasDatabaseName("IX_ProductAttributes_CategoryId_Name");
-
-                    b.ToTable("ProductAttributes", (string)null);
-                });
-
-            modelBuilder.Entity("ATSYN.Api.Features.ProductAttributeValue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AttributeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AttributeId");
-
-                    b.HasIndex("ProductId", "AttributeId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_ProductAttributeValues_ProductId_AttributeId");
-
-                    b.ToTable("ProductAttributeValues", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -565,63 +439,15 @@ namespace ATSYN.Data.Migrations
                     b.ToTable("OrderStatusHistory", (string)null);
                 });
 
-            modelBuilder.Entity("ATSYN.Api.Features.AttributeOption", b =>
-                {
-                    b.HasOne("ATSYN.Api.Features.ProductAttribute", "Attribute")
-                        .WithMany("Options")
-                        .HasForeignKey("AttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Attribute");
-                });
-
             modelBuilder.Entity("ATSYN.Api.Features.Product", b =>
                 {
-                    b.HasOne("ATSYN.Api.Features.Brand", "Brand")
-                        .WithMany("Products")
-                        .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("ATSYN.Api.Features.Category", "Category")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Brand");
-
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("ATSYN.Api.Features.ProductAttribute", b =>
-                {
-                    b.HasOne("ATSYN.Api.Features.Category", "Category")
-                        .WithMany("Attributes")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("ATSYN.Api.Features.ProductAttributeValue", b =>
-                {
-                    b.HasOne("ATSYN.Api.Features.ProductAttribute", "Attribute")
-                        .WithMany("ProductAttributeValues")
-                        .HasForeignKey("AttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ATSYN.Api.Features.Product", "Product")
-                        .WithMany("AttributeValues")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Attribute");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -703,30 +529,6 @@ namespace ATSYN.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("ATSYN.Api.Features.Brand", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("ATSYN.Api.Features.Category", b =>
-                {
-                    b.Navigation("Attributes");
-
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("ATSYN.Api.Features.Product", b =>
-                {
-                    b.Navigation("AttributeValues");
-                });
-
-            modelBuilder.Entity("ATSYN.Api.Features.ProductAttribute", b =>
-                {
-                    b.Navigation("Options");
-
-                    b.Navigation("ProductAttributeValues");
                 });
 
             modelBuilder.Entity("Order", b =>

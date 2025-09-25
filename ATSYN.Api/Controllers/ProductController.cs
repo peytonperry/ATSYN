@@ -33,6 +33,7 @@ public class ProductController : ControllerBase
                 IsVisible = p.IsVisible,
                 ShippingTypeId = p.ShippingTypeId,
                 InStock = p.InStock,
+                ImageUrl = p.ImageUrl,
                 Category = new CategoryDto
                 {
                     Id = p.Category.Id,
@@ -66,6 +67,7 @@ public class ProductController : ControllerBase
                 IsVisible = p.IsVisible,
                 ShippingTypeId = p.ShippingTypeId,
                 InStock = p.InStock,
+                ImageUrl = p.ImageUrl,
                 Category = new CategoryDto
                 {
                     Id = p.Category.Id,
@@ -100,6 +102,7 @@ public class ProductController : ControllerBase
             IsVisible = product.IsVisible,
             ShippingTypeId = product.ShippingTypeId,
             InStock = product.InStock,
+            ImageUrl = product.ImageUrl,
             Category = new CategoryDto
             {
                 Id = product.Category.Id,
@@ -130,6 +133,7 @@ public class ProductController : ControllerBase
             StockAmount = productDto.StockAmount,
             IsVisible = productDto.IsVisible,
             ShippingTypeId = productDto.ShippingTypeId,
+            ImageUrl = productDto.ImageUrl,
             InStock = productDto.InStock
         };
 
@@ -151,6 +155,7 @@ public class ProductController : ControllerBase
             IsVisible = createdProduct.IsVisible,
             ShippingTypeId = createdProduct.ShippingTypeId,
             InStock = createdProduct.InStock,
+            ImageUrl = createdProduct.ImageUrl,
             Category = new CategoryDto
             {
                 Id = createdProduct.Category.Id,
@@ -193,6 +198,7 @@ public class ProductController : ControllerBase
         product.StockAmount = productDto.StockAmount;
         product.IsVisible = productDto.IsVisible;
         product.ShippingTypeId = productDto.ShippingTypeId;
+        product.ImageUrl = productDto.ImageUrl;
         product.InStock = productDto.InStock;
 
         try
