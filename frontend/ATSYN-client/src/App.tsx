@@ -11,6 +11,8 @@ import AuthPage from "./pages/Login-Signup-page.tsx";
 import ProductPage from "./pages/Products/Product-Page.tsx";
 import NavBar from "./components/Navbar.tsx";
 import ContactPage from "./pages/Contact-page.tsx";
+import { CartProvider } from "./components/Cart/CartContext.tsx";
+import CartPage from "./pages/Cartpage/CartPage.tsx";
 
 // Admin Routes 
 import AppShell from "./pages/admin/admincomponents/Appshell.tsx"; 
@@ -31,8 +33,8 @@ function AppContent() {
 
   if (location.pathname !== "/") {
     import("./index.css");
-  }else if (location.pathname == "/"){
-    import("./pages/Homepage/Homepage.css")
+  } else if (location.pathname == "/") {
+    import("./pages/Homepage/Homepage.css");
   }
 
   return (
@@ -48,6 +50,8 @@ function AppContent() {
         <Route path="/login" element={<AuthPage />} />
         <Route path="/signup" element={<AuthPage />} />
         <Route path="/" element={<HomePage />} />
+        <Route path="/products" element={<ProductPage />} />
+        <Route path="/cart" element={<CartPage />} />
         <Route path="/products" element={<ProductPage/>}/>
 
         <Route path="/admin" element={<AppShell />}>
@@ -67,9 +71,11 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <CartProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </CartProvider>
   );
 }
 

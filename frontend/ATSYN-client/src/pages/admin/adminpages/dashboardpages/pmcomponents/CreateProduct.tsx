@@ -49,6 +49,7 @@ const CreateProduct: React.FC = () => {
                     ? (e.target as HTMLInputElement).checked 
                     : value
             });
+        console.log("Form data being sent:", formData);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -57,13 +58,17 @@ const CreateProduct: React.FC = () => {
         setErrorMsg("");
         setSuccessMsg("");
 
+        const test = {
+        ...formData,
+        price: Number(formData.price),
+        stockAmount: Number(formData.stockAmount)
+        };
+        console.log("Form data being sent:", test);
+        
         try {
-            const response: Product = await apiService.post("/api/Product", {
-                ...formData,
-                price: Number(formData.price),
-                stockAmount: Number(formData.stockAmount)
-            });
-
+            
+            const response: Product = await apiService.post("/api/Product", test);
+            
             console.log("Created product:", response);
 
             setSuccessMsg(`Product "${response.title}" created successfully!`);
@@ -78,6 +83,7 @@ const CreateProduct: React.FC = () => {
                 shippingTypeId: 0,
                 imageUrl: ""
             });
+            console.log("Form data being sent:", formData);
 
         } catch (error) {
             console.error("Error creating product:", error);

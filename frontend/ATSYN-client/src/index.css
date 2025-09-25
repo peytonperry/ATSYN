@@ -14,15 +14,20 @@
   --accent-yellow: #ffff00;
   --accent-red: #ff0000;
   --accent-green: #00ff00;
-  
-  --primary-purple: #8A00C4;
-  --secondary-purple: #B534D6;
-  --light-purple: #D866E8;
-  --dark-purple: #5A0080;
-  
-  --gradient-purple: linear-gradient(135deg, #8A00C4 0%, #B534D6 50%, #D866E8 100%);
-  --gradient-fire: linear-gradient(135deg, #8A00C4 0%, #D866E8 100%);
-  --gradient-cyber: linear-gradient(135deg, #8A00C4 0%, #B534D6 100%);
+
+  --primary-purple: #8a00c4;
+  --secondary-purple: #b534d6;
+  --light-purple: #d866e8;
+  --dark-purple: #5a0080;
+
+  --gradient-purple: linear-gradient(
+    135deg,
+    #8a00c4 0%,
+    #b534d6 50%,
+    #d866e8 100%
+  );
+  --gradient-fire: linear-gradient(135deg, #8a00c4 0%, #d866e8 100%);
+  --gradient-cyber: linear-gradient(135deg, #8a00c4 0%, #b534d6 100%);
 
   --font-primary: "Inter", "Helvetica Neue", Arial, sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
@@ -315,7 +320,7 @@ a:hover {
 }
 
 .add-to-cart-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -533,8 +538,12 @@ a:hover {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .grid {
