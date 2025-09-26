@@ -40,19 +40,14 @@ function ProductDetailPage() {
   const [shippingOption, setShippingOption] = useState("shipping");
   const [showToast, setShowToast] = useState(false);
   const [toastProduct, setToastProduct] = useState("");
+  const [quantity, setQuantity] = useState<string | null>("1");
   const { id } = useParams();
 
   const { addToCart } = useCart();
 
   const handleAddToCart = () => {
     if (product && quantity) {
-      const productToAdd = {
-        ...product,
-        selectedQuantity: parseInt(quantity),
-        selectedShipping: shippingOption,
-      };
-
-      addToCart(productToAdd);
+      addToCart(product, parseInt(quantity));
       setToastProduct(product.title);
       setShowToast(true);
     }
@@ -69,8 +64,6 @@ function ProductDetailPage() {
       console.error("API call failed:", error);
     }
   };
-
-  const [quantity, setQuantity] = useState<string | null>("1");
 
   const quantityOptions = product
     ? Array.from({ length: product.stockAmount }, (_, i) => ({
@@ -130,7 +123,7 @@ function ProductDetailPage() {
                     <Radio value="pickup" label="Store Pickup" />
                   </Stack>
                 </Radio.Group>
-                {/* Quantity of items and shipping option will need to be in a form*/}
+                {/* Quantity of items and shipping option will need to be in a form?*/}
               </div>
               <Button
                 className="btn"

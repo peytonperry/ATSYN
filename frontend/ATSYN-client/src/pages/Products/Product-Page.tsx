@@ -95,13 +95,13 @@ export default function ProductPage() {
 
   
   const ProductCard = ({ product }: { product: Product }) => {
-    const { addToCart } = useCart();
+    //const { addToCart } = useCart();
 
-    const handleAddToCart = (product: Product) => {
+    /*const handleAddToCart = (product: Product) => {
       addToCart(product);
       setToastProduct(product.title);
       setShowToast(true);
-    };
+    };*/
 
     const convertGoogleDriveUrl = (url: string) => {
       if (url.includes("drive.google.com")) {
@@ -191,7 +191,7 @@ export default function ProductPage() {
             </div>
           </div>
 
-          <button
+          {/*<button
             className={`add-to-cart-btn ${!product.inStock ? "disabled" : ""}`}
             onClick={() => handleAddToCart(product)}
             disabled={!product.inStock}
@@ -199,7 +199,7 @@ export default function ProductPage() {
             <span className="btn-text">
               {product.inStock ? "Add to Cart" : "Out of Stock"}
             </span>
-          </button>
+          </button>*/}
         </div>
       </div>
     );
