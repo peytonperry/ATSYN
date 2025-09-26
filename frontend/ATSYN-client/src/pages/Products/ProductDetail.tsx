@@ -11,8 +11,9 @@ import {
   Button,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { apiService } from "../config/api";
+import { apiService } from "../../config/api";
 import { useParams } from "react-router-dom";
+import { useCart } from "../../components/Cart/CartContext";
 
 interface Category {
   id: number;
@@ -37,7 +38,25 @@ function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [shippingOption, setShippingOption] = useState("shipping");
+  const [showToast, setShowToast] = useState(false);
+  const [toastProduct, setToastProduct] = useState("");
   const { id } = useParams();
+
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    if (product && quantity) {
+      const productToAdd = {
+        ...product,
+        selectedQuantity: parseInt(quantity),
+        selectedShipping: shippingOption,
+      };
+
+      addToCart(productToAdd);
+      setToastProduct(product.title);
+      setShowToast(true);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -65,7 +84,7 @@ function ProductDetailPage() {
   }, [id]);
 
   return (
-    <Container size="xl">
+    <Container size="lg">
       <Grid>
         {/* Left */}
         <Grid.Col span={{ base: 12, md: 5 }}>
@@ -113,8 +132,15 @@ function ProductDetailPage() {
                 </Radio.Group>
                 {/* Quantity of items and shipping option will need to be in a form*/}
               </div>
-              <Button className="btn" fullWidth size="md" variant="outline">
-                Add to Cart
+              <Button
+                className="btn"
+                fullWidth
+                size="md"
+                variant="outline"
+                onClick={handleAddToCart}
+                disabled={!product?.inStock || !quantity}
+              >
+                {product?.inStock ? "Add to Cart" : "Out of Stock"}
               </Button>
             </Stack>
           </Paper>

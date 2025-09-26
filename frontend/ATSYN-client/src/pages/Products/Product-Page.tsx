@@ -3,6 +3,7 @@ import "./ProductPage.css";
 import { apiService } from "../../config/api";
 import { useCart } from "../../components/Cart/CartContext";
 import CartToast from "../../components/Cart/CartToast";
+import { Anchor } from "@mantine/core";
 
 interface Category {
   id: number;
@@ -34,6 +35,7 @@ export default function ProductPage() {
   const [showToast, setShowToast] = useState(false);
   const [toastProduct, setToastProduct] = useState("");
 
+  //search tool
   useEffect(() => {
     let filtered = products;
 
@@ -54,6 +56,7 @@ export default function ProductPage() {
     setFilteredProducts(filtered);
   }, [products, searchTerm, selectedCategory]);
 
+  //fetching products from database
   const fetchData = async () => {
     try {
       const data: Product[] = await apiService.get("/api/Product");
@@ -77,6 +80,7 @@ export default function ProductPage() {
     }
   };
 
+
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedCategory("");
@@ -89,6 +93,7 @@ export default function ProductPage() {
     }
   }, []);
 
+  
   const ProductCard = ({ product }: { product: Product }) => {
     const { addToCart } = useCart();
 
@@ -109,6 +114,7 @@ export default function ProductPage() {
     };
 
     return (
+      //Handling images in the card
       <div className="product-card">
         <div className="product-image-container">
           {product.imageUrl ? (
@@ -270,7 +276,9 @@ export default function ProductPage() {
 
         <div className="products-grid">
           {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <Anchor href={`/product/${product.id}`}>
+              <ProductCard key={product.id} product={product} />
+            </Anchor>
           ))}
         </div>
 

@@ -12,7 +12,7 @@ import NavBar from "./components/Navbar.tsx";
 import ContactPage from "./pages/Contact-page.tsx";
 import { CartProvider } from "./components/Cart/CartContext.tsx";
 import CartPage from "./pages/Cartpage/CartPage.tsx";
-import ProductDetailPage from "./pages/ProductDetail.tsx";
+import ProductDetailPage from "./pages/Products/ProductDetail.tsx";
 
 function AppContent() {
   const location = useLocation();
