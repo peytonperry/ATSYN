@@ -3,6 +3,7 @@ import "./ProductPage.css";
 import { apiService } from "../../config/api";
 import { useCart } from "../../components/Cart/CartContext";
 import CartToast from "../../components/Cart/CartToast";
+import { Anchor } from "@mantine/core";
 
 interface Category {
   id: number;
@@ -34,6 +35,7 @@ export default function ProductPage() {
   const [showToast, setShowToast] = useState(false);
   const [toastProduct, setToastProduct] = useState("");
 
+  //search tool
   useEffect(() => {
     let filtered = products;
 
@@ -54,6 +56,7 @@ export default function ProductPage() {
     setFilteredProducts(filtered);
   }, [products, searchTerm, selectedCategory]);
 
+  //fetching products from database
   const fetchData = async () => {
     try {
       const data: Product[] = await apiService.get("/api/Product");
@@ -77,6 +80,7 @@ export default function ProductPage() {
     }
   };
 
+
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedCategory("");
@@ -89,14 +93,15 @@ export default function ProductPage() {
     }
   }, []);
 
+  
   const ProductCard = ({ product }: { product: Product }) => {
-    const { addToCart } = useCart();
+    //const { addToCart } = useCart();
 
-    const handleAddToCart = (product: Product) => {
+    /*const handleAddToCart = (product: Product) => {
       addToCart(product);
       setToastProduct(product.title);
       setShowToast(true);
-    };
+    };*/
 
     const convertGoogleDriveUrl = (url: string) => {
       if (url.includes("drive.google.com")) {
@@ -109,6 +114,7 @@ export default function ProductPage() {
     };
 
     return (
+      //Handling images in the card
       <div className="product-card">
         <div className="product-image-container">
           {product.imageUrl ? (
@@ -185,7 +191,7 @@ export default function ProductPage() {
             </div>
           </div>
 
-          <button
+          {/*<button
             className={`add-to-cart-btn ${!product.inStock ? "disabled" : ""}`}
             onClick={() => handleAddToCart(product)}
             disabled={!product.inStock}
@@ -193,7 +199,7 @@ export default function ProductPage() {
             <span className="btn-text">
               {product.inStock ? "Add to Cart" : "Out of Stock"}
             </span>
-          </button>
+          </button>*/}
         </div>
       </div>
     );
@@ -270,7 +276,9 @@ export default function ProductPage() {
 
         <div className="products-grid">
           {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <Anchor href={`/product/${product.id}`} underline="never">
+              <ProductCard key={product.id} product={product} />
+            </Anchor>
           ))}
         </div>
 
