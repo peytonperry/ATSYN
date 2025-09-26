@@ -9,6 +9,9 @@ import {
   Paper,
   Radio,
   Button,
+  Accordion,
+  AccordionControl,
+  AccordionPanel,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
@@ -34,6 +37,11 @@ interface Product {
   category: Category;
 }
 
+const shippingInfo =
+  "We currently ship through USPS. Rates and tracking are updated directly from USPS. We will ship orders received within 1-2 business days of order receipt.";
+const returnInfo =
+  "Returns on sterilized products are not valid if they have been opened. Returns are only eligible within 30 days from receipt. Proof of purchase necessary. ATSYN does not offer returns of funds directly. Store credit will be issued for returned items. For all questions or concerns regarding returns contact: customerservice@alltheshityouneed.com";
+
 function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,7 +50,6 @@ function ProductDetailPage() {
   const [toastProduct, setToastProduct] = useState("");
   const [quantity, setQuantity] = useState<string | null>("1");
   const { id } = useParams();
-
   const { addToCart } = useCart();
 
   const handleAddToCart = () => {
@@ -137,6 +144,18 @@ function ProductDetailPage() {
               </Button>
             </Stack>
           </Paper>
+          <Accordion>
+            <Accordion.Item value="returns">
+              <AccordionControl>Shipping & Returns</AccordionControl>
+              <AccordionPanel>
+                <Text fw={500}>Shipping</Text>
+                <Text>{shippingInfo}</Text>
+                <br />
+                <Text fw={500}>Returns</Text>
+                <Text>{returnInfo}</Text>
+              </AccordionPanel>
+            </Accordion.Item>
+          </Accordion>
         </Grid.Col>
       </Grid>
     </Container>

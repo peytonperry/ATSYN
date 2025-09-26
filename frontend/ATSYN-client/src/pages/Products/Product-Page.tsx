@@ -276,7 +276,7 @@ export default function ProductPage() {
 
         <div className="products-grid">
           {filteredProducts.map((product) => (
-            <Anchor href={`/product/${product.id}`}>
+            <Anchor href={`/product/${product.id}`} underline="never">
               <ProductCard key={product.id} product={product} />
             </Anchor>
           ))}
