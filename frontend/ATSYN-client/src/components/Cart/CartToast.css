@@ -4,10 +4,11 @@
   right: 20px;
   z-index: 9999;
   background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
-  border: 1px solid #8A00C4;
+  border: 1px solid #8a00c4;
   border-radius: 12px;
   padding: 0;
-  box-shadow: 0 10px 30px rgba(138, 0, 196, 0.3), 0 0 0 1px rgba(138, 0, 196, 0.1);
+  box-shadow: 0 10px 30px rgba(138, 0, 196, 0.3),
+    0 0 0 1px rgba(138, 0, 196, 0.1);
   transform: translateX(400px);
   opacity: 0;
   transition: all 0.4s ease;
@@ -99,25 +100,25 @@
     max-width: calc(100vw - 20px);
     min-width: 280px;
   }
-  
+
   .toast-content {
     padding: 0.875rem;
   }
-  
+
   .toast-icon {
     width: 36px;
     height: 36px;
   }
-  
+
   .check-icon {
     width: 18px;
     height: 18px;
   }
-  
+
   .toast-title {
     font-size: 0.9rem;
   }
-  
+
   .toast-product {
     font-size: 0.8rem;
   }
