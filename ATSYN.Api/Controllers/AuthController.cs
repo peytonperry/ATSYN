@@ -9,11 +9,13 @@ namespace ATSYN.Api.Controllers {
     public class AuthController : ControllerBase {  
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
 
         }
 
@@ -33,6 +35,18 @@ namespace ATSYN.Api.Controllers {
 
             if (result.Succeeded)
             {
+                string roleAssign = register.Role ?? "Customer";
+
+                if (await _roleManager.RoleExistsAsync(roleAssign))
+                {
+                    await _userManager.AddToRoleAsync(user, roleAssign);
+                }
+                else
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(roleAssign));
+                    await _userManager.AddToRoleAsync(user, roleAssign);
+                }
+
                 return Ok(new { Message = "New user registered.", UserId = user.Id });
             }
 
@@ -93,11 +107,13 @@ namespace ATSYN.Api.Controllers {
             {
                 return NotFound(new { Message = "User not found" });
             }
+            var role = await _userManager.GetRolesAsync(user);
             return Ok(new
             {
                 Id = user.Id,
                 Email = user.Email,
                 UserName = user.UserName,
+                role = role,
                 EmailConfirmed = user.EmailConfirmed
             });
         }
@@ -107,6 +123,7 @@ namespace ATSYN.Api.Controllers {
         {
             public string Email { get; set; } = string.Empty;
             public string Password { get; set; } = string.Empty;
+            public string? Role { get; set; } = "Customer";
         }
 
 
