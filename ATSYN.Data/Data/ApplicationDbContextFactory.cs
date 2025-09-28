@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using System.Runtime.InteropServices;
 
 namespace ATSYN.Data.Data;
 
@@ -9,12 +10,17 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         var connectionString = string.Empty;
-        
-#if OS_WINDOWS
-        connectionString = "Server=localhost;Database=ATSYN_Design;Trusted_Connection=true;TrustServerCertificate=true;"
-#else
-        connectionString = "Server=127.0.0.1,1433;Database=ATSYN_Design;Trusted_Connection=true;Username=sa;Password=YourStrongP@assword";
-#endif
+
+        //connectionString = "Server=127.0.0.1,1433;Database=ATSYN_Design;User Id=sa;Password=YourStrongP@ssword;TrustServerCertificate=true;Encrypt=false;";
+        if (OperatingSystem.IsWindows())
+        {
+            connectionString = "Server=localhost,1433;Database=ATSYN_Design;User Id=sa;Password=YourStrongP@assword;TrustServerCertificate=true;Encrypt=false;";
+        } 
+        else
+        {
+            connectionString = "Server=127.0.0.1,1433;Database=ATSYN_Design;User Id=sa;Password=YourStrongP@assword;TrustServerCertificate=true;Encrypt=false;";
+        }
+
         
         optionsBuilder.UseSqlServer(connectionString);
         return new ApplicationDbContext(optionsBuilder.Options);

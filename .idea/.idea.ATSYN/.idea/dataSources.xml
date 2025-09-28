@@ -1,11 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="sqldata" uuid="16ea9933-2867-4334-8c3a-1444e6a10961">
+    <data-source source="LOCAL" name="ATSYN-SqlServer" uuid="55403a86-23ac-4174-baae-595cdfc1f44a">
       <driver-ref>sqlserver.jb</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
-      <jdbc-url>Server=127.0.0.1,1433;User ID=sa;Password=YourStrongP@assword;TrustServerCertificate=true;Initial Catalog=sqldata</jdbc-url>
+      <jdbc-url>Server=127.0.0.1,56154;User ID=sa;Password=YourStrongP@assword;TrustServerCertificate=true</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="ATSYN-SqlServer" uuid="d0e38b35-ecd3-409c-9b5d-531b78c64c2a">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,57052;User ID=sa;Password=YourStrongP@assword;TrustServerCertificate=true</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="ATSYN-SqlServer" uuid="dff746b0-3451-4231-916d-7bbc7e128ca7">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,59106;User ID=sa;Password=YourStrongP@assword;TrustServerCertificate=true</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="ATSYN-SqlServer" uuid="7b533c9f-2d9a-4b12-afb5-bee6d63b7e74">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,54005;User ID=sa;Password=YourStrongP@assword;TrustServerCertificate=true</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="ATSYN-SqlServer" uuid="35befcd7-41ae-4203-9103-909afc2c7f22">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,55194;User ID=sa;Password=YourStrongP@assword;TrustServerCertificate=true</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="ATSYN-SqlServer" uuid="fb6c4da1-d857-4a17-b55b-8dbc9c160476">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,64580;User ID=sa;Password=YourStrongP@assword;TrustServerCertificate=true</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="ATSYN-SqlServer" uuid="00db39a1-329d-4cc6-939b-6397f062f0cc">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Server=127.0.0.1,60787;User ID=sa;Password=YourStrongP@assword;TrustServerCertificate=true</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
     <data-source source="LOCAL" name="sqldata" uuid="787a0e75-6d98-404c-91c7-7703df8e11ae">

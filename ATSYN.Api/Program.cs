@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://192.168.69.21:5173")
+        policy.WithOrigins("http://localhost:5173", "https://192.168.69.21:5173", "http://172.23.202.192:5173", "http://172.26.197.221:5173")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -58,6 +58,21 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    string[] roles = { "Admin", "Customer" };
+
+    foreach (var role in roles)
+    {
+       if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+}
 
 app.MapScalarApiReference();
 

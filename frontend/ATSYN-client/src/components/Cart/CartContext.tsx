@@ -30,7 +30,7 @@ type CartAction =
 
 interface CartContextType {
   state: CartState;
-  addToCart: (product: Product) => void;
+  addToCart: (product: Product, quantity: number) => void;
   removeFromCart: (productId: number) => void;
   updateQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
@@ -49,20 +49,19 @@ const calculateTotals = (items: CartItem[]) => {
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
-    case "ADD_TO_CART": {
-      const existingItem = state.items.find(
-        (item) => item.product.id === action.payload.id
-      );
-
+    case 'ADD_TO_CART': {
+      const {product, quantity = 1} = action.payload;
+      const existingItem = state.items.find(item => item.product.id === product.id);
+      
       let newItems: CartItem[];
       if (existingItem) {
-        newItems = state.items.map((item) =>
-          item.product.id === action.payload.id
-            ? { ...item, quantity: item.quantity + 1 }
+        newItems = state.items.map(item =>
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       } else {
-        newItems = [...state.items, { product: action.payload, quantity: 1 }];
+        newItems = [...state.items, { product, quantity}];
       }
 
       const totals = calculateTotals(newItems);
@@ -115,7 +114,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     totalPrice: 0,
   });
 
-  // Load cart from localStorage on mount
   useEffect(() => {
     try {
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
@@ -128,7 +126,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, []);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state.items));
@@ -137,8 +134,8 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [state.items]);
 
-  const addToCart = (product: Product) => {
-    dispatch({ type: "ADD_TO_CART", payload: product });
+  const addToCart = (product: Product, quantity: number = 1) => {
+    dispatch({ type: 'ADD_TO_CART', payload: {product, quantity} });
   };
 
   const removeFromCart = (productId: number) => {
