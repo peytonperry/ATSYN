@@ -2,6 +2,10 @@
 <project version="4">
   <component name="dataSourceStorageLocal" created-in="RD-251.25410.119">
     <data-source name="sqldata" uuid="16ea9933-2867-4334-8c3a-1444e6a10961">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MSSQL" />
+      <schema-mapping />
+    </data-source>
+    <data-source name="sqldata" uuid="787a0e75-6d98-404c-91c7-7703df8e11ae">
       <database-info product="Microsoft SQL Server" version="16.00.4210" jdbc-version="4.2" driver-name="JetBrains JDBC Driver for SQL Server" driver-version="1.0" dbms="MSSQL" exact-version="16.0.4210" exact-driver-version="1.0">
         <extra-name-characters>$#@</extra-name-characters>
         <identifier-quote-string>&quot;</identifier-quote-string>

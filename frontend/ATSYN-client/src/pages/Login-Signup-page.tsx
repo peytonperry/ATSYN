@@ -7,10 +7,56 @@ import {
   PasswordInput,
   Button,
   Title,
+  Checkbox,
 } from "@mantine/core";
+import { apiService } from "../config/api";
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
+
+  interface RegisterDto {
+    email: string;
+    password: string;
+  }
+
+  interface LoginDto {
+    email: string;
+    password: string;
+    rememberMe: boolean;
+  }
+  const [loginForm, setLoginForm] = useState<LoginDto>({
+    email: "",
+    password: "",
+    rememberMe: false,
+  });
+  const [registerform, setregisterform] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleLogin = async () => {
+    try {
+      const loginData: LoginDto = {
+        email: loginForm.email,
+        password: loginForm.password,
+        rememberMe: loginForm.rememberMe,
+      };
+      const data = await apiService.post("/api/controller/login", loginData);
+    } catch (error: any) {
+      console.error("error logging in:", error);
+    }
+  };
+  const handleRegister = async () => {
+    try {
+      const registerData: RegisterDto = {
+        email: registerform.email,
+        password: registerform.password,
+      };
+      const data = await apiService.post("/api/controller/register", registerData);
+    } catch (error: any) {
+      console.error("error creating account:", error);
+    }
+  };
 
   return (
     <Container size={420} my={60}>
@@ -43,14 +89,30 @@ export default function AuthPage() {
                 placeholder="you@email.com"
                 required
                 mt="md"
+                value={loginForm.email}
+                onChange={(e) =>
+                  setLoginForm({ ...loginForm, email: e.target.value })
+                }
               />
               <PasswordInput
                 label="Password"
                 placeholder="Your password"
                 required
                 mt="md"
+                value={loginForm.password}
+                onChange={(e) =>
+                  setLoginForm({ ...loginForm, password: e.target.value })
+                }
               />
-              <Button fullWidth mt="xl" type="submit">
+              <Checkbox
+                label="Remember me"
+                mt="md"
+                checked={loginForm.rememberMe}
+                onChange={(e) =>
+                  setLoginForm({ ...loginForm, rememberMe: e.target.checked })
+                }
+              />
+              <Button fullWidth mt="xl" type="submit" onClick={handleLogin}>
                 Sign in
               </Button>
             </form>
@@ -64,12 +126,18 @@ export default function AuthPage() {
                 placeholder="you@email.com"
                 required
                 mt="md"
+                value={registerform.email}
+                onChange={(e) =>
+                  setregisterform({ ...registerform, email: e.target.value })
+                }
               />
               <PasswordInput
                 label="Password"
                 placeholder="Your password"
                 required
                 mt="md"
+                value = {registerform.password}
+                onChange={(e) => setregisterform({...registerform, password: e.target.value})}
               />
               <PasswordInput
                 label="Confirm Password"
@@ -77,7 +145,8 @@ export default function AuthPage() {
                 required
                 mt="md"
               />
-              <Button fullWidth mt="xl" type="submit">
+              <Button fullWidth mt="xl" type="submit"
+              onClick={handleRegister}>
                 Create account
               </Button>
             </form>
