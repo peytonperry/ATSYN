@@ -43,6 +43,7 @@ public class ProductDto
     public CategoryDto Category { get; init; } = null!;
     public BrandDto? Brand { get; init; }
     public List<ProductAttributeValueDto> AttributeValues { get; init; } = new();
+    public List<PhotoDto> Photos { get; init; } = new();
 }
 
 

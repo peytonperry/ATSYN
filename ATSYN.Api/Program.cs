@@ -27,7 +27,7 @@ builder.Services.AddCors(options =>
 
 
 
-builder.Services.AddIdentity<IdentityUser,  IdentityRole>(options =>
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;

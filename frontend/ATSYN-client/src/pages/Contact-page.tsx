@@ -1,4 +1,5 @@
 import { Container, Text, Paper, List } from '@mantine/core';
+import ImageUpload from '../components/Image-Uploade';
 
 function ContactPage(){
 
