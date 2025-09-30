@@ -1,7 +1,7 @@
-header-container{
+.header-container{
     background-color: #ffffff;
     border-bottom: 1px solid #e5e7eb;
-    /* color: #111827; */
+    color: #111827;
     padding: 1rem 1.5rem;
     font-weight: 600;
     font-size: 1.1rem;
