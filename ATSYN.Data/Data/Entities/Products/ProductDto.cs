@@ -1,3 +1,4 @@
+using ATSYN.Data.Data.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -20,6 +21,7 @@ public class Product
     public Category Category { get; set; } = null!;
     public Brand? Brand { get; set; }
     public ICollection<ProductAttributeValue> AttributeValues { get; set; } = new List<ProductAttributeValue>();
+    public ICollection<Review> Reviews { get; set; } = new List<Review>();
 }
 
 public class ProductDto
