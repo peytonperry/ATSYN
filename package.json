@@ -1,18 +1,17 @@
 {
   "dependencies": {
-    "@mantine/carousel": "^8.3.2",
-    "@mantine/core": "^8.3.2",
+    "@mantine/carousel": "^8.3.1",
     "@radix-ui/themes": "^3.2.1",
-    "@vitejs/plugin-react": "^5.0.4",
-    "embla-carousel": "^8.6.0",
-    "embla-carousel-react": "^8.6.0",
+    "@tabler/icons-react": "^3.35.0",
+    "@types/react-router-dom": "^5.3.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.3",
-    "vite": "^7.1.7",
-    "zod": "^4.1.8"
+    "react-router-dom": "^7.9.1"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.2",
+    "@radix-ui/themes": "^3.2.1",
+    "zod": "^4.1.8",
     "@hey-api/client-fetch": "latest",
     "@hey-api/openapi-ts": "latest",
     "@types/node": "^20.0.0",
