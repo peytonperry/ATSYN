@@ -5,7 +5,6 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { Header } from "./components/Header";
 import HomePage from "./pages/Homepage/Homepage.tsx";
 import AuthPage from "./pages/Login-Signup-page.tsx";
 import ProductPage from "./pages/Products/Product-Page.tsx";
@@ -41,7 +40,6 @@ function AppContent() {
     <>
       {!shouldHideHeader && (
         <>
-          {/* <Header callToActionTitle="Get Started" callToActionUrl="/signup" /> */}
           <NavBar />
         </>
       )}
