@@ -1,5 +1,22 @@
 import { useEffect, useRef, useState } from "react";
-import "./ProductPage.css";
+import {
+  Container,
+  Title,
+  Text,
+  TextInput,
+  Select,
+  Button,
+  Card,
+  Image,
+  Badge,
+  Group,
+  Stack,
+  Loader,
+  Center,
+  Grid,
+  Paper,
+} from "@mantine/core";
+import { IconSearch, IconX } from "@tabler/icons-react";
 import { apiService } from "../../config/api";
 import { useCart } from "../../components/Cart/CartContext";
 import CartToast from "../../components/Cart/CartToast";
@@ -28,7 +45,7 @@ export default function ProductPage() {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const hasFetched = useRef(false);
   const [showToast, setShowToast] = useState(false);
@@ -79,7 +96,7 @@ export default function ProductPage() {
 
   const clearFilters = () => {
     setSearchTerm("");
-    setSelectedCategory("");
+    setSelectedCategory(null);
   };
 
   useEffect(() => {
@@ -109,193 +126,204 @@ export default function ProductPage() {
     };
 
     return (
-      <div className="product-card">
-        <div className="product-image-container">
-          {product.imageUrl ? (
-            <img
-              src={convertGoogleDriveUrl(product.imageUrl)}
-              alt={product.title}
-              className="product-image"
-              onError={(e) => {
-                console.log(
-                  "Image failed to load:",
-                  convertGoogleDriveUrl(product.imageUrl)
-                );
-                e.currentTarget.style.display = "none";
-                const placeholder =
-                  e.currentTarget.parentNode?.querySelector(
-                    ".image-placeholder"
+      <Card className="product-card">
+        <Card.Section>
+          <div style={{ position: "relative" }}>
+            {product.imageUrl ? (
+              <Image
+                className="product-image"
+                src={convertGoogleDriveUrl(product.imageUrl)}
+                alt={product.title}
+                height={200}
+                fallbackSrc="https://placehold.co/400x300?text=No+Image"
+                onError={() => {
+                  console.log(
+                    "Image failed to load:",
+                    convertGoogleDriveUrl(product.imageUrl)
                   );
-                if (!placeholder) {
-                  const newPlaceholder = document.createElement("div");
-                  newPlaceholder.className = "image-placeholder";
-                  newPlaceholder.textContent = "Image not available";
-                  e.currentTarget.parentNode?.appendChild(newPlaceholder);
-                }
-              }}
-              onLoad={() => {
-                console.log(
-                  "Image loaded successfully:",
-                  convertGoogleDriveUrl(product.imageUrl)
-                );
-              }}
-            />
-          ) : (
-            <div className="image-placeholder">
-              <span>No Image Available</span>
-            </div>
-          )}
-
-          <div className="product-badges">
-            <span
-              className={`stock-badge ${
-                product.inStock ? "in-stock" : "out-of-stock"
-              }`}
-            >
-              {product.inStock ? "In Stock" : "Out of Stock"}
-            </span>
-            {!product.isVisible && (
-              <span className="visibility-badge">Hidden</span>
+                }}
+                onLoad={() => {
+                  console.log(
+                    "Image loaded successfully:",
+                    convertGoogleDriveUrl(product.imageUrl)
+                  );
+                }}
+              />
+            ) : (
+              <Center h={200} bg="gray.1">
+                <Text c="dimmed">No Image Available</Text>
+              </Center>
             )}
-          </div>
-        </div>
 
-        <div className="product-content">
-          <h3 className="product-title">{product.title}</h3>
+            <Group
+              gap="xs"
+              style={{ position: "absolute", top: 10, right: 10 }}
+            >
+              <Badge color={product.inStock ? "green" : "red"} variant="filled">
+                {product.inStock ? "In Stock" : "Out of Stock"}
+              </Badge>
+              {!product.isVisible && (
+                <Badge color="gray" variant="filled">
+                  Hidden
+                </Badge>
+              )}
+            </Group>
+          </div>
+        </Card.Section>
+
+        <Stack gap="md" mt="md">
+          <Title className="product-title" order={3} lineClamp={2}>
+            {product.title}
+          </Title>
 
           {product.description && (
-            <p className="product-description">{product.description}</p>
+            <Text className="product-description" lineClamp={3}>
+              {product.description}
+            </Text>
           )}
 
-          <div className="product-meta">
-            <div className="product-price">
-              <span className="price-symbol">$</span>
-              <span className="price-amount">{product.price.toFixed(2)}</span>
-            </div>
+          <Group className="price-amount">
+            <Text>${product.price.toFixed(2)}</Text>
+          </Group>
 
-            <div className="product-info">
-              <div className="info-item">
-                <span className="info-label">Category:</span>
-                <span className="category-tag">{product.category.name}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Stock:</span>
-                <span className="stock-count">{product.stockAmount}</span>
-              </div>
+          <Group justify="space-between">
+            <div>
+              <Text>Category:</Text>
+              <Badge className="category-tag">{product.category.name}</Badge>
             </div>
-          </div>
+            <div>
+              <Text className="stock-badge">Stock:</Text>
+              <Text className="stock-count">{product.stockAmount}</Text>
+            </div>
+          </Group>
 
-          <button
-            className={`add-to-cart-btn ${!product.inStock ? "disabled" : ""}`}
+          <Button
+            className="add-to-cart-btn"
             onClick={() => handleAddToCart(product)}
             disabled={!product.inStock}
           >
-            <span className="btn-text">
-              {product.inStock ? "Add to Cart" : "Out of Stock"}
-            </span>
-          </button>
-        </div>
-      </div>
+            {product.inStock ? "Add to Cart" : "Out of Stock"}
+          </Button>
+        </Stack>
+      </Card>
     );
   };
 
   if (loading) {
     return (
-      <div className="products-container">
-        <div className="loading-section">
-          <h2 className="loading-title">Loading Products...</h2>
-          <div className="loading-spinner"></div>
-        </div>
-      </div>
+      <Container size="xl" py="xl">
+        <Center h={400}>
+          <Stack align="center" gap="md">
+            <Title order={2}>Loading Products...</Title>
+            <Loader size="lg" />
+          </Stack>
+        </Center>
+      </Container>
     );
   }
 
   return (
-    <div className="products-container">
-      <div className="products-content">
-        <div className="products-header">
-          <h1 className="products-title">Our Products</h1>
+    <Container size="xl" py="xl">
+      <Stack gap="xl">
+        <div>
+          <Title order={1} mb="xl">
+            Our Products
+          </Title>
 
-          <div className="filters-section">
-            <div className="search-container">
-              <input
-                type="text"
+          <Stack gap="md">
+            <Group grow>
+              <TextInput
                 placeholder="Search products..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
+                onChange={(e) => setSearchTerm(e.currentTarget.value)}
+                leftSection={<IconSearch size={16} />}
+                size="md"
               />
-            </div>
 
-            <div className="filter-container">
-              <select
+              <Select
+                placeholder="All Categories"
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="category-filter"
-              >
-                <option value="">All Categories</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.name}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+                onChange={setSelectedCategory}
+                data={categories.map((cat) => ({
+                  value: cat.name,
+                  label: cat.name,
+                }))}
+                clearable
+                size="md"
+              />
+            </Group>
 
             {(searchTerm || selectedCategory) && (
-              <button onClick={clearFilters} className="clear-filters-btn">
+              <Button
+                variant="light"
+                leftSection={<IconX size={16} />}
+                onClick={clearFilters}
+              >
                 Clear Filters
-              </button>
+              </Button>
             )}
-          </div>
+          </Stack>
 
-          <div className="results-summary">
-            <p>
+          <Paper p="md" mt="md" withBorder>
+            <Text size="sm">
               Showing {filteredProducts.length} of {products.length} products
               {searchTerm && (
-                <span>
+                <Text span fw={700}>
                   {" "}
-                  for "<strong>{searchTerm}</strong>"
-                </span>
+                  for "{searchTerm}"
+                </Text>
               )}
               {selectedCategory && (
-                <span>
+                <Text span fw={700}>
                   {" "}
-                  in <strong>{selectedCategory}</strong>
-                </span>
+                  in {selectedCategory}
+                </Text>
               )}
-            </p>
-          </div>
+            </Text>
+          </Paper>
         </div>
 
-        <div className="products-grid">
+        <Grid>
           {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <Grid.Col key={product.id} span={{ base: 12, sm: 6, md: 4, lg: 3 }}>
+              <ProductCard product={product} />
+            </Grid.Col>
           ))}
-        </div>
+        </Grid>
 
         {filteredProducts.length === 0 && products.length > 0 && (
-          <div className="empty-state">
-            <h3>No products found</h3>
-            <p>Try adjusting your search or filter criteria</p>
-            <button onClick={clearFilters} className="clear-filters-btn">
-              Clear Filters
-            </button>
-          </div>
+          <Paper p="xl" withBorder>
+            <Center>
+              <Stack align="center" gap="md">
+                <Title order={3}>No products found</Title>
+                <Text c="dimmed">
+                  Try adjusting your search or filter criteria
+                </Text>
+                <Button onClick={clearFilters} variant="light">
+                  Clear Filters
+                </Button>
+              </Stack>
+            </Center>
+          </Paper>
         )}
 
         {products.length === 0 && !loading && (
-          <div className="empty-state">
-            <h3>No products found</h3>
-            <p>Check back later for new products!</p>
-          </div>
+          <Paper p="xl" withBorder>
+            <Center>
+              <Stack align="center" gap="md">
+                <Title order={3}>No products found</Title>
+                <Text c="dimmed">Check back later for new products!</Text>
+              </Stack>
+            </Center>
+          </Paper>
         )}
-      </div>
+      </Stack>
+
       <CartToast
         show={showToast}
         productName={toastProduct}
         onClose={() => setShowToast(false)}
       />
-    </div>
+    </Container>
   );
 }
