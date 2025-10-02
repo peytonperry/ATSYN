@@ -1,4 +1,3 @@
-
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,8 +12,8 @@ import ContactPage from "./pages/Contact-page.tsx";
 import { CartProvider } from "./components/Cart/CartContext.tsx";
 import CartPage from "./pages/Cartpage/CartPage.tsx";
 
-// Admin Routes 
-import AppShell from "./pages/admin/admincomponents/Appshell.tsx"; 
+// Admin Routes
+import AppShell from "./pages/admin/admincomponents/Appshell.tsx";
 import Dashboard from "./pages/admin/adminpages/Dashboard.tsx";
 import Customers from "./pages/admin/adminpages/Customers.tsx";
 import Reports from "./pages/admin/adminpages/Reports.tsx";
@@ -44,17 +43,18 @@ function AppContent() {
         </>
       )}
       <Routes>
-        <Route path="/auth" element={<AuthPage />} /> 
+        <Route path="/auth" element={<AuthPage />} />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/signup" element={<AuthPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductPage />} />
         <Route path="/cart" element={<CartPage />} />
-        <Route path="/products" element={<ProductPage/>}/>
+        <Route path="/products" element={<ProductPage />} />
+        <Route path="/contact" element={<ContactPage />} />
 
         <Route path="/admin" element={<AppShell />}>
-          <Route index element={<Dashboard />} />      
-          <Route path="Customers" element={<Customers />} />    
+          <Route index element={<Dashboard />} />
+          <Route path="Customers" element={<Customers />} />
           <Route path="Reports" element={<Reports />} />
           <Route path="Settings" element={<Settings />} />
           <Route path="productmanagement" element={<ProductManagement />} />
@@ -65,7 +65,6 @@ function AppContent() {
     </>
   );
 }
-
 
 function App() {
   return (

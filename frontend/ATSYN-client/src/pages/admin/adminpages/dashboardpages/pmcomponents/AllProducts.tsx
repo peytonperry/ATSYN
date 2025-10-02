@@ -29,7 +29,7 @@ const AllProducts = () => {
 
     const fetchData = async () => {
         try{
-            const data: Product[] = await apiService.get("/api/Product");
+            const data: Product[] = await apiService.get("/Product");
             //console.log(data);
             setProducts(data);
             const sorted = data.sort((a, b) =>

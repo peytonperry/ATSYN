@@ -44,7 +44,7 @@ const CreateProduct: React.FC = () => {
     useEffect(() => {
          const fetchCategories = async () => {
         try {
-            const response = await apiService.get("/api/Category");
+            const response = await apiService.get("/Category");
             const fetchedCategories: Category[] = response || [];
             console.log("Fetched categories:", fetchedCategories);
             setCategories(fetchedCategories);
