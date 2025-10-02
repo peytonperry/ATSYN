@@ -19,8 +19,7 @@ namespace ATSYN.Api.Controllers
             _context = context;
         }
 
-    //endpoint to get the reviews made by a specific user
-    //might be changed to get the reviews of the logged in user
+    //endpoint to get the reviews made by the logged in user
     [HttpGet("my-reviews")]
     [Authorize]
     public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviewsLoggedIn()
@@ -83,6 +82,32 @@ namespace ATSYN.Api.Controllers
 
         //endpoint for deleting a review (this might be a bit challenging)
         //two types of deletions: user can only delete their own reviews, admin can delete any review
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeleteReview(int reviewId)
+        {
+            var review = await _context.Reviews.FindAsync(reviewId);
+
+            if (review == null)
+                return NotFound("Review not found.");
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var isAdmin = User.IsInRole("Admin");
+
+
+            if (review.UserId != userId && isAdmin)
+            {
+                return Forbid();
+            }
+            
+            _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+
+
+        }
+
 
         //endpoint to get all reviews? (probably only make this for testing)
         //probably will change drastically later
@@ -106,8 +131,32 @@ namespace ATSYN.Api.Controllers
             return Ok(reviews);
 
         }
+
         //endpoint for all reviews on a specific product (main goal)
-        //I think only deleting and creating reviews would require an user to be logged in
+        [HttpGet("product/{productId}")]
+        public async Task<IActionResult> GetReviewsForProduct(int productId)
+        {
+          var productReviews = await _context.Reviews
+                .Where(r => r.ProductId == productId)
+                .Select(r => new ReviewDto
+                {
+                    Id = r.Id,
+                    ProductId = r.ProductId,
+                    Rating = r.Rating,
+                    Title = r.Title,
+                    Comment = r.Comment,
+                    CreatedAt = r.CreatedAt,
+                    UserName = r.User.UserName,
+                    ProductTitle = r.Product.Title
+                })
+                .ToListAsync();
+            if (productReviews == null || productReviews.Count == 0)
+            {
+                return NotFound($"No reviews found for product with ID {productId}.");
+            }
+            return Ok(productReviews);
+
+        }
 
 
     } 
