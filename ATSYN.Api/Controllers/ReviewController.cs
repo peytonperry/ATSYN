@@ -19,11 +19,11 @@ namespace ATSYN.Api.Controllers
             _context = context;
         }
 
-    //endpoint to get the reviews made by the logged in user
-    [HttpGet("my-reviews")]
-    [Authorize]
-    public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviewsLoggedIn()
-    {
+        //endpoint to get the reviews made by the logged in user
+        [HttpGet("my-reviews")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviewsLoggedIn()
+        {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userId))
@@ -49,13 +49,12 @@ namespace ATSYN.Api.Controllers
                 return NotFound($"No reviews found for user with ID {userId}.");
             }
             return Ok(reviews);
-    }
+        }
 
-    //endpoint for creating a review (user must be logged in)
-    [HttpPost]
-    [Authorize]
-
-    public async Task<IActionResult> CreateReview (CreateReviewDto createReviewDto)
+        //endpoint for creating a review (user must be logged in)
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreateReview(CreateReviewDto createReviewDto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -99,7 +98,7 @@ namespace ATSYN.Api.Controllers
             {
                 return Forbid();
             }
-            
+
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
 
@@ -136,20 +135,20 @@ namespace ATSYN.Api.Controllers
         [HttpGet("product/{productId}")]
         public async Task<IActionResult> GetReviewsForProduct(int productId)
         {
-          var productReviews = await _context.Reviews
-                .Where(r => r.ProductId == productId)
-                .Select(r => new ReviewDto
-                {
-                    Id = r.Id,
-                    ProductId = r.ProductId,
-                    Rating = r.Rating,
-                    Title = r.Title,
-                    Comment = r.Comment,
-                    CreatedAt = r.CreatedAt,
-                    UserName = r.User.UserName,
-                    ProductTitle = r.Product.Title
-                })
-                .ToListAsync();
+            var productReviews = await _context.Reviews
+                  .Where(r => r.ProductId == productId)
+                  .Select(r => new ReviewDto
+                  {
+                      Id = r.Id,
+                      ProductId = r.ProductId,
+                      Rating = r.Rating,
+                      Title = r.Title,
+                      Comment = r.Comment,
+                      CreatedAt = r.CreatedAt,
+                      UserName = r.User.UserName,
+                      ProductTitle = r.Product.Title
+                  })
+                  .ToListAsync();
             if (productReviews == null || productReviews.Count == 0)
             {
                 return NotFound($"No reviews found for product with ID {productId}.");
@@ -159,5 +158,5 @@ namespace ATSYN.Api.Controllers
         }
 
 
-    } 
+    }
 }
