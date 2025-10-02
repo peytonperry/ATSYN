@@ -10,9 +10,11 @@ import {
   Checkbox,
 } from "@mantine/core";
 import { apiService } from "../config/api";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
+  const navigate = useNavigate()
 
   interface RegisterDto {
     email: string;
@@ -42,6 +44,9 @@ export default function AuthPage() {
         rememberMe: loginForm.rememberMe,
       };
       const data = await apiService.post("/api/controller/login", loginData);
+      if (data != null){
+        navigate('/')
+      }
     } catch (error: any) {
       console.error("error logging in:", error);
     }

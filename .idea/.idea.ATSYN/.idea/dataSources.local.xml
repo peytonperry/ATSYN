@@ -1,7 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal" created-in="RD-251.25410.119">
-    <data-source name="sqldata" uuid="16ea9933-2867-4334-8c3a-1444e6a10961">
+    <data-source name="ATSYN-SqlServer" uuid="55403a86-23ac-4174-baae-595cdfc1f44a">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MSSQL" />
+      <schema-mapping />
+    </data-source>
+    <data-source name="ATSYN-SqlServer" uuid="d0e38b35-ecd3-409c-9b5d-531b78c64c2a">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MSSQL" />
+      <schema-mapping />
+    </data-source>
+    <data-source name="ATSYN-SqlServer" uuid="dff746b0-3451-4231-916d-7bbc7e128ca7">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MSSQL" />
+      <schema-mapping />
+    </data-source>
+    <data-source name="ATSYN-SqlServer" uuid="7b533c9f-2d9a-4b12-afb5-bee6d63b7e74">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MSSQL" />
+      <schema-mapping />
+    </data-source>
+    <data-source name="ATSYN-SqlServer" uuid="35befcd7-41ae-4203-9103-909afc2c7f22">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MSSQL" />
+      <schema-mapping />
+    </data-source>
+    <data-source name="ATSYN-SqlServer" uuid="fb6c4da1-d857-4a17-b55b-8dbc9c160476">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MSSQL" />
+      <schema-mapping />
+    </data-source>
+    <data-source name="ATSYN-SqlServer" uuid="00db39a1-329d-4cc6-939b-6397f062f0cc">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MSSQL" />
       <schema-mapping />
     </data-source>

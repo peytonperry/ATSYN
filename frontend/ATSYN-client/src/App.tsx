@@ -4,6 +4,8 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
+import { AuthContext } from "./components/Auth/AuthContext.tsx";
+import { useAuth } from "./components/Auth/useAuth.tsx";
 import { Header } from "./components/Header";
 import HomePage from "./pages/Homepage/Homepage.tsx";
 import AuthPage from "./pages/Login-Signup-page.tsx";
@@ -50,12 +52,15 @@ function AppContent() {
 }
 
 function App() {
+  const { user, login, logout, setUser } = useAuth();
   return (
+    <AuthContext.Provider value={{ user, setUser }}>
     <CartProvider>
       <Router>
         <AppContent />
       </Router>
     </CartProvider>
+    </AuthContext.Provider>
   );
 }
 
