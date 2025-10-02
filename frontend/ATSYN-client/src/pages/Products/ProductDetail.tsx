@@ -106,8 +106,6 @@ function ProductDetailPage() {
               <Text size="xl" fw={700}>
                 ${product?.price}
               </Text>
-              <Text size="sm">Free Returns</Text> {/* Will change */}
-              <Text size="sm">Free Delivery</Text> {/* Will change */}
               <div>
                 <Text size="sm">Quantity:</Text>
                 <Select
