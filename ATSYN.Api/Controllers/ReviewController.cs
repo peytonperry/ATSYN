@@ -52,7 +52,7 @@ namespace ATSYN.Api.Controllers
         }
 
         //endpoint for creating a review (user must be logged in)
-        [HttpPost]
+        [HttpPost("create-review")]
         [Authorize]
         public async Task<IActionResult> CreateReview(CreateReviewDto createReviewDto)
         {
@@ -81,7 +81,7 @@ namespace ATSYN.Api.Controllers
 
         //endpoint for deleting a review (this might be a bit challenging)
         //two types of deletions: user can only delete their own reviews, admin can delete any review
-        [HttpDelete]
+        [HttpDelete("delete-review")]
         [Authorize]
         public async Task<IActionResult> DeleteReview(int reviewId)
         {
@@ -110,7 +110,7 @@ namespace ATSYN.Api.Controllers
 
         //endpoint to get all reviews? (probably only make this for testing)
         //probably will change drastically later
-        [HttpGet]
+        [HttpGet("get-all")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllReviews()
         {
