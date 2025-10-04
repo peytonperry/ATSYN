@@ -73,7 +73,7 @@ export default function ProductPage() {
 
   const fetchData = async () => {
     try {
-      const data: Product[] = await apiService.get("/api/Product");
+      const data: Product[] = await apiService.get("/Product");
       console.log(data);
       setProducts(data);
 

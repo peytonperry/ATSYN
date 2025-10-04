@@ -1,6 +1,7 @@
 using ATSYN.Api.Features;
 using ATSYN.Data;
 using ATSYN.Data.Data;
+using ATSYN.Data.Data.Entities.Photo;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +22,8 @@ public class ProductController : ControllerBase
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
     {
         var products = await _context.Products
-            .Include(p => p.Category) 
+            .Include(p => p.Category)
+            .Include(p => p.Photos)
             .Select(p => new ProductDto
             {
                 Id = p.Id,
@@ -38,12 +40,29 @@ public class ProductController : ControllerBase
                 {
                     Id = p.Category.Id,
                     Name = p.Category.Name
-                }
+                },
+                Photos = p.Photos
+                    .OrderByDescending(ph => ph.IsPrimary)
+                    .ThenBy(ph => ph.DisplayOrder)
+                    .Select(ph => new PhotoDto
+                    {
+                        Id = ph.Id,
+                        FileName = ph.FileName,
+                        ContentType = ph.ContentType,
+                        FileSize = ph.FileSize,
+                        CreatedAt = ph.CreatedAt,
+                        IsPrimary = ph.IsPrimary,
+                        DisplayOrder = ph.DisplayOrder,
+                        AltText = ph.AltText,
+                        ImageUrl = $"/api/Photo/{ph.Id}"
+                    })
+                    .ToList()
             })
             .ToListAsync();
 
         return Ok(products);
     }
+
     [HttpGet("category/{categoryId}")]
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsByCategory(int categoryId)
     {
@@ -55,6 +74,7 @@ public class ProductController : ControllerBase
 
         var products = await _context.Products
             .Include(p => p.Category)
+            .Include(p => p.Photos)
             .Where(p => p.CategoryId == categoryId)
             .Select(p => new ProductDto
             {
@@ -72,7 +92,23 @@ public class ProductController : ControllerBase
                 {
                     Id = p.Category.Id,
                     Name = p.Category.Name
-                }
+                },
+                Photos = p.Photos
+                    .OrderByDescending(ph => ph.IsPrimary)
+                    .ThenBy(ph => ph.DisplayOrder)
+                    .Select(ph => new PhotoDto
+                    {
+                        Id = ph.Id,
+                        FileName = ph.FileName,
+                        ContentType = ph.ContentType,
+                        FileSize = ph.FileSize,
+                        CreatedAt = ph.CreatedAt,
+                        IsPrimary = ph.IsPrimary,
+                        DisplayOrder = ph.DisplayOrder,
+                        AltText = ph.AltText,
+                        ImageUrl = $"/api/Photo/{ph.Id}"
+                    })
+                    .ToList()
             })
             .ToListAsync();
 
@@ -83,9 +119,10 @@ public class ProductController : ControllerBase
     public async Task<ActionResult<ProductDto>> GetProduct(int id)
     {
         var product = await _context.Products
-            .Include(p => p.Category) 
+            .Include(p => p.Category)
+            .Include(p => p.Photos)
             .FirstOrDefaultAsync(p => p.Id == id);
-        
+
         if (product == null)
         {
             return NotFound();
@@ -107,7 +144,23 @@ public class ProductController : ControllerBase
             {
                 Id = product.Category.Id,
                 Name = product.Category.Name
-            }
+            },
+            Photos = product.Photos
+                .OrderByDescending(ph => ph.IsPrimary)
+                .ThenBy(ph => ph.DisplayOrder)
+                .Select(ph => new PhotoDto
+                {
+                    Id = ph.Id,
+                    FileName = ph.FileName,
+                    ContentType = ph.ContentType,
+                    FileSize = ph.FileSize,
+                    CreatedAt = ph.CreatedAt,
+                    IsPrimary = ph.IsPrimary,
+                    DisplayOrder = ph.DisplayOrder,
+                    AltText = ph.AltText,
+                    ImageUrl = $"/api/Photo/{ph.Id}"
+                })
+                .ToList()
         };
 
         return Ok(productDto);
@@ -118,7 +171,7 @@ public class ProductController : ControllerBase
     {
         var categoryExists = await _context.Categories
             .AnyAsync(c => c.Id == productDto.CategoryId);
-            
+
         if (!categoryExists)
         {
             return BadRequest($"Category with ID {productDto.CategoryId} does not exist.");
@@ -142,6 +195,7 @@ public class ProductController : ControllerBase
 
         var createdProduct = await _context.Products
             .Include(p => p.Category)
+            .Include(p => p.Photos)
             .FirstAsync(p => p.Id == product.Id);
 
         var responseDto = new ProductDto
@@ -160,12 +214,28 @@ public class ProductController : ControllerBase
             {
                 Id = createdProduct.Category.Id,
                 Name = createdProduct.Category.Name
-            }
+            },
+            Photos = createdProduct.Photos
+                .OrderByDescending(ph => ph.IsPrimary)
+                .ThenBy(ph => ph.DisplayOrder)
+                .Select(ph => new PhotoDto
+                {
+                    Id = ph.Id,
+                    FileName = ph.FileName,
+                    ContentType = ph.ContentType,
+                    FileSize = ph.FileSize,
+                    CreatedAt = ph.CreatedAt,
+                    IsPrimary = ph.IsPrimary,
+                    DisplayOrder = ph.DisplayOrder,
+                    AltText = ph.AltText,
+                    ImageUrl = $"/api/Photo/{ph.Id}"
+                })
+                .ToList()
         };
 
         return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, responseDto);
     }
-    
+
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProduct(int id, ProductDto productDto)
     {
@@ -184,7 +254,7 @@ public class ProductController : ControllerBase
         {
             var categoryExists = await _context.Categories
                 .AnyAsync(c => c.Id == productDto.CategoryId);
-                
+
             if (!categoryExists)
             {
                 return BadRequest($"Category with ID {productDto.CategoryId} does not exist.");

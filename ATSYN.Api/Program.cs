@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://192.168.69.21:5173")
+        policy.WithOrigins("http://localhost:5173", "https://192.168.69.21:5173", "http://172.26.196.155:5173", "http://172.23.219.57:5173")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -27,7 +27,7 @@ builder.Services.AddCors(options =>
 
 
 
-builder.Services.AddIdentity<IdentityUser,  IdentityRole>(options =>
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
