@@ -62,7 +62,7 @@ function ProductDetailPage() {
 
   const fetchData = async () => {
     try {
-      const data: Product = await apiService.get(`/api/Product/${id}`);
+      const data: Product = await apiService.get(`/Product/${id}`);
       console.log(data);
       setProduct(data);
       setLoading(false);
