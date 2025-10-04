@@ -4,7 +4,6 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { Header } from "./components/Header";
 import HomePage from "./pages/Homepage/Homepage.tsx";
 import AuthPage from "./pages/Login-Signup-page.tsx";
 import ProductPage from "./pages/Products/Product-Page.tsx";
@@ -13,6 +12,17 @@ import ContactPage from "./pages/Contact-page.tsx";
 import { CartProvider } from "./components/Cart/CartContext.tsx";
 import CartPage from "./pages/Cartpage/CartPage.tsx";
 import ProductDetailPage from "./pages/Products/ProductDetail.tsx";
+import { MantineProvider } from "@mantine/core";
+
+// Admin Routes
+import AppShell from "./pages/admin/admincomponents/Appshell.tsx";
+import Dashboard from "./pages/admin/adminpages/Dashboard.tsx";
+import Customers from "./pages/admin/adminpages/Customers.tsx";
+import Reports from "./pages/admin/adminpages/Reports.tsx";
+import Settings from "./pages/admin/adminpages/Settings.tsx";
+import ProductManagement from "./pages/admin/adminpages/dashboardpages/ProductManagement.tsx";
+import AllProducts from "./pages/admin/adminpages/dashboardpages/pmcomponents/AllProducts.tsx";
+import CreateProduct from "./pages/admin/adminpages/dashboardpages/pmcomponents/CreateProduct.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -25,18 +35,18 @@ function AppContent() {
     import("./index.css");
   } else if (location.pathname == "/") {
     import("./pages/Homepage/Homepage.css");
+  } else if (location.pathname == "/products") {
+    import("./pages/Products/ProductPage.css");
   }
 
   return (
     <>
       {!shouldHideHeader && (
         <>
-          {/* <Header callToActionTitle="Get Started" callToActionUrl="/signup" /> */}
           <NavBar />
         </>
       )}
       <Routes>
-        <Route path="/contact" element={<ContactPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/signup" element={<AuthPage />} />
@@ -44,6 +54,18 @@ function AppContent() {
         <Route path="/products" element={<ProductPage />} />
         <Route path="/cart" element={<CartPage/>} />
         <Route path="/product/:id" element={<ProductDetailPage/>} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+
+        <Route path="/admin" element={<AppShell />}>
+          <Route index element={<Dashboard />} />
+          <Route path="Customers" element={<Customers />} />
+          <Route path="Reports" element={<Reports />} />
+          <Route path="Settings" element={<Settings />} />
+          <Route path="productmanagement" element={<ProductManagement />} />
+          <Route path="all-products" element={<AllProducts />} />
+          <Route path="create-product" element={<CreateProduct />} />
+        </Route>
       </Routes>
     </>
   );
@@ -51,11 +73,33 @@ function AppContent() {
 
 function App() {
   return (
-    <CartProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </CartProvider>
+    <MantineProvider
+      theme={{
+        colors: {
+          purple: [
+            "#f3e8ff",
+            "#e0b8ff",
+            "#cb88ff",
+            "#b758ff",
+            "#a228ff",
+            "#8A00C4",
+            "#7a00b0",
+            "#6a009d",
+            "#5a0089",
+            "#4a0075",
+          ],
+        },
+        primaryColor: "purple",
+        primaryShade: 5,
+      }}
+      defaultColorScheme="dark"
+    >
+      <CartProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </CartProvider>
+    </MantineProvider>
   );
 }
 
