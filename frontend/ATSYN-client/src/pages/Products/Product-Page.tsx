@@ -230,57 +230,69 @@ export default function ProductPage() {
             Our Products
           </Title>
 
-          <Stack gap="md">
-            <Group grow>
-              <TextInput
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.currentTarget.value)}
-                leftSection={<IconSearch size={16} />}
-                size="md"
-              />
+          <Paper
+            p="md"
+            mb="sm"
+            radius="lg"
+            withBorder
+            style={{
+              backgroundColor: "rgba(255,255,255,0.02)",
+              borderColor: "rgba(255,255,255,0.1)",
+            }}
+          >
+            <Group justify="space-between" align="center" gap="md" wrap="wrap">
+              <Group gap="sm" grow>
+                <TextInput
+                  placeholder="Search products..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.currentTarget.value)}
+                  leftSection={<IconSearch size={16} />}
+                  size="md"
+                  w={{ base: "100%", sm: 260, md: 320 }}
+                />
 
-              <Select
-                placeholder="All Categories"
-                value={selectedCategory}
-                onChange={setSelectedCategory}
-                data={categories.map((cat) => ({
-                  value: cat.name,
-                  label: cat.name,
-                }))}
-                clearable
-                size="md"
-              />
+                <Select
+                  placeholder="All Categories"
+                  value={selectedCategory}
+                  onChange={setSelectedCategory}
+                  data={categories.map((cat) => ({
+                    value: cat.name,
+                    label: cat.name,
+                  }))}
+                  clearable
+                  size="md"
+                  w={{ base: "100%", sm: 200 }}
+                />
+              </Group>
+
+              {(searchTerm || selectedCategory) && (
+                <Button
+                  variant="light"
+                  color="purple"
+                  leftSection={<IconX size={16} />}
+                  onClick={clearFilters}
+                >
+                  Clear
+                </Button>
+              )}
             </Group>
-
-            {(searchTerm || selectedCategory) && (
-              <Button
-                variant="light"
-                leftSection={<IconX size={16} />}
-                onClick={clearFilters}
-              >
-                Clear Filters
-              </Button>
-            )}
-          </Stack>
-
-          <Paper p="md" mt="md" withBorder>
-            <Text size="sm">
-              Showing {filteredProducts.length} of {products.length} products
-              {searchTerm && (
-                <Text span fw={700}>
-                  {" "}
-                  for "{searchTerm}"
-                </Text>
-              )}
-              {selectedCategory && (
-                <Text span fw={700}>
-                  {" "}
-                  in {selectedCategory}
-                </Text>
-              )}
-            </Text>
           </Paper>
+
+          <Text size="sm" mb="md" c="dimmed">
+            Showing {filteredProducts.length} of {products.length} products
+            {searchTerm && (
+              <Text span fw={700}>
+                {" "}
+                for "{searchTerm}"
+              </Text>
+            )}
+            {selectedCategory && (
+              <Text span fw={700}>
+                {" "}
+                in {selectedCategory}
+              </Text>
+            )}
+          </Text>
         </div>
 
         <Grid>

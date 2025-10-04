@@ -12,6 +12,7 @@ import NavBar from "./components/Navbar.tsx";
 import ContactPage from "./pages/Contact-page.tsx";
 import { CartProvider } from "./components/Cart/CartContext.tsx";
 import CartPage from "./pages/Cartpage/CartPage.tsx";
+import { MantineProvider } from "@mantine/core";
 
 function AppContent() {
   const location = useLocation();
@@ -24,13 +25,14 @@ function AppContent() {
     import("./index.css");
   } else if (location.pathname == "/") {
     import("./pages/Homepage/Homepage.css");
+  } else if (location.pathname == "/products") {
+    import("./pages/Products/ProductPage.css");
   }
 
   return (
     <>
       {!shouldHideHeader && (
         <>
-          {/* <Header callToActionTitle="Get Started" callToActionUrl="/signup" /> */}
           <NavBar />
         </>
       )}
@@ -49,11 +51,33 @@ function AppContent() {
 
 function App() {
   return (
-    <CartProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </CartProvider>
+    <MantineProvider
+      theme={{
+        colors: {
+          purple: [
+            "#f3e8ff",
+            "#e0b8ff",
+            "#cb88ff",
+            "#b758ff",
+            "#a228ff",
+            "#8A00C4",
+            "#7a00b0",
+            "#6a009d",
+            "#5a0089",
+            "#4a0075",
+          ],
+        },
+        primaryColor: "purple",
+        primaryShade: 5,
+      }}
+      defaultColorScheme="dark"
+    >
+      <CartProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </CartProvider>
+    </MantineProvider>
   );
 }
 
