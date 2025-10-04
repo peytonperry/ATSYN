@@ -35,12 +35,15 @@ public class ProductDto
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
+    public int ReviewCount { get; set; }
+    public double AverageRating { get; set; }
     public int CategoryId { get; set; }
     public int? BrandId { get; set; } 
     public int StockAmount { get; set; }
     public bool IsVisible { get; set; }
     public int ShippingTypeId { get; set; }
     public bool InStock { get; set; }
+
     public string ImageUrl { get; set; } = string.Empty;
     public CategoryDto Category { get; init; } = null!;
     public BrandDto? Brand { get; init; }

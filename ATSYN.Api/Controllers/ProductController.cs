@@ -2,6 +2,7 @@ using ATSYN.Api.Features;
 using ATSYN.Data;
 using ATSYN.Data.Data;
 using ATSYN.Data.Data.Entities.Photo;
+using ATSYN.Data.Data.Entities.Products;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ public class ProductController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
     {
+
         var products = await _context.Products
             .Include(p => p.Category)
             .Include(p => p.Photos)
@@ -29,6 +31,8 @@ public class ProductController : ControllerBase
                 Id = p.Id,
                 Title = p.Title,
                 Description = p.Description,
+                ReviewCount = p.Reviews.Count,
+                AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
                 Price = p.Price,
                 CategoryId = p.CategoryId,
                 StockAmount = p.StockAmount,
@@ -81,6 +85,8 @@ public class ProductController : ControllerBase
                 Id = p.Id,
                 Title = p.Title,
                 Description = p.Description,
+                ReviewCount = p.Reviews.Count,
+                AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
                 Price = p.Price,
                 CategoryId = p.CategoryId,
                 StockAmount = p.StockAmount,
@@ -134,6 +140,8 @@ public class ProductController : ControllerBase
             Title = product.Title,
             Description = product.Description,
             Price = product.Price,
+            ReviewCount = product.Reviews.Count,
+            AverageRating = product.Reviews.Any() ? product.Reviews.Average(r => r.Rating) : 0,
             CategoryId = product.CategoryId,
             StockAmount = product.StockAmount,
             IsVisible = product.IsVisible,
@@ -203,6 +211,8 @@ public class ProductController : ControllerBase
             Id = createdProduct.Id,
             Title = createdProduct.Title,
             Description = createdProduct.Description,
+            ReviewCount = createdProduct.Reviews.Count,
+            AverageRating = createdProduct.Reviews.Any() ? createdProduct.Reviews.Average(r => r.Rating) : 0,
             Price = createdProduct.Price,
             CategoryId = createdProduct.CategoryId,
             StockAmount = createdProduct.StockAmount,
