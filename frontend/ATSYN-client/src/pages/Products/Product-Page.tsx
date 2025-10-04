@@ -126,7 +126,20 @@ export default function ProductPage() {
     };
 
     return (
-      <Card className="product-card">
+      <Card
+        className="product-card"
+        styles={{
+          root: {
+            background: "linear-gradient(145deg, #2a2a2a, #1f1f1f)",
+            border: "1px solid #333",
+            transition: "transform 0.3s ease, box-shadow 0.3s ease",
+            "&:hover": {
+              transform: "translateY(-5px)",
+              boxShadow: "0 20px 40px rgba(138, 0, 196, 0.3)",
+            },
+          },
+        }}
+      >
         <Card.Section>
           <div style={{ position: "relative" }}>
             {product.imageUrl ? (
