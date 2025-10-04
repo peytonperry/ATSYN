@@ -20,6 +20,7 @@ import { IconSearch, IconX } from "@tabler/icons-react";
 import { apiService } from "../../config/api";
 import { useCart } from "../../components/Cart/CartContext";
 import CartToast from "../../components/Cart/CartToast";
+import { Anchor } from "@mantine/core";
 
 interface Category {
   id: number;
@@ -51,6 +52,7 @@ export default function ProductPage() {
   const [showToast, setShowToast] = useState(false);
   const [toastProduct, setToastProduct] = useState("");
 
+  //search tool
   useEffect(() => {
     let filtered = products;
 
@@ -71,6 +73,7 @@ export default function ProductPage() {
     setFilteredProducts(filtered);
   }, [products, searchTerm, selectedCategory]);
 
+  //fetching products from database
   const fetchData = async () => {
     try {
       const data: Product[] = await apiService.get("/Product");
@@ -107,120 +110,118 @@ export default function ProductPage() {
   }, []);
 
   const ProductCard = ({ product }: { product: Product }) => {
-    const { addToCart } = useCart();
+  const { addToCart } = useCart();
 
-    const handleAddToCart = (product: Product) => {
-      addToCart(product);
-      setToastProduct(product.title);
-      setShowToast(true);
-    };
+  const handleAddToCart = (p: Product) => {
+    addToCart(p, 1);
+    setToastProduct(p.title);
+    setShowToast(true);
+  };
 
-    const convertGoogleDriveUrl = (url: string) => {
-      if (url.includes("drive.google.com")) {
-        const fileId = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1];
-        if (fileId) {
-          return `https://lh3.googleusercontent.com/d/${fileId}`;
-        }
-      }
-      return url;
-    };
+  const convertGoogleDriveUrl = (url: string) => {
+    if (url.includes("drive.google.com")) {
+      const fileId = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1];
+      if (fileId) return `https://lh3.googleusercontent.com/d/${fileId}`;
+    }
+    return url;
+  };
 
-    return (
-      <Card
-        className="product-card"
-        styles={{
-          root: {
-            background: "linear-gradient(145deg, #2a2a2a, #1f1f1f)",
-            border: "1px solid #333",
-            transition: "transform 0.3s ease, box-shadow 0.3s ease",
-            "&:hover": {
-              transform: "translateY(-5px)",
-              boxShadow: "0 20px 40px rgba(138, 0, 196, 0.3)",
-            },
+  return (
+    <Card
+      className="product-card"
+      styles={{
+        root: {
+          background: "linear-gradient(145deg, #2a2a2a, #1f1f1f)",
+          border: "1px solid #333",
+          transition: "transform 0.3s ease, box-shadow 0.3s ease",
+          "&:hover": {
+            transform: "translateY(-5px)",
+            boxShadow: "0 20px 40px rgba(138, 0, 196, 0.3)",
           },
-        }}
-      >
-        <Card.Section>
-          <div style={{ position: "relative" }}>
-            {product.imageUrl ? (
+        },
+      }}
+    >
+      <Card.Section>
+        <div style={{ position: "relative" }}>
+          {product.imageUrl ? (
+            <Anchor href={`/product/${product.id}`} underline="never">
               <Image
                 className="product-image"
                 src={convertGoogleDriveUrl(product.imageUrl)}
                 alt={product.title}
                 height={200}
                 fallbackSrc="https://placehold.co/400x300?text=No+Image"
-                onError={() => {
-                  console.log(
-                    "Image failed to load:",
-                    convertGoogleDriveUrl(product.imageUrl)
-                  );
-                }}
-                onLoad={() => {
-                  console.log(
-                    "Image loaded successfully:",
-                    convertGoogleDriveUrl(product.imageUrl)
-                  );
-                }}
               />
-            ) : (
+            </Anchor>
+          ) : (
+            <Anchor href={`/product/${product.id}`} underline="never">
               <Center h={200} bg="gray.1">
                 <Text c="dimmed">No Image Available</Text>
               </Center>
-            )}
-
-            <Group
-              gap="xs"
-              style={{ position: "absolute", top: 10, right: 10 }}
-            >
-              <Badge color={product.inStock ? "green" : "red"} variant="filled">
-                {product.inStock ? "In Stock" : "Out of Stock"}
-              </Badge>
-              {!product.isVisible && (
-                <Badge color="gray" variant="filled">
-                  Hidden
-                </Badge>
-              )}
-            </Group>
-          </div>
-        </Card.Section>
-
-        <Stack gap="md" mt="md">
-          <Title className="product-title" order={3} lineClamp={2}>
-            {product.title}
-          </Title>
-
-          {product.description && (
-            <Text className="product-description" lineClamp={3}>
-              {product.description}
-            </Text>
+            </Anchor>
           )}
 
-          <Group className="price-amount">
-            <Text>${product.price.toFixed(2)}</Text>
+          <Group gap="xs" style={{ position: "absolute", top: 10, right: 10 }}>
+            <Badge color={product.inStock ? "green" : "red"} variant="filled">
+              {product.inStock ? "In Stock" : "Out of Stock"}
+            </Badge>
+            {!product.isVisible && (
+              <Badge color="gray" variant="filled">
+                Hidden
+              </Badge>
+            )}
           </Group>
+        </div>
+      </Card.Section>
 
-          <Group justify="space-between">
-            <div>
-              <Text>Category:</Text>
-              <Badge className="category-tag">{product.category.name}</Badge>
-            </div>
-            <div>
-              <Text className="stock-badge">Stock:</Text>
-              <Text className="stock-count">{product.stockAmount}</Text>
-            </div>
-          </Group>
-
-          <Button
-            className="add-to-cart-btn"
-            onClick={() => handleAddToCart(product)}
-            disabled={!product.inStock}
+      <Stack gap="md" mt="md">
+        <Title className="product-title" order={3} lineClamp={2}>
+          <Anchor
+            href={`/product/${product.id}`}
+            underline="never"
+            style={{ color: "inherit" }}
           >
-            {product.inStock ? "Add to Cart" : "Out of Stock"}
-          </Button>
-        </Stack>
-      </Card>
-    );
-  };
+            {product.title}
+          </Anchor>
+        </Title>
+
+        {product.description && (
+          <Text className="product-description" lineClamp={3}>
+            {product.description}
+          </Text>
+        )}
+
+        <Group className="price-amount">
+          <Text>${product.price.toFixed(2)}</Text>
+        </Group>
+
+        <Group justify="space-between">
+          <div>
+            <Text>Category:</Text>
+            <Badge className="category-tag">{product.category.name}</Badge>
+          </div>
+          <div>
+            <Text className="stock-badge">Stock:</Text>
+            <Text className="stock-count">{product.stockAmount}</Text>
+          </div>
+        </Group>
+
+        <Button
+          className="add-to-cart-btn"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleAddToCart(product);
+          }}
+          disabled={!product.inStock}
+        >
+          {product.inStock ? "Add to Cart" : "Out of Stock"}
+        </Button>
+      </Stack>
+    </Card>
+  );
+};
+
 
   if (loading) {
     return (
