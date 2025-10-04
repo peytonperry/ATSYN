@@ -1,5 +1,5 @@
 import React from "react";
-import backgroundimage from './ATSYN_Logo.png'
+import backgroundimage from "./ATSYN_Logo.png";
 const HomePage = () => {
   return (
     <div className="homepage-wrapper">

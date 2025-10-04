@@ -1,6 +1,6 @@
-import React from 'react';
-import { useCart } from '../../components/Cart/CartContext';
-import './CartPage.css';
+import React from "react";
+import { useCart } from "../../components/Cart/CartContext";
+import "./CartPage.css";
 
 const CartPage: React.FC = () => {
   const { state, removeFromCart, updateQuantity, clearCart } = useCart();
@@ -21,8 +21,7 @@ const CartPage: React.FC = () => {
             <h1 className="cart-title">Your Cart</h1>
           </div>
           <div className="empty-cart">
-            <div className="empty-cart-icon">🛒</div>
-            <h3>Your cart is empty</h3>
+            <h3>Your cart is empty.</h3>
             <p>Add some products to get started!</p>
             <a href="/products" className="continue-shopping-btn">
               Continue Shopping
@@ -60,30 +59,38 @@ const CartPage: React.FC = () => {
 
                 <div className="item-details">
                   <h3 className="item-title">{item.product.title}</h3>
-                  <div className="item-category">{item.product.category.name}</div>
+                  <div className="item-category">
+                    {item.product.category.name}
+                  </div>
                   <div className="item-price">
                     <span className="price-symbol">$</span>
-                    <span className="price-amount">{item.product.price.toFixed(2)}</span>
+                    <span className="price-amount">
+                      {item.product.price.toFixed(2)}
+                    </span>
                   </div>
                 </div>
 
                 <div className="item-controls">
                   <div className="quantity-controls">
-                    <button 
+                    <button
                       className="quantity-btn"
-                      onClick={() => handleQuantityChange(item.product.id, item.quantity - 1)}
+                      onClick={() =>
+                        handleQuantityChange(item.product.id, item.quantity - 1)
+                      }
                     >
                       -
                     </button>
                     <span className="quantity">{item.quantity}</span>
-                    <button 
+                    <button
                       className="quantity-btn"
-                      onClick={() => handleQuantityChange(item.product.id, item.quantity + 1)}
+                      onClick={() =>
+                        handleQuantityChange(item.product.id, item.quantity + 1)
+                      }
                     >
                       +
                     </button>
                   </div>
-                  
+
                   <div className="item-total">
                     <span className="total-label">Total:</span>
                     <span className="total-price">
@@ -91,7 +98,7 @@ const CartPage: React.FC = () => {
                     </span>
                   </div>
 
-                  <button 
+                  <button
                     className="remove-btn"
                     onClick={() => removeFromCart(item.product.id)}
                   >
@@ -105,7 +112,7 @@ const CartPage: React.FC = () => {
           <div className="cart-sidebar">
             <div className="order-summary">
               <h3 className="summary-title">Order Summary</h3>
-              
+
               <div className="summary-breakdown">
                 {state.items.map((item) => (
                   <div key={item.product.id} className="summary-item">
@@ -137,13 +144,18 @@ const CartPage: React.FC = () => {
                 <div className="summary-divider"></div>
                 <div className="summary-row total-row">
                   <span>Total:</span>
-                  <span>${(state.totalPrice + 5.99 + (state.totalPrice * 0.08)).toFixed(2)}</span>
+                  <span>
+                    $
+                    {(
+                      state.totalPrice +
+                      5.99 +
+                      state.totalPrice * 0.08
+                    ).toFixed(2)}
+                  </span>
                 </div>
               </div>
 
-              <button className="checkout-btn">
-                Proceed to Checkout
-              </button>
+              <button className="checkout-btn">Proceed to Checkout</button>
 
               <a href="/products" className="continue-shopping-link">
                 Continue Shopping

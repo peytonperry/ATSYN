@@ -62,7 +62,7 @@ function ProductDetailPage() {
 
   const fetchData = async () => {
     try {
-      const data: Product = await apiService.get(`/api/Product/${id}`);
+      const data: Product = await apiService.get(`/Product/${id}`);
       console.log(data);
       setProduct(data);
       setLoading(false);
@@ -112,8 +112,6 @@ function ProductDetailPage() {
               <Text size="xl" fw={700}>
                 ${product?.price}
               </Text>
-              <Text size="sm">Free Returns</Text> {/* Will change */}
-              <Text size="sm">Free Delivery</Text> {/* Will change */}
               <div>
                 <Text size="sm">Quantity:</Text>
                 <Select
