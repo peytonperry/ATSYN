@@ -83,6 +83,12 @@ function ProductDetailPage() {
     fetchData();
   }, [id]);
 
+  //average product rating
+  //find some way to count the amount of reviews for the one product (totalReviewsCreated)
+  //tally up the star ratings (totalRatingStars)
+  //divide to get the average (totalRatingStars / totalReviewsCreated) and display the average
+  //
+
   return (
     <Container size="lg">
       <Grid>
