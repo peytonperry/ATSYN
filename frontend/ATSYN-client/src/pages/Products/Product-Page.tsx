@@ -97,7 +97,6 @@ export default function ProductPage() {
     }
   };
 
-
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedCategory(null);
@@ -110,12 +109,11 @@ export default function ProductPage() {
     }
   }, []);
 
-  
   const ProductCard = ({ product }: { product: Product }) => {
     const { addToCart } = useCart();
 
     const handleAddToCart = (product: Product) => {
-      addToCart(product);
+      addToCart(product, 1);
       setToastProduct(product.title);
       setShowToast(true);
     };
