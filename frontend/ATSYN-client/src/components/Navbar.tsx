@@ -15,14 +15,12 @@ function NavBar() {
         <button className="nav-button" onClick={() => navigate("/")}>
           Home
         </button>
-        <button className="nav-button" onClick={() => navigate("/about")}>
-          About
-        </button>
+
         <button className="nav-button" onClick={() => navigate("/products")}>
           Products
         </button>
         <button className="nav-button" onClick={() => navigate("/contact")}>
-          Contact
+          Contact Us
         </button>
       </div>
 

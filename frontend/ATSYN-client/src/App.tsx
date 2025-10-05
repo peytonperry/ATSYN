@@ -52,8 +52,8 @@ function AppContent() {
         <Route path="/signup" element={<AuthPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductPage />} />
-        <Route path="/cart" element={<CartPage/>} />
-        <Route path="/product/:id" element={<ProductDetailPage/>} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/contact" element={<ContactPage />} />
 
@@ -94,11 +94,11 @@ function App() {
       }}
       defaultColorScheme="dark"
     >
-      <CartProvider>
-        <Router>
-          <AppContent />
-        </Router>
-      </CartProvider>
+        <CartProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </CartProvider>
     </MantineProvider>
   );
 }
