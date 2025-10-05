@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { Navigate, useNavigate } from "react-router-dom";
 import { apiService } from "../config/api";
-import { useAuth } from "../components/Auth/useAuth";
+import { useAuth } from "../components/Auth/AuthContext";
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
@@ -46,8 +46,12 @@ export default function AuthPage() {
         rememberMe: loginForm.rememberMe,
       };
       const data = await apiService.post("/controller/login", loginData);
-      login(data.user);
       if (data != null) {
+        const role =
+          data.userRoles && data.userRoles.length > 0
+            ? data.userRoles[0]
+            : "User";
+        login(data.userId, role);
         navigate("/");
       }
     } catch (error: any) {
