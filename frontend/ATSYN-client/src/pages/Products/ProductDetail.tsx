@@ -115,7 +115,10 @@ function ProductDetailPage() {
         <Grid.Col span={{ base: 12, md: 4 }}>
           <Stack gap="md">
             <Title order={1}>{product?.title}</Title>
-            <Rating value={product?.averageRating} fractions={2} readOnly />
+            <Group>
+              <Rating value={product?.averageRating} fractions={2} readOnly />
+              <Text>{product?.reviewCount} Reviews</Text>
+            </Group>
             <Text size="md">{product?.description}</Text>
           </Stack>
         </Grid.Col>
