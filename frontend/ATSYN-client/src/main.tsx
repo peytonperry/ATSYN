@@ -5,8 +5,7 @@ import App from "./App.tsx";
 import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/notifications/styles.css";
-import { createTheme, MantineProvider, DEFAULT_THEME } from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
+import { createTheme, DEFAULT_THEME } from "@mantine/core";
 
 const theme = createTheme({
   ...DEFAULT_THEME,
