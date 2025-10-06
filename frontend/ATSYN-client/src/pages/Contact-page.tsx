@@ -10,7 +10,6 @@ import {
   Button,
   Textarea,
 } from "@mantine/core";
-import { Form } from "react-router-dom";
 
 function ContactPage() {
   const SPACING = "lg";
