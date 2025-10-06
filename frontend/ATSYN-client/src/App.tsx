@@ -23,6 +23,7 @@ import Settings from "./pages/admin/adminpages/Settings.tsx";
 import ProductManagement from "./pages/admin/adminpages/dashboardpages/ProductManagement.tsx";
 import AllProducts from "./pages/admin/adminpages/dashboardpages/pmcomponents/AllProducts.tsx";
 import CreateProduct from "./pages/admin/adminpages/dashboardpages/pmcomponents/CreateProduct.tsx";
+import ProductDetailAdminPage from "./pages/admin/adminpages/dashboardpages/pmcomponents/ProductDetailAdminPage.tsx";
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 
 function AppContent() {
@@ -65,6 +66,7 @@ function AppContent() {
           <Route path="Settings" element={<Settings />} />
           <Route path="productmanagement" element={<ProductManagement />} />
           <Route path="all-products" element={<AllProducts />} />
+          <Route path="products/:id" element={<ProductDetailAdminPage />} />
           <Route path="create-product" element={<CreateProduct />} />
         </Route>
       </Routes>

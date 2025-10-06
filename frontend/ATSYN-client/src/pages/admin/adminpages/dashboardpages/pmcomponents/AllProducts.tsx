@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import "./AllProducts.css";
 import { apiService } from "../../../../../config/api";
+import ProductDetailAdminPage from "./ProductDetailAdminPage";
+import { useNavigate } from "react-router-dom";
+import { Button, Card, Container, Group, SimpleGrid, Text, Stack, Table } from "@mantine/core";
 
 
 interface Category {
@@ -26,6 +29,8 @@ const AllProducts = () => {
     const [loading, setLoading] = useState(true);
     const [view, setView] = useState<"table" | "card">("card");
     const hasFetched = useRef(false);
+    const navigate = useNavigate();
+
 
     const fetchData = async () => {
         try{
@@ -52,72 +57,115 @@ const AllProducts = () => {
         }
     }, []);
 
-    return (
-     <div className="products-page">
-      <div className="products-header">
+return (
+  <Container size="xl" className="products-page" py="md">
+    <Group justify="space-between" mb="md">
+      <Text fw={600} size="xl">
+        Product Management
+      </Text>
 
-        <div className="view-buttons">
-          <button
-            onClick={() => setView("card")}
-            className={`view-button ${view === "card" ? "active" : ""}`}
-          >
-            Card View
-          </button>
-          <button
-            onClick={() => setView("table")}
-            className={`view-button ${view === "table" ? "active" : ""}`}
-          >
-            Table View
-          </button>
-        </div>
-      </div>
+      <Group>
+        <Button
+          variant={view === "card" ? "filled" : "outline"}
+          color={view === "card" ? "blue" : "black"}
+          onClick={() => setView("card")}
+        >
+          Card View
+        </Button>
+        <Button
+          variant={view === "table" ? "filled" : "outline"}
+          color={view === "table" ? "blue" : "black"}
+          onClick={() => setView("table")}
+        >
+          Table View
+        </Button>
+      </Group>
+    </Group>
 
-      {view === "card" ? (
-        <div className="products-grid">
-          {Products.map((p) => (
-            <div key={p.id} className="product-card">
+    {view === "card" ? (
+      <SimpleGrid
+        cols={{ base: 1, sm: 2, md: 3, lg: 4 }}
+        spacing="lg"
+        className="products-grid"
+      >
+        {Products.map((p) => (
+          <Card
+            key={p.id}
+            shadow="sm"
+            padding="md"
+            radius="md"
+            withBorder
+            onClick={() => navigate(`/admin/products/${p.id}`)}
+            className="product-card"
+            style={{ cursor: "pointer" }}
+          >
+            <Card.Section>
               <img
-                src={p.imageUrl || "https://via.placeholder.com/200x200"}
+                src={p.imageUrl || "https://via.placeholder.com/300x300"}
                 alt={p.title}
-                className="product-image"
+                height={180}
+                style={{ objectFit: "cover", width: "100%" }}
               />
-              <h2 className="product-name">{p.title}</h2>
-              <p className="product-price">${p.price.toFixed(2)}</p>
-              <p
-                className={`product-stock ${
-                  p.stockAmount > 0 ? "in-stock" : "out-of-stock"
-                }`}
-              >
-                {p.stockAmount > 0 ? `${p.stockAmount} in stock` : "Out of stock"}
-              </p>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <table className="w-full border border-gray-200 rounded-lg shadow-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-4 py-2 text-left">Name</th>
-              <th className="px-4 py-2 text-right">Price</th>
-              <th className="px-4 py-2 text-right">Stock</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Products.map((p) => (
-              <tr key={p.id} className="border-t hover:bg-gray-50">
-                <td className="px-4 py-2">{p.title}</td>
-                <td className="px-4 py-2 text-right">${p.price.toFixed(2)}</td>
-                <td className="px-4 py-2 text-right">
-                  {p.stockAmount > 0 ? `${p.stockAmount} in stock` : "Out of stock"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-      </div>
+            </Card.Section>
 
-    );
+            <Stack gap={4} mt="sm">
+              <Text fw={600}>{p.title}</Text>
+              <Text c="blue" fw={500}>
+                ${p.price.toFixed(2)}
+              </Text>
+              <Text
+                size="sm"
+                c={p.stockAmount > 0 ? "green" : "red"}
+                fw={500}
+              >
+                {p.stockAmount > 0
+                  ? `${p.stockAmount} in stock`
+                  : "Out of stock"}
+              </Text>
+            </Stack>
+          </Card>
+        ))}
+      </SimpleGrid>
+    ) : (
+      <Table
+        highlightOnHover
+        withColumnBorders
+        withTableBorder
+        captionSide="top"
+        verticalSpacing="sm"
+        className="product-table"
+      >
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Name</Table.Th>
+            <Table.Th ta="right">Price</Table.Th>
+            <Table.Th ta="right">Stock</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {Products.map((p) => (
+            <Table.Tr
+              key={p.id}
+              onClick={() => navigate(`/admin/products/${p.id}`)}
+              style={{ cursor: "pointer" }}
+            >
+              <Table.Td fw={500}>{p.title}</Table.Td>
+              <Table.Td ta="right">${p.price.toFixed(2)}</Table.Td>
+              <Table.Td ta="right">
+                <Text c={p.stockAmount > 0 ? "green" : "red"}>
+                  {p.stockAmount > 0
+                    ? `${p.stockAmount} in stock`
+                    : "Out of stock"}
+                </Text>
+              </Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    )}
+  </Container>
+);
+
 }
 
 export default AllProducts;
