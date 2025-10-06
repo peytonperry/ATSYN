@@ -12,6 +12,7 @@ import {
   Accordion,
   AccordionControl,
   AccordionPanel,
+  Rating
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
@@ -28,6 +29,8 @@ interface Product {
   title: string;
   description: string;
   price: number;
+  reviewCount: number;
+  averageRating: number;
   categoryId: number;
   stockAmount: number;
   isVisible: boolean;
@@ -83,12 +86,6 @@ function ProductDetailPage() {
     fetchData();
   }, [id]);
 
-  //average product rating
-  //find some way to count the amount of reviews for the one product (totalReviewsCreated)
-  //tally up the star ratings (totalRatingStars)
-  //divide to get the average (totalRatingStars / totalReviewsCreated) and display the average
-  //
-
   return (
     <Container size="lg">
       <Grid>
@@ -101,6 +98,7 @@ function ProductDetailPage() {
         <Grid.Col span={{ base: 12, md: 4 }}>
           <Stack gap="md">
             <Title order={1}>{product?.title}</Title>
+            <Rating value={product?.averageRating} fractions={2} readOnly/>
             <Text size="md">{product?.description}</Text>
           </Stack>
         </Grid.Col>

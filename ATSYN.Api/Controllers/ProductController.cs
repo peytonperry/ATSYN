@@ -127,6 +127,7 @@ public class ProductController : ControllerBase
         var product = await _context.Products
             .Include(p => p.Category)
             .Include(p => p.Photos)
+            .Include(p => p.Reviews)
             .FirstOrDefaultAsync(p => p.Id == id);
 
         if (product == null)
