@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import "./NavBar.css";
 import { useCart } from "./Cart/CartContext";
 import { useAuth } from "./Auth/AuthContext";
-import { Button } from "@mantine/core";
 function NavBar() {
   const navigate = useNavigate();
   const { state } = useCart();
