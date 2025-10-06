@@ -24,6 +24,7 @@ import ProductManagement from "./pages/admin/adminpages/dashboardpages/ProductMa
 import AllProducts from "./pages/admin/adminpages/dashboardpages/pmcomponents/AllProducts.tsx";
 import CreateProduct from "./pages/admin/adminpages/dashboardpages/pmcomponents/CreateProduct.tsx";
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
+import { ProtectedRoute } from "./components/ProtectedRoutes.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -58,7 +59,14 @@ function AppContent() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/contact" element={<ContactPage />} />
 
-        <Route path="/admin" element={<AppShell />}>
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AppShell />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Dashboard />} />
           <Route path="Customers" element={<Customers />} />
           <Route path="Reports" element={<Reports />} />
