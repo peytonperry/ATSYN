@@ -12,7 +12,10 @@ import {
   Accordion,
   AccordionControl,
   AccordionPanel,
-  Rating
+  Rating,
+  Group,
+  TextInput,
+  Textarea,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
@@ -40,6 +43,15 @@ interface Product {
   category: Category;
 }
 
+interface Review {
+  id: number;
+  productId: number;
+  rating: number;
+  title: string;
+  comment: string;
+  userName: string;
+}
+
 const shippingInfo =
   "We currently ship through USPS. Rates and tracking are updated directly from USPS. We will ship orders received within 1-2 business days of order receipt.";
 const returnInfo =
@@ -47,6 +59,7 @@ const returnInfo =
 
 function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [shippingOption, setShippingOption] = useState("shipping");
   const [showToast, setShowToast] = useState(false);
@@ -65,9 +78,13 @@ function ProductDetailPage() {
 
   const fetchData = async () => {
     try {
-      const data: Product = await apiService.get(`/Product/${id}`);
-      console.log(data);
-      setProduct(data);
+      const productData: Product = await apiService.get(`/Product/${id}`);
+      const reviewData: Review[] = await apiService.get(
+        `/Review/product/${id}`
+      );
+
+      setProduct(productData);
+      setReviews(reviewData);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -98,7 +115,7 @@ function ProductDetailPage() {
         <Grid.Col span={{ base: 12, md: 4 }}>
           <Stack gap="md">
             <Title order={1}>{product?.title}</Title>
-            <Rating value={product?.averageRating} fractions={2} readOnly/>
+            <Rating value={product?.averageRating} fractions={2} readOnly />
             <Text size="md">{product?.description}</Text>
           </Stack>
         </Grid.Col>
@@ -132,7 +149,6 @@ function ProductDetailPage() {
                     <Radio value="pickup" label="Store Pickup" />
                   </Stack>
                 </Radio.Group>
-                {/* Quantity of items and shipping option will need to be in a form?*/}
               </div>
               <Button
                 className="btn"
@@ -158,6 +174,43 @@ function ProductDetailPage() {
               </AccordionPanel>
             </Accordion.Item>
           </Accordion>
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <Paper p="md" radius="md" mt="xl">
+            <Title order={2}>{product?.reviewCount || 0} Reviews</Title>
+
+            {reviews.map((review) => (
+              <div key={review.id}>
+                <Paper withBorder p="md" radius="md" mt="xl">
+                  <Text fw={500}>{review.userName}</Text>
+                  <Text fw={500}>{review.title}</Text>
+                  <Rating value={review.rating} readOnly />
+                  <Text fw={500}>{review.comment}</Text>
+                </Paper>
+              </div>
+            ))}
+          </Paper>
+          {/*<Paper withBorder p="md" radius="md" mt="xl">
+            <Title order={2} mb="md">Reviews</Title>
+            <Title order={3} mb="md">Write a Review</Title>
+            <Stack gap="md">
+              <div>
+                <Text size="sm" mb="xs">Your Rating</Text>
+                <Rating size="lg"/>
+              </div>
+
+              <TextInput label="Title" placeholder="Sum up your experience"/>
+              <Textarea label="Your review" placeholder="Share your thoughts about this product" minRows={4}/>
+              <Button>Submit Review</Button>
+
+              <Title order={3} mb="md">All Reviews</Title>
+              <Stack gap="md">
+                <Text c="dimmed" ta="center" py="xl">
+                  No reviews yet. Be the first to review this product!
+                </Text>
+              </Stack>
+            </Stack>
+          </Paper>*/}
         </Grid.Col>
       </Grid>
     </Container>
