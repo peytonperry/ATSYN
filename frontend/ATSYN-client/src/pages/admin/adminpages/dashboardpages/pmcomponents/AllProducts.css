@@ -61,6 +61,11 @@
 }
 
 
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  color:#ffffff
+}
 
 .product-card {
   border: 1px solid #e5e7eb; 
