@@ -73,11 +73,13 @@ namespace ATSYN.Api.Controllers {
             if (result.Succeeded)
             {
                 var user = await _userManager.FindByNameAsync(login.Email);
+                var role = await _userManager.GetRolesAsync(user);
                 return Ok(new
                 {
                     Message = "Login successful",
                     UserId = user?.Id,
-                    Email = user?.Email
+                    Email = user?.Email,
+                    userRoles = role,
                 });
             }
 

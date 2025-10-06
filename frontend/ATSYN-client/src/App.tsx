@@ -23,6 +23,7 @@ import Settings from "./pages/admin/adminpages/Settings.tsx";
 import ProductManagement from "./pages/admin/adminpages/dashboardpages/ProductManagement.tsx";
 import AllProducts from "./pages/admin/adminpages/dashboardpages/pmcomponents/AllProducts.tsx";
 import CreateProduct from "./pages/admin/adminpages/dashboardpages/pmcomponents/CreateProduct.tsx";
+import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -52,8 +53,8 @@ function AppContent() {
         <Route path="/signup" element={<AuthPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductPage />} />
-        <Route path="/cart" element={<CartPage/>} />
-        <Route path="/product/:id" element={<ProductDetailPage/>} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/contact" element={<ContactPage />} />
 
@@ -94,11 +95,13 @@ function App() {
       }}
       defaultColorScheme="dark"
     >
-      <CartProvider>
-        <Router>
-          <AppContent />
-        </Router>
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </CartProvider>
+      </AuthProvider>
     </MantineProvider>
   );
 }
