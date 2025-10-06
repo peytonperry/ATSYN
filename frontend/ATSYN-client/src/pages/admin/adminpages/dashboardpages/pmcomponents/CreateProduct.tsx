@@ -287,7 +287,7 @@ const CreateProduct: React.FC = () => {
               }
             />
 
-            <Checkbox label="In Stock" checked />
+            <Checkbox label="In Stock" checked={formData.stockAmount > 0} />
 
             {successMsg && (
               <Alert
