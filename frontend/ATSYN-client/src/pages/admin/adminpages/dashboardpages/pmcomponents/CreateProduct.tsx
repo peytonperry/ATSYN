@@ -216,6 +216,7 @@ const CreateProduct: React.FC = () => {
               />
             </Group>
 
+            <label>Category</label>
             <CategorySelect
               categories={categories}
               onCategoryChange={(category) =>

@@ -17,12 +17,13 @@ import { MantineProvider } from "@mantine/core";
 // Admin Routes
 import AppShell from "./pages/admin/admincomponents/Appshell.tsx";
 import Dashboard from "./pages/admin/adminpages/Dashboard.tsx";
-import Customers from "./pages/admin/adminpages/Customers.tsx";
+import Customers from "./pages/admin/adminpages/OrderManagement/Customers.tsx";
 import Reports from "./pages/admin/adminpages/Reports.tsx";
 import Settings from "./pages/admin/adminpages/Settings.tsx";
 import ProductManagement from "./pages/admin/adminpages/dashboardpages/ProductManagement.tsx";
 import AllProducts from "./pages/admin/adminpages/dashboardpages/pmcomponents/AllProducts.tsx";
 import CreateProduct from "./pages/admin/adminpages/dashboardpages/pmcomponents/CreateProduct.tsx";
+import ProductDetailAdminPage from "./pages/admin/adminpages/dashboardpages/pmcomponents/ProductDetailAdminPage.tsx";
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoutes.tsx";
 
@@ -73,6 +74,7 @@ function AppContent() {
           <Route path="Settings" element={<Settings />} />
           <Route path="productmanagement" element={<ProductManagement />} />
           <Route path="all-products" element={<AllProducts />} />
+          <Route path="products/:id" element={<ProductDetailAdminPage />} />
           <Route path="create-product" element={<CreateProduct />} />
         </Route>
       </Routes>
