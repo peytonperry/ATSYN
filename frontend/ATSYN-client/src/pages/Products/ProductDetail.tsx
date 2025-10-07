@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
 import { useParams } from "react-router-dom";
 import { useCart } from "../../components/Cart/CartContext";
+import CartToast from "../../components/Cart/CartToast";
 
 interface Category {
   id: number;
@@ -173,6 +174,11 @@ function ProductDetailPage() {
           </Accordion>
         </Grid.Col>
       </Grid>
+      <CartToast
+        show={showToast}
+        productName={toastProduct}
+        onClose={() => setShowToast(false)}
+      />
     </Container>
   );
 }

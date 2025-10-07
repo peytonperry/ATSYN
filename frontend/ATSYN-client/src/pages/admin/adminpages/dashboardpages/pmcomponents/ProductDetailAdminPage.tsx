@@ -19,7 +19,7 @@ import {
 import { useEffect, useState } from "react";
 import { apiService } from "../../../../../config/api";
 import { useParams, useNavigate } from "react-router-dom";
-import "./ProductDetailAdminPage.css"; 
+import "./ProductDetailAdminPage.css";
 import { CategorySelect } from "./CategorySelect";
 
 interface Category {
@@ -81,6 +81,13 @@ const ProductDetailAdminPage = () => {
     };
     fetchProduct();
   }, [id]);
+  const getProductImageUrl = (product: Product) => {
+    const primaryPhoto =
+      product.photos?.find((p) => p.isPrimary) || product.photos?.[0];
+    return primaryPhoto
+      ? apiService.getImageUrl(primaryPhoto.id)
+      : product.imageUrl || "";
+  };
 
   const handleUpdate = async () => {
     if (!product) return;
@@ -137,7 +144,7 @@ const ProductDetailAdminPage = () => {
         <Grid.Col span={6}>
           <div className="admin-product-image">
             <Image
-              src={product.imageUrl}
+              src={getProductImageUrl(product)}
               alt={product.title}
               height={400}
               fit="contain"
@@ -177,7 +184,7 @@ const ProductDetailAdminPage = () => {
                 label="Image URL"
                 value={product.imageUrl}
                 onChange={(e) =>
-                    setProduct({ ...product, imageUrl: e.currentTarget.value })
+                  setProduct({ ...product, imageUrl: e.currentTarget.value })
                 }
               />
               <NumberInput
@@ -235,4 +242,3 @@ const ProductDetailAdminPage = () => {
 };
 
 export default ProductDetailAdminPage;
-
