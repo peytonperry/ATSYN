@@ -17,10 +17,22 @@ import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
 import { useParams } from "react-router-dom";
 import { useCart } from "../../components/Cart/CartContext";
+import CartToast from "../../components/Cart/CartToast";
 
 interface Category {
   id: number;
   name: string;
+}
+interface Photo {
+  id: number;
+  fileName: string;
+  contentType: string;
+  fileSize: number;
+  createdAt: string;
+  isPrimary: boolean;
+  displayOrder: number;
+  altText: string;
+  imageUrl: string;
 }
 
 interface Product {
@@ -35,6 +47,7 @@ interface Product {
   inStock: boolean;
   imageUrl: string;
   category: Category;
+  photos: Photo[];
 }
 
 const shippingInfo =
@@ -71,6 +84,11 @@ function ProductDetailPage() {
       console.error("API call failed:", error);
     }
   };
+  const primaryPhoto =
+    product?.photos?.find((p) => p.isPrimary) || product?.photos?.[0];
+  const imageUrl = primaryPhoto
+    ? apiService.getImageUrl(primaryPhoto.id)
+    : product?.imageUrl || "";
 
   const quantityOptions = product
     ? Array.from({ length: product.stockAmount }, (_, i) => ({
@@ -88,7 +106,7 @@ function ProductDetailPage() {
       <Grid>
         {/* Left */}
         <Grid.Col span={{ base: 12, md: 5 }}>
-          <Image src={product?.imageUrl} radius="sm" fit="contain" h={400} />
+          <Image src={imageUrl} radius="sm" fit="contain" h={400} />
         </Grid.Col>
 
         {/* Middle*/}
@@ -156,6 +174,11 @@ function ProductDetailPage() {
           </Accordion>
         </Grid.Col>
       </Grid>
+      <CartToast
+        show={showToast}
+        productName={toastProduct}
+        onClose={() => setShowToast(false)}
+      />
     </Container>
   );
 }

@@ -90,11 +90,20 @@ public class PhotoController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetPhoto(int id)
     {
+    
         var photo = await _context.Photos.FindAsync(id);
         if (photo == null)
+        {
             return NotFound();
+        }
 
-        return File(photo.ImageData, photo.ContentType, photo.FileName);
+
+        if (photo.ImageData == null || photo.ImageData.Length == 0)
+        {
+            return NotFound("Image data is empty");
+        }
+
+        return File(photo.ImageData, photo.ContentType);
     }
 
     [HttpGet("product/{productId}")]
@@ -114,7 +123,7 @@ public class PhotoController : ControllerBase
                 IsPrimary = p.IsPrimary,
                 DisplayOrder = p.DisplayOrder,
                 AltText = p.AltText,
-                ImageUrl = $"/api/Photo/{p.Id}"  // Fixed to match GET endpoint
+                ImageUrl = $"{Request.Scheme}://{Request.Host}/api/Photo/{p.Id}"  
             })
             .ToListAsync();
 

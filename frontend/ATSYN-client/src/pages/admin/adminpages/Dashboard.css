@@ -4,7 +4,8 @@
   flex-wrap: wrap;
   gap: 1.5rem;
   padding: 2rem;
-  background-color: #f9fafb;
+  background-color: #2a2a2a;
+;
   /* min-height: 100vh; */
   justify-content: flex-start; 
 }
