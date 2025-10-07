@@ -17,7 +17,7 @@ import { MantineProvider } from "@mantine/core";
 // Admin Routes
 import AppShell from "./pages/admin/admincomponents/Appshell.tsx";
 import Dashboard from "./pages/admin/adminpages/Dashboard.tsx";
-import Customers from "./pages/admin/adminpages/Customers.tsx";
+import Customers from "./pages/admin/adminpages/OrderManagement/Customers.tsx";
 import Reports from "./pages/admin/adminpages/Reports.tsx";
 import Settings from "./pages/admin/adminpages/Settings.tsx";
 import ProductManagement from "./pages/admin/adminpages/dashboardpages/ProductManagement.tsx";
