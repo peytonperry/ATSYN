@@ -19,9 +19,10 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../../components/Cart/CartContext";
 import CartToast from "../../components/Cart/CartToast";
+import { useAuth } from "../../components/Auth/AuthContext";
 
 interface Category {
   id: number;
@@ -88,6 +89,21 @@ function ProductDetailPage() {
       setShowToast(true);
     }
   };
+
+  function ReviewButton() {
+    const navigate = useNavigate();
+    const { user } = useAuth();
+
+    const handleClick = () => {
+      if (user) {
+        navigate(`/write-review/${product?.id}`);
+      } else {
+        navigate("/login", { state: { from: `/write-review/${product?.id}` } });
+      }
+    };
+
+    return <Button onClick={handleClick}>Write a review</Button>;
+  }
 
   const fetchData = async () => {
     try {
@@ -200,7 +216,7 @@ function ProductDetailPage() {
           <Paper p="md" radius="md" mt="xl">
             <Group justify="space-between">
               <Title order={2}>{product?.reviewCount || 0} Reviews</Title>
-              <Button>Write a review</Button>
+              <ReviewButton/>
             </Group>
 
             {reviews.map((review) => (
@@ -216,27 +232,6 @@ function ProductDetailPage() {
               </div>
             ))}
           </Paper>
-          {/*<Paper withBorder p="md" radius="md" mt="xl">
-            <Title order={2} mb="md">Reviews</Title>
-            <Title order={3} mb="md">Write a Review</Title>
-            <Stack gap="md">
-              <div>
-                <Text size="sm" mb="xs">Your Rating</Text>
-                <Rating size="lg"/>
-              </div>
-
-              <TextInput label="Title" placeholder="Sum up your experience"/>
-              <Textarea label="Your review" placeholder="Share your thoughts about this product" minRows={4}/>
-              <Button>Submit Review</Button>
-
-              <Title order={3} mb="md">All Reviews</Title>
-              <Stack gap="md">
-                <Text c="dimmed" ta="center" py="xl">
-                  No reviews yet. Be the first to review this product!
-                </Text>
-              </Stack>
-            </Stack>
-          </Paper>*/}
         </Grid.Col>
       </Grid>
       <CartToast
