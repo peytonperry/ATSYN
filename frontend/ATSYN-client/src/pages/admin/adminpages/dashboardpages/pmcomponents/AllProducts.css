@@ -39,6 +39,7 @@
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 1.5rem; 
+  color: black;
 }
 
 @media (min-width: 640px) {
@@ -60,6 +61,11 @@
 }
 
 
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  color:#ffffff
+}
 
 .product-card {
   border: 1px solid #e5e7eb; 

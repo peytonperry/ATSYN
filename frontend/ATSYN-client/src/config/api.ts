@@ -34,6 +34,32 @@ export const apiService = {
     return response.json();
   },
 
+  async put(endpoint: string, data: any) {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }); 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+  },
+
+  async delete(endpoint: string) {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+  },
+
   async uploadFile(endpoint: string, formData: FormData){
     console.log('Uploading to:', `${API_BASE_URL}${endpoint}`); // Temporary debug
     const response = await fetch(`${API_BASE_URL}${endpoint}`,{

@@ -1,15 +1,6 @@
+import { Button } from "@mantine/core";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button } from '@mantine/core';
 import "./Header.css";
-//this will display the current page name like Dashboard, Customers, Settings etc
-// display a search bar
-// admin name 
-
-// type HeaderProps = {
-//     settingName: string;
-       //will add more props later 
-
-// }
 
 const Header= () => {
     const location = useLocation();
@@ -21,23 +12,42 @@ const Header= () => {
         "/admin/reports": "Reports",
         "/admin/settings": "Settings",
         "/admin/productmanagement": "Product Management",
+        "/admin/all-products": "View All Products",
+        "/admin/create-product": "Add New Product",
     };
+    
     const subRouteTitlesPM: Record<string, string> = {
         "/admin/all-products": "View All Products",
         "/admin/create-product": "Add New Product",
     };
 
-    const settingName = routeTitles[location.pathname] || "Admin Panel";
+    const isProductDetailPage = () => {
+        return /^\/admin\/products\/\d+$/.test(location.pathname);
+    };
 
+    const getSettingName = () => {
+        if (isProductDetailPage()) {
+            return "Product Details";
+        }
+        return routeTitles[location.pathname] || "Admin Panel";
+    };
 
+    const settingName = getSettingName();
 
-    //need to add logic for subroutes in product management -> add product 
+    // Check if we're in any Product Management related page
+    const isProductManagementSection = 
+        settingName === 'Product Management' || 
+        settingName === 'View All Products' || 
+        settingName === 'Add New Product' || 
+        settingName === 'Product Details';
 
     return (
        <div className="header-container">
-        {settingName == 'Product Management' ? (
-            <div className= "header-group"> 
-            <h1 className="header-title">{settingName + "-"}</h1>
+        {isProductManagementSection ? (
+            <div className="header-group"> 
+                <button className="pm-subroute-button" onClick={() => navigate("/admin/productmanagement")}>
+                    <h1 className="header-title">Product Management -</h1>
+                </button>
                 {Object.entries(subRouteTitlesPM).map(([path, title]: [string, string]) => (
                     <Button
                         key={path} 
@@ -50,20 +60,10 @@ const Header= () => {
                         {title}
                     </Button>
                 ))}
-                {/* <Button
-                    variant="outline"
-                    size="sm"
-                    radius="md"
-                    className="add-product-button"
-                    onClick={() => navigate("/admin/all-products")}
-                >
-                    {subRouteTitlesPM[location.pathname] || "View All Products"}
-                </Button> */}
             </div>
         ): (
             <h1 className="header-title">{settingName}</h1>
         )}
-        
        </div> 
     );
 }
