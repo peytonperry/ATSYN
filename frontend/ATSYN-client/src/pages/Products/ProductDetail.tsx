@@ -198,15 +198,20 @@ function ProductDetailPage() {
         </Grid.Col>
         <Grid.Col span={12}>
           <Paper p="md" radius="md" mt="xl">
-            <Title order={2}>{product?.reviewCount || 0} Reviews</Title>
+            <Group justify="space-between">
+              <Title order={2}>{product?.reviewCount || 0} Reviews</Title>
+              <Button>Write a review</Button>
+            </Group>
 
             {reviews.map((review) => (
               <div key={review.id}>
                 <Paper withBorder p="md" radius="md" mt="xl">
                   <Text fw={500}>{review.userName}</Text>
-                  <Text fw={500}>{review.title}</Text>
-                  <Rating value={review.rating} readOnly />
-                  <Text fw={500}>{review.comment}</Text>
+                  <Group>
+                    <Rating value={review.rating} readOnly />
+                    <Text fw={700}>{review.title}</Text>
+                  </Group>
+                  <Text>{review.comment}</Text>
                 </Paper>
               </div>
             ))}
