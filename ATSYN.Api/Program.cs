@@ -1,5 +1,6 @@
 using ATSYN.Data;
 using ATSYN.Data.Data;
+using ATSYN.Data.Data.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -27,7 +28,7 @@ builder.Services.AddCors(options =>
 
 
 
-builder.Services.AddIdentity<IdentityUser,  IdentityRole>(options =>
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
@@ -56,6 +57,8 @@ builder.Services.AddSwaggerGen(options =>
     options.SupportNonNullableReferenceTypes();
     options.DescribeAllParametersInCamelCase();
 });
+
+builder.Services.AddHttpClient<IEmailService, EmailService>();
 
 var app = builder.Build();
 

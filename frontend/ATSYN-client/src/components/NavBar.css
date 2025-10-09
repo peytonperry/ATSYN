@@ -32,30 +32,40 @@
 }
 
 .nav-button {
-  background-color: #8a00c4;
-  color: white;
+  background: none;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 14px;
+  color: white;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
-  min-height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
+  position: relative;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     sans-serif;
 }
 
 .nav-button:hover {
-  background-color: #7a00b0;
-  transform: translateY(-1px);
+  color: #b84ae6;
 }
 
 .nav-button:active {
   transform: translateY(0);
+}
+.nav-button::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(135deg, #8a00c4, #b84ae6);
+  transition: width 0.3s ease;
+}
+
+.nav-button:hover::after {
+  width: 80%;
 }
 
 .cart-button {
