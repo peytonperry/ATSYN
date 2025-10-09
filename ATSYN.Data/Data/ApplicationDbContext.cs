@@ -1,6 +1,7 @@
 using System.Reflection;
 using ATSYN.Api.Features;
 using ATSYN.Data.Data.Entities.Photo;
+using ATSYN.Data.Data.Entities.Products;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     public DbSet<ProductAttribute> ProductAttributes { get; set; }
     public DbSet<AttributeOption> AttributeOptions { get; set; }
     public DbSet<ProductAttributeValue> ProductAttributeValues { get; set; }
+    public DbSet<Review> Reviews { get; set; }
 
     public DbSet<Photo> Photos { get; set; }
 

@@ -26,6 +26,7 @@ import CreateProduct from "./pages/admin/adminpages/dashboardpages/pmcomponents/
 import ProductDetailAdminPage from "./pages/admin/adminpages/dashboardpages/pmcomponents/ProductDetailAdminPage.tsx";
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoutes.tsx";
+import WriteReview from "./pages/Write-Review-Page.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -59,6 +60,7 @@ function AppContent() {
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/write-review/:productId" element={<WriteReview/>}/>
 
         <Route
           path="/admin"

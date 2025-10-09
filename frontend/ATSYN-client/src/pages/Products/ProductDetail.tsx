@@ -12,12 +12,15 @@ import {
   Accordion,
   AccordionControl,
   AccordionPanel,
+  Rating,
+  Group,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../../components/Cart/CartContext";
 import CartToast from "../../components/Cart/CartToast";
+import { useAuth } from "../../components/Auth/AuthContext";
 
 interface Category {
   id: number;
@@ -40,6 +43,8 @@ interface Product {
   title: string;
   description: string;
   price: number;
+  reviewCount: number;
+  averageRating: number;
   categoryId: number;
   stockAmount: number;
   isVisible: boolean;
@@ -50,6 +55,15 @@ interface Product {
   photos: Photo[];
 }
 
+interface Review {
+  id: number;
+  productId: number;
+  rating: number;
+  title: string;
+  comment: string;
+  userName: string;
+}
+
 const shippingInfo =
   "We currently ship through USPS. Rates and tracking are updated directly from USPS. We will ship orders received within 1-2 business days of order receipt.";
 const returnInfo =
@@ -57,6 +71,7 @@ const returnInfo =
 
 function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [shippingOption, setShippingOption] = useState("shipping");
   const [showToast, setShowToast] = useState(false);
@@ -73,11 +88,30 @@ function ProductDetailPage() {
     }
   };
 
+  function ReviewButton() {
+    const navigate = useNavigate();
+    const { user } = useAuth();
+
+    const handleClick = () => {
+      if (user) {
+        navigate(`/write-review/${product?.id}`);
+      } else {
+        navigate("/login", { state: { from: `/write-review/${product?.id}` } });
+      }
+    };
+
+    return <Button onClick={handleClick}>Write a review</Button>;
+  }
+
   const fetchData = async () => {
     try {
-      const data: Product = await apiService.get(`/Product/${id}`);
-      console.log(data);
-      setProduct(data);
+      const productData: Product = await apiService.get(`/Product/${id}`);
+      const reviewData: Review[] = await apiService.get(
+        `/Review/product/${id}`
+      );
+
+      setProduct(productData);
+      setReviews(reviewData);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -113,6 +147,10 @@ function ProductDetailPage() {
         <Grid.Col span={{ base: 12, md: 4 }}>
           <Stack gap="md">
             <Title order={1}>{product?.title}</Title>
+            <Group>
+              <Rating value={product?.averageRating} fractions={2} readOnly />
+              <Text>{product?.reviewCount} Reviews</Text>
+            </Group>
             <Text size="md">{product?.description}</Text>
           </Stack>
         </Grid.Col>
@@ -146,7 +184,6 @@ function ProductDetailPage() {
                     <Radio value="pickup" label="Store Pickup" />
                   </Stack>
                 </Radio.Group>
-                {/* Quantity of items and shipping option will need to be in a form?*/}
               </div>
               <Button
                 className="btn"
@@ -172,6 +209,27 @@ function ProductDetailPage() {
               </AccordionPanel>
             </Accordion.Item>
           </Accordion>
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <Paper p="md" radius="md" mt="xl">
+            <Group justify="space-between">
+              <Title order={2}>{product?.reviewCount || 0} Reviews</Title>
+              <ReviewButton />
+            </Group>
+
+            {reviews.map((review) => (
+              <div key={review.id}>
+                <Paper withBorder p="md" radius="md" mt="xl">
+                  <Text fw={500}>{review.userName}</Text>
+                  <Group>
+                    <Rating value={review.rating} readOnly />
+                    <Text fw={700}>{review.title}</Text>
+                  </Group>
+                  <Text>{review.comment}</Text>
+                </Paper>
+              </div>
+            ))}
+          </Paper>
         </Grid.Col>
       </Grid>
       <CartToast
