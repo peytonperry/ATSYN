@@ -58,9 +58,6 @@ namespace ATSYN.Api.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized();
-
             var review = new Review
             {
                 ProductId = createReviewDto.ProductId,
@@ -74,7 +71,7 @@ namespace ATSYN.Api.Controllers
             _context.Reviews.Add(review);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(review);
         }
 
 
