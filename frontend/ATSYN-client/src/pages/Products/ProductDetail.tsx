@@ -14,8 +14,6 @@ import {
   AccordionPanel,
   Rating,
   Group,
-  TextInput,
-  Textarea,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
@@ -216,7 +214,7 @@ function ProductDetailPage() {
           <Paper p="md" radius="md" mt="xl">
             <Group justify="space-between">
               <Title order={2}>{product?.reviewCount || 0} Reviews</Title>
-              <ReviewButton/>
+              <ReviewButton />
             </Group>
 
             {reviews.map((review) => (
