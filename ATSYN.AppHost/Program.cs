@@ -5,6 +5,8 @@ var builder = DistributedApplication.CreateBuilder(args);
 var sqlServerPasswprd = builder
     .AddParameter("sql-server-password", "YourStrongP@assword", secret: true);
 
+var smtp2goApiKey = builder.AddParameter("smtp2go-api-key", secret: true);
+
 var sql = builder
     .AddSqlServer(name: "ATSYN-SqlServer", port: 1433, password: sqlServerPasswprd)
     .WithLifetime(ContainerLifetime.Persistent)
@@ -18,6 +20,9 @@ var migrations = builder.AddProject<Projects.AtsynApi_MigrationService>("migrati
 
 var api = builder.AddProject<Projects.ATSYN_Api>("api")
     .WithReference(db)
+    .WithEnvironment("Email__ApiKey", smtp2goApiKey)
+    //replace email with clients 
+    .WithEnvironment("Email__SenderAddress", "brennan.kimbrell@selu.edu")
     .WaitForCompletion(migrations)   
     .WithExternalHttpEndpoints()
     .WaitFor(db);
