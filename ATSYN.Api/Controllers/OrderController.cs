@@ -1,5 +1,6 @@
 using ATSYN.Api.Features;
 using ATSYN.Data.Data;
+using ATSYN.Data.Data.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -11,10 +12,12 @@ namespace ATSYN.Api.Controllers;
 public class OrdersController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly IEmailService _emailService;
 
-    public OrdersController(ApplicationDbContext context)
+    public OrdersController(ApplicationDbContext context, IEmailService emailService)
     {
         _context = context;
+        _emailService = emailService;
     }
 
     #region Order CRUD Operations
@@ -43,6 +46,7 @@ public class OrdersController : ControllerBase
                 CustomerName = o.CustomerName,
                 CustomerEmail = o.CustomerEmail,
                 ShippingAddress = o.ShippingAddress,
+                IsPickup = o.IsPickup,
                 BillingAddress = o.BillingAddress,
                 SubTotal = o.SubTotal,
                 TaxAmount = o.TaxAmount,
@@ -232,9 +236,10 @@ public class OrdersController : ControllerBase
             CustomerEmail = createOrderDto.CustomerEmail,
             ShippingAddress = createOrderDto.ShippingAddress,
             BillingAddress = createOrderDto.BillingAddress,
+            IsPickup = createOrderDto.IsPickup,
             SubTotal = subTotal,
             TaxAmount = taxAmount,
-            ShippingCost = createOrderDto.ShippingCost,
+            ShippingCost = createOrderDto.IsPickup ? 0 : createOrderDto.ShippingCost,
             TotalAmount = totalAmount,
             Status = OrderStatus.Pending,
             Notes = createOrderDto.Notes,
@@ -256,6 +261,14 @@ public class OrdersController : ControllerBase
         }
 
         await _context.SaveChangesAsync();
+
+        try
+        {
+            await _emailService.SendPurchaseReceipt(order.Id);
+        }catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to send recipt email: {ex.Message}");
+        }
 
         await AddStatusHistory(order.Id, OrderStatus.Pending, OrderStatus.Pending, "Order created", "System");
 

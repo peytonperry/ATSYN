@@ -1,5 +1,6 @@
 using ATSYN.Data;
 using ATSYN.Data.Data;
+using ATSYN.Data.Data.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -56,6 +57,8 @@ builder.Services.AddSwaggerGen(options =>
     options.SupportNonNullableReferenceTypes();
     options.DescribeAllParametersInCamelCase();
 });
+
+builder.Services.AddHttpClient<IEmailService, EmailService>();
 
 var app = builder.Build();
 

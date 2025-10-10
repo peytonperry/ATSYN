@@ -22,6 +22,7 @@ public class Order
     public string CustomerName { get; set; } = string.Empty;
     public string CustomerEmail { get; set; } = string.Empty;
     public string ShippingAddress { get; set; } = string.Empty;
+    public bool IsPickup { get; set; }
     public string BillingAddress { get; set; } = string.Empty;
     public decimal SubTotal { get; set; }
     public decimal TaxAmount { get; set; }
@@ -44,6 +45,7 @@ public class OrderDto
     public string CustomerEmail { get; set; } = string.Empty;
     public string ShippingAddress { get; set; } = string.Empty;
     public string BillingAddress { get; set; } = string.Empty;
+    public bool IsPickup { get; set; } = false;
     public decimal SubTotal { get; set; }
     public decimal TaxAmount { get; set; }
     public decimal ShippingCost { get; set; }
@@ -76,8 +78,10 @@ public class CreateOrderDto
     [EmailAddress]
     public string CustomerEmail { get; set; } = string.Empty;
     
-    [Required]
+    
     public string ShippingAddress { get; set; } = string.Empty;
+
+    public bool IsPickup { get; set; } = false;
     
     [Required]
     public string BillingAddress { get; set; } = string.Empty;
