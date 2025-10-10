@@ -21,6 +21,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../../components/Cart/CartContext";
 import CartToast from "../../components/Cart/CartToast";
 import { useAuth } from "../../components/Auth/AuthContext";
+import WriteReviewModal from "../Write-Review-Modal";
 
 interface Category {
   id: number;
@@ -77,8 +78,10 @@ function ProductDetailPage() {
   const [showToast, setShowToast] = useState(false);
   const [toastProduct, setToastProduct] = useState("");
   const [quantity, setQuantity] = useState<string | null>("1");
+  const [reviewModalOpened, setReviewModalOpened] = useState(false);
   const { id } = useParams();
   const { addToCart } = useCart();
+  const { user } = useAuth();
 
   const handleAddToCart = () => {
     if (product && quantity) {
@@ -214,7 +217,17 @@ function ProductDetailPage() {
           <Paper p="md" radius="md" mt="xl">
             <Group justify="space-between">
               <Title order={2}>{product?.reviewCount || 0} Reviews</Title>
-              <ReviewButton />
+
+              {user && (
+                <Button onClick={() => setReviewModalOpened(true)}>
+                  Write a Review
+                </Button>
+              )}
+              <WriteReviewModal
+                productId={id ? Number(id) : undefined}
+                opened={reviewModalOpened}
+                onClose={() => setReviewModalOpened(false)}
+              />
             </Group>
 
             {reviews.map((review) => (
