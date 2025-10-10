@@ -8,12 +8,11 @@ const Header= () => {
 
     const routeTitles: Record<string, string> = {
         "/admin": "Dashboard",
-        "/admin/customers": "Customers",
         "/admin/reports": "Reports",
-        "/admin/settings": "Settings",
         "/admin/productmanagement": "Product Management",
         "/admin/all-products": "View All Products",
         "/admin/create-product": "Add New Product",
+        "/admin/order-management": "Order Management",
     };
     
     const subRouteTitlesPM: Record<string, string> = {
