@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./AllProducts.css";
-import { apiService } from "../../../../../config/api";
-import ProductDetailAdminPage from "./ProductDetailAdminPage";
+import { apiService } from "../../../config/api";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -54,6 +53,7 @@ const AllProducts = () => {
     try {
       const data: Product[] = await apiService.get("/Product");
       setProducts(data);
+      console.log(data);
       const sorted = data.sort((a, b) =>
         a.title.localeCompare(b.title, "en", { sensitivity: "base" })
       );

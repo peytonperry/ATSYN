@@ -4,17 +4,17 @@ import "./Sidebar.css";
 const Sidebar = () =>{
 
     const navItems = [
-        { name: "Dashboard", path: "/admin" },
-        { name: "Customers", path: "/admin/customers" },
+        {name: "Profile", path: "/admin"},
+        { name: "Product Management", path: "/admin/productmanagement" },
+        { name: "Order Management", path: "/admin/order-management" },
         { name: "Reports", path: "/admin/reports" },
-        { name: "Settings", path: "/admin/settings" },
     ]
 
 
 
     return (
       <aside className="sidebar">
-      <h2 className="sidebar-title">Admin Portal</h2>
+      <h2 className="sidebar-title">Dashboard</h2>
       <nav>
         <ul className="sidebar-nav">
           {navItems.map((item) => (

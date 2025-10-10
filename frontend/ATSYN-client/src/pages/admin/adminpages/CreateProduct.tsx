@@ -16,7 +16,7 @@ import {
   Select,
 } from "@mantine/core";
 import { IconUpload, IconCheck, IconAlertCircle } from "@tabler/icons-react";
-import { apiService } from "../../../../../config/api";
+import { apiService } from "../../../config/api";
 import { CategorySelect } from "./CategorySelect";
 
 interface Category {
@@ -52,6 +52,7 @@ const CreateProduct: React.FC = () => {
     categoryId: 0,
     brandId: null as number | null,
     stockAmount: 0,
+    inStock: true,
     isVisible: true,
     shippingTypeId: 0,
     imageUrl: "",
@@ -145,6 +146,7 @@ const CreateProduct: React.FC = () => {
         categoryId: 0,
         brandId: null,
         stockAmount: 0,
+        inStock: true,
         isVisible: true,
         shippingTypeId: 0,
         imageUrl: "",
@@ -158,6 +160,8 @@ const CreateProduct: React.FC = () => {
       setLoading(false);
     }
   };
+
+  {console.log(formData.stockAmount, formData.inStock)}
 
   return (
     <Container size="md" py="xl">
@@ -288,7 +292,16 @@ const CreateProduct: React.FC = () => {
               }
             />
 
-            <Checkbox label="In Stock" checked={formData.stockAmount > 0} />
+            <Checkbox
+              label="In Stock"
+              checked={formData.stockAmount > 0}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  stockAmount: e.currentTarget.checked ? 1 : 0,
+                })
+              }
+            />
 
             {successMsg && (
               <Alert
