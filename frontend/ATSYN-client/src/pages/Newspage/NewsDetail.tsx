@@ -46,7 +46,7 @@ function NewsDetail() {
   }
 
   if (!news) {
-    return <Container>News post not found</Container>;
+    return <Container>Blog post not found</Container>;
   }
 
   return (
@@ -54,10 +54,10 @@ function NewsDetail() {
       <Stack gap="lg">
         <Button 
           variant="subtle" 
-          onClick={() => navigate("/news")}
+          onClick={() => navigate("/blog")}
           style={{ alignSelf: "flex-start" }}
         >
-          ← Back to News
+          ← Back to Blogs
         </Button>
 
         <Paper shadow="sm" p="xl" withBorder>

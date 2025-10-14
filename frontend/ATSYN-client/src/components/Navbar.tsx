@@ -30,8 +30,8 @@ function NavBar() {
         <button className="nav-button" onClick={() => navigate("/contact")}>
           Contact Us
         </button>
-        <button className="nav-button" onClick={() => navigate("/news")}>
-          News
+        <button className="nav-button" onClick={() => navigate("/blog")}>
+          Blog
         </button>
         {isAuthenticated && (
           <button className="nav-button" onClick={() => navigate("/orders")}>

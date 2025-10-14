@@ -61,8 +61,8 @@ function AppContent() {
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/news" element={<News />} />
-        <Route path="/news/:id" element={<NewsDetail />} />
+        <Route path="/blog" element={<News />} />
+        <Route path="/blog/:id" element={<NewsDetail />} />
         
 
         <Route

@@ -29,7 +29,7 @@ function News() {
 
   const fetchNews = async () => {
     try {
-      const data: NewsPost[] = await apiService.get("/News");
+      const data: NewsPost[] = await apiService.get("/news");
       console.log(data);
       setNews(data);
       setLoading(false);
@@ -65,7 +65,7 @@ function News() {
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
               }}
-              onClick={() => navigate(`/news/${newsPost.id}`)}
+              onClick={() => navigate(`/blog/${newsPost.id}`)}
             >
               <Stack gap="xs">
                 <Group justify="space-between" align="flex-start">
