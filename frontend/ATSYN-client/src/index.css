@@ -653,7 +653,11 @@ a:hover {
   flex-wrap: wrap;
   margin-top: var(--space-lg);
 }
-
+.hero-title {
+  background: none !important;
+  -webkit-text-fill-color: white !important;
+  color: white !important;
+}
 @keyframes fadeInUp {
   from {
     opacity: 0;
