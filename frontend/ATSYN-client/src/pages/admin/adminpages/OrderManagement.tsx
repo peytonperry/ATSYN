@@ -39,12 +39,12 @@ interface Product {
 
 interface OrderItem {
     id: number;
-    ProductId: number;
-    ProductName: string;
-    UnitPrice: number;
-    Quantity: number;
-    TotalPrice: number;
-    Product: Product;
+    productId: number;
+    productName: string;
+    unitPrice: number;
+    quantity: number;
+    totalPrice: number;
+    product: Product;
 }
 
 
@@ -157,6 +157,7 @@ function OrderManagement() {
                 <th>Order ID</th>
                 <th>Customer</th>
                 <th>Email</th>
+                <th>Product</th>
                 <th>Total</th>
                 <th>Status</th>
                 <th>Date</th>
@@ -187,6 +188,13 @@ function OrderManagement() {
                       {order.customerEmail}
                       </Text>
                       </td>
+                    <td>
+                     {order.orderItems.map((item) =>(
+                      <Text fw={500}>
+                        {item.productName}
+                      </Text>
+                     ))}
+                    </td>
                     <td>
                       <Text fw={500}>
                       ${order.totalAmount}
