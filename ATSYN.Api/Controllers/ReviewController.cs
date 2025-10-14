@@ -21,7 +21,6 @@ namespace ATSYN.Api.Controllers
 
         //endpoint to get the reviews made by the logged in user
         [HttpGet("my-reviews")]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviewsLoggedIn()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -39,8 +38,7 @@ namespace ATSYN.Api.Controllers
                     Title = r.Title,
                     Comment = r.Comment,
                     CreatedAt = r.CreatedAt,
-                    UserName = r.User.UserName,
-                    ProductTitle = r.Product.Title
+                    UserName = r.User.UserName
                 })
                 .ToListAsync();
 
@@ -53,7 +51,6 @@ namespace ATSYN.Api.Controllers
 
         //endpoint for creating a review (user must be logged in)
         [HttpPost("create-review")]
-        [Authorize]
         public async Task<IActionResult> CreateReview(CreateReviewDto createReviewDto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -79,7 +76,6 @@ namespace ATSYN.Api.Controllers
         //endpoint for deleting a review (this might be a bit challenging)
         //two types of deletions: user can only delete their own reviews, admin can delete any review
         [HttpDelete("delete-review")]
-        [Authorize]
         public async Task<IActionResult> DeleteReview(int reviewId)
         {
             var review = await _context.Reviews.FindAsync(reviewId);
@@ -120,8 +116,7 @@ namespace ATSYN.Api.Controllers
                     Title = r.Title,
                     Comment = r.Comment,
                     CreatedAt = r.CreatedAt,
-                    UserName = r.User.UserName,
-                    ProductTitle = r.Product.Title
+                    UserName = r.User.UserName
                 })
                 .ToListAsync();
             return Ok(reviews);
@@ -142,8 +137,7 @@ namespace ATSYN.Api.Controllers
                       Title = r.Title,
                       Comment = r.Comment,
                       CreatedAt = r.CreatedAt,
-                      UserName = r.User.UserName,
-                      ProductTitle = r.Product.Title
+                      UserName = r.User.UserName
                   })
                   .ToListAsync();
             if (productReviews == null || productReviews.Count == 0)

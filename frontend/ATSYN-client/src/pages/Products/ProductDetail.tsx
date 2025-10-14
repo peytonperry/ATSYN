@@ -54,6 +54,7 @@ interface Product {
   imageUrl: string;
   category: Category;
   photos: Photo[];
+  reviews: Review[];
 }
 
 interface Review {
@@ -72,7 +73,6 @@ const returnInfo =
 
 function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
-  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [shippingOption, setShippingOption] = useState("shipping");
   const [showToast, setShowToast] = useState(false);
@@ -109,12 +109,8 @@ function ProductDetailPage() {
   const fetchData = async () => {
     try {
       const productData: Product = await apiService.get(`/Product/${id}`);
-      const reviewData: Review[] = await apiService.get(
-        `/Review/product/${id}`
-      );
 
       setProduct(productData);
-      setReviews(reviewData);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -230,7 +226,7 @@ function ProductDetailPage() {
               />
             </Group>
 
-            {reviews.map((review) => (
+            {product?.reviews.map((review) => (
               <div key={review.id}>
                 <Paper withBorder p="md" radius="md" mt="xl">
                   <Text fw={500}>{review.userName}</Text>

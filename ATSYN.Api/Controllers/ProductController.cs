@@ -27,6 +27,7 @@ public class ProductController : ControllerBase
             .Include(p => p.Category)
             .Include(p => p.Brand)
             .Include(p => p.Photos)
+            .Include(p => p.Reviews)
             .Select(p => new ProductDto
             {
                 Id = p.Id,
@@ -67,7 +68,18 @@ public class ProductController : ControllerBase
                         AltText = ph.AltText,
                         ImageUrl = $"/api/Photo/{ph.Id}"
                     })
-                    .ToList()
+                    .ToList(),
+                Reviews = p.Reviews.Select(r => new ReviewDto
+                {
+                    Id = r.Id,
+                    ProductId = r.ProductId,
+                    UserId = r.UserId,
+                    UserName = r.User.UserName,
+                    Rating = r.Rating,
+                    Title = r.Title,
+                    Comment = r.Comment,
+                    CreatedAt = r.CreatedAt
+                }).ToList()
             })
             .ToListAsync();
 
@@ -87,6 +99,7 @@ public class ProductController : ControllerBase
             .Include(p => p.Category)
             .Include(p => p.Brand)
             .Include(p => p.Photos)
+            .Include(p => p.Reviews)
             .Where(p => p.CategoryId == categoryId)
             .Select(p => new ProductDto
             {
@@ -128,7 +141,18 @@ public class ProductController : ControllerBase
                         AltText = ph.AltText,
                         ImageUrl = $"/api/Photo/{ph.Id}"
                     })
-                    .ToList()
+                    .ToList(),
+                Reviews = p.Reviews.Select(r => new ReviewDto
+                {
+                    Id = r.Id,
+                    ProductId = r.ProductId,
+                    UserId = r.UserId,
+                    UserName = r.User.UserName,
+                    Rating = r.Rating,
+                    Title = r.Title,
+                    Comment = r.Comment,
+                    CreatedAt = r.CreatedAt
+                }).ToList()
             })
             .ToListAsync();
 
@@ -190,7 +214,18 @@ public class ProductController : ControllerBase
                     AltText = ph.AltText,
                     ImageUrl = $"/api/Photo/{ph.Id}"
                 })
-                .ToList()
+                .ToList(),
+            Reviews = product.Reviews.Select(r => new ReviewDto
+            {
+                Id = r.Id,
+                ProductId = r.ProductId,
+                UserId = r.UserId,
+                UserName = r.User?.UserName,
+                Rating = r.Rating,
+                Title = r.Title,
+                Comment = r.Comment,
+                CreatedAt = r.CreatedAt
+            }).ToList()
         };
 
         return Ok(productDto);
@@ -281,7 +316,19 @@ public class ProductController : ControllerBase
                     AltText = ph.AltText,
                     ImageUrl = $"/api/Photo/{ph.Id}"
                 })
-                .ToList()
+                .ToList(),
+            Reviews = product.Reviews.Select(r => new ReviewDto
+            {
+                Id = r.Id,
+                ProductId = r.ProductId,
+                UserId = r.UserId,
+                UserName = r.User.UserName,
+                Rating = r.Rating,
+                Title = r.Title,
+                Comment = r.Comment,
+                CreatedAt = r.CreatedAt
+            }).ToList()
+
         };
 
         return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, responseDto);

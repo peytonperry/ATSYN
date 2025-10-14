@@ -49,6 +49,8 @@ public class ProductDto
     public BrandDto? Brand { get; init; }
     public List<ProductAttributeValueDto> AttributeValues { get; init; } = new();
     public List<PhotoDto> Photos { get; init; } = new();
+    public List<ReviewDto> Reviews { get; set; } = new();
+
 }
 
 
