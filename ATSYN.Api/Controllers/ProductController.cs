@@ -28,6 +28,7 @@ public class ProductController : ControllerBase
             .Include(p => p.Brand)
             .Include(p => p.Photos)
             .Include(p => p.Reviews)
+            .ThenInclude(p => p.User)
             .Select(p => new ProductDto
             {
                 Id = p.Id,
@@ -100,6 +101,7 @@ public class ProductController : ControllerBase
             .Include(p => p.Brand)
             .Include(p => p.Photos)
             .Include(p => p.Reviews)
+            .ThenInclude(p => p.User)
             .Where(p => p.CategoryId == categoryId)
             .Select(p => new ProductDto
             {
@@ -167,6 +169,7 @@ public class ProductController : ControllerBase
             .Include(p => p.Brand)
             .Include(p => p.Photos)
             .Include(p => p.Reviews)
+            .ThenInclude(p => p.User)
             .FirstOrDefaultAsync(p => p.Id == id);
 
         if (product == null)

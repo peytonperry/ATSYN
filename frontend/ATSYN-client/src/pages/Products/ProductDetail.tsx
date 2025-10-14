@@ -237,6 +237,7 @@ function ProductDetailPage() {
                   <Text>{review.comment}</Text>
                 </Paper>
               </div>
+              
             ))}
           </Paper>
         </Grid.Col>
