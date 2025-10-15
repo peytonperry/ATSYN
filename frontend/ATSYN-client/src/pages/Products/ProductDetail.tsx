@@ -12,12 +12,16 @@ import {
   Accordion,
   AccordionControl,
   AccordionPanel,
+  Rating,
+  Group,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../../components/Cart/CartContext";
 import CartToast from "../../components/Cart/CartToast";
+import { useAuth } from "../../components/Auth/AuthContext";
+import WriteReviewModal from "../Write-Review-Modal";
 
 interface Category {
   id: number;
@@ -40,6 +44,8 @@ interface Product {
   title: string;
   description: string;
   price: number;
+  reviewCount: number;
+  averageRating: number;
   categoryId: number;
   stockAmount: number;
   isVisible: boolean;
@@ -48,6 +54,16 @@ interface Product {
   imageUrl: string;
   category: Category;
   photos: Photo[];
+  reviews: Review[];
+}
+
+interface Review {
+  id: number;
+  productId: number;
+  rating: number;
+  title: string;
+  comment: string;
+  userName: string;
 }
 
 const shippingInfo =
@@ -62,8 +78,10 @@ function ProductDetailPage() {
   const [showToast, setShowToast] = useState(false);
   const [toastProduct, setToastProduct] = useState("");
   const [quantity, setQuantity] = useState<string | null>("1");
+  const [reviewModalOpened, setReviewModalOpened] = useState(false);
   const { id } = useParams();
   const { addToCart } = useCart();
+  const { user } = useAuth();
 
   const handleAddToCart = () => {
     if (product && quantity) {
@@ -73,11 +91,12 @@ function ProductDetailPage() {
     }
   };
 
+
   const fetchData = async () => {
     try {
-      const data: Product = await apiService.get(`/Product/${id}`);
-      console.log(data);
-      setProduct(data);
+      const productData: Product = await apiService.get(`/Product/${id}`);
+
+      setProduct(productData);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -113,6 +132,10 @@ function ProductDetailPage() {
         <Grid.Col span={{ base: 12, md: 4 }}>
           <Stack gap="md">
             <Title order={1}>{product?.title}</Title>
+            <Group>
+              <Rating value={product?.averageRating} fractions={2} readOnly />
+              <Text>{product?.reviewCount} Reviews</Text>
+            </Group>
             <Text size="md">{product?.description}</Text>
           </Stack>
         </Grid.Col>
@@ -146,7 +169,6 @@ function ProductDetailPage() {
                     <Radio value="pickup" label="Store Pickup" />
                   </Stack>
                 </Radio.Group>
-                {/* Quantity of items and shipping option will need to be in a form?*/}
               </div>
               <Button
                 className="btn"
@@ -172,6 +194,38 @@ function ProductDetailPage() {
               </AccordionPanel>
             </Accordion.Item>
           </Accordion>
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <Paper p="md" radius="md" mt="xl">
+            <Group justify="space-between">
+              <Title order={2}>{product?.reviewCount || 0} Reviews</Title>
+
+              {user && (
+                <Button onClick={() => setReviewModalOpened(true)}>
+                  Write a Review
+                </Button>
+              )}
+              <WriteReviewModal
+                productId={id ? Number(id) : undefined}
+                opened={reviewModalOpened}
+                onClose={() => setReviewModalOpened(false)}
+              />
+            </Group>
+
+            {product?.reviews.map((review) => (
+              <div key={review.id}>
+                <Paper withBorder p="md" radius="md" mt="xl">
+                  <Text fw={500}>{review.userName}</Text>
+                  <Group>
+                    <Rating value={review.rating} readOnly />
+                    <Text fw={700}>{review.title}</Text>
+                  </Group>
+                  <Text>{review.comment}</Text>
+                </Paper>
+              </div>
+              
+            ))}
+          </Paper>
         </Grid.Col>
       </Grid>
       <CartToast

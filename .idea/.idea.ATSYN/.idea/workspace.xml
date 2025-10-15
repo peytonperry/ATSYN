@@ -14,7 +14,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f1b6c2bb-3028-4c33-aefb-425564ed5242" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ATSYN.Api/Controllers/ReviewController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Api/Controllers/ReviewController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Products/ProductDetail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Products/ProductDetail.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,25 +31,25 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "peytonperry"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;peytonperry&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/peytonperry/ATSYN.git",
-    "accountId": "3a29b9b3-b385-4a15-967d-5ab0eeb62387"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/peytonperry/ATSYN.git&quot;,
+    &quot;accountId&quot;: &quot;3a29b9b3-b385-4a15-967d-5ab0eeb62387&quot;
   }
-}]]></component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="33qqq6jE2UhXKoKIrvceSKfNPmv" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -58,7 +62,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "feat/homepage-products",
+    "git-widget-placeholder": "product-review",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",

@@ -28,6 +28,7 @@ import CreateProduct from "./pages/admin/adminpages/dashboardpages/pmcomponents/
 import ProductDetailAdminPage from "./pages/admin/adminpages/dashboardpages/pmcomponents/ProductDetailAdminPage.tsx";
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoutes.tsx";
+import WriteReview from "./pages/Write-Review-Modal.tsx";
 
 function AppContent() {
   const location = useLocation();
