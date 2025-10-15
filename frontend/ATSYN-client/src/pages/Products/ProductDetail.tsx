@@ -14,6 +14,8 @@ import {
   AccordionPanel,
   Rating,
   Group,
+  Center,
+  Loader,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
@@ -91,11 +93,9 @@ function ProductDetailPage() {
     }
   };
 
-
   const fetchData = async () => {
     try {
       const productData: Product = await apiService.get(`/Product/${id}`);
-
       setProduct(productData);
       setLoading(false);
     } catch (error) {
@@ -120,10 +120,24 @@ function ProductDetailPage() {
     fetchData();
   }, [id]);
 
+  if (loading) {
+    return (
+      <Container size="xl" py="xl">
+        <Center h={400}>
+          <Stack align="center" gap="md">
+            <Title order={2}>Loading Product...</Title>
+            <Loader size="lg" />
+          </Stack>
+        </Center>
+      </Container>
+    );
+  }
+
   return (
-    <Container size="lg">
+    <Container size="lg" py="xl">
       <Grid>
         {/* Left */}
+
         <Grid.Col span={{ base: 12, md: 5 }}>
           <Image src={imageUrl} radius="sm" fit="contain" h={400} />
         </Grid.Col>
@@ -223,7 +237,6 @@ function ProductDetailPage() {
                   <Text>{review.comment}</Text>
                 </Paper>
               </div>
-              
             ))}
           </Paper>
         </Grid.Col>
