@@ -16,7 +16,6 @@ import CartPage from "./pages/Cartpage/CartPage.tsx";
 import ProductDetailPage from "./pages/Products/ProductDetail.tsx";
 import { MantineProvider } from "@mantine/core";
 
-
 // Admin Routes
 import AppShell from "./pages/admin/admincomponents/Appshell.tsx";
 import Dashboard from "./pages/admin/adminpages/Dashboard.tsx";

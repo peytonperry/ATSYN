@@ -51,6 +51,7 @@ namespace ATSYN.Api.Controllers
 
         //endpoint for creating a review (user must be logged in)
         [HttpPost("create-review")]
+        [Authorize]
         public async Task<IActionResult> CreateReview(CreateReviewDto createReviewDto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

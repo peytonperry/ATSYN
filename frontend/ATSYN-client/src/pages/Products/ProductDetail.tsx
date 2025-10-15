@@ -91,20 +91,6 @@ function ProductDetailPage() {
     }
   };
 
-  function ReviewButton() {
-    const navigate = useNavigate();
-    const { user } = useAuth();
-
-    const handleClick = () => {
-      if (user) {
-        navigate(`/write-review/${product?.id}`);
-      } else {
-        navigate("/login", { state: { from: `/write-review/${product?.id}` } });
-      }
-    };
-
-    return <Button onClick={handleClick}>Write a review</Button>;
-  }
 
   const fetchData = async () => {
     try {
