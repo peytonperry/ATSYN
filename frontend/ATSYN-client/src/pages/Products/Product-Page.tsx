@@ -96,7 +96,6 @@ export default function ProductPage() {
   const fetchData = async () => {
     try {
       const data: Product[] = await apiService.get("/Product");
-      console.log(data);
       setProducts(data);
 
       const uniqueCategories: Category[] = Array.from(
