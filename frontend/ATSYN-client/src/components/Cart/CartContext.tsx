@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useReducer, useEffect } from "react";
+import React, { createContext, useContext, useReducer, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+
 interface Product {
   id: number;
   title: string;
@@ -25,9 +26,7 @@ type CartAction =
   | { type: 'ADD_TO_CART'; payload: {product: Product; quantity: number} }
   | { type: 'REMOVE_FROM_CART'; payload: number }
   | { type: 'UPDATE_QUANTITY'; payload: { id: number; quantity: number } }
-  | { type: 'CLEAR_CART' }
-  | { type: 'LOAD_CART'; payload: CartItem[] };
-
+  | { type: 'CLEAR_CART' };
 
 interface CartContextType {
   state: CartState;
@@ -39,6 +38,8 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const CART_STORAGE_KEY = "atsyn-cart";
+
 const calculateTotals = (items: CartItem[]) => {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
@@ -48,24 +49,43 @@ const calculateTotals = (items: CartItem[]) => {
   return { totalItems, totalPrice };
 };
 
+const loadInitialCart = (): CartState => {
+  try {
+    const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+    if (savedCart) {
+      const items = JSON.parse(savedCart);
+      console.log('Loading cart from localStorage:', items);
+      const totals = calculateTotals(items);
+      return { items, ...totals };
+    }
+  } catch (error) {
+    console.error("Error loading cart from localStorage:", error);
+  }
+  return { items: [], totalItems: 0, totalPrice: 0 };
+};
+
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_TO_CART': {
       const {product, quantity = 1} = action.payload;
+      console.log('ADD_TO_CART - Current state:', state.items);
+      console.log('ADD_TO_CART - Adding product:', product, 'Quantity:', quantity);
+      
       const existingItem = state.items.find(item => item.product.id === product.id);
+      console.log('Existing item found:', existingItem);
       
       let newItems: CartItem[];
       if (existingItem) {
         newItems = state.items.map(item =>
           item.product.id === product.id
             ? { ...item, quantity: item.quantity + quantity }
-
             : item
         );
       } else {
         newItems = [...state.items, { product, quantity}];
       }
 
+      console.log('ADD_TO_CART - New items:', newItems);
       const totals = calculateTotals(newItems);
       return { items: newItems, ...totals };
     }
@@ -95,52 +115,34 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       return { items: [], totalItems: 0, totalPrice: 0 };
     }
 
-    case "LOAD_CART": {
-      const totals = calculateTotals(action.payload);
-      return { items: action.payload, ...totals };
-    }
-
     default:
       return state;
   }
 };
 
-const CART_STORAGE_KEY = "atsyn-cart";
-
 export const CartProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [state, dispatch] = useReducer(cartReducer, {
-    items: [],
-    totalItems: 0,
-    totalPrice: 0,
-  });
+  const [state, dispatch] = useReducer(cartReducer, undefined, loadInitialCart);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load cart from localStorage on mount
   useEffect(() => {
-    try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-      if (savedCart) {
-        const cartItems = JSON.parse(savedCart);
-        dispatch({ type: "LOAD_CART", payload: cartItems });
-      }
-    } catch (error) {
-      console.error("Error loading cart from localStorage:", error);
-    }
+    setIsInitialized(true);
   }, []);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
+    if (!isInitialized) return;
+    
+    console.log('Saving cart to localStorage:', state.items);
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state.items));
     } catch (error) {
       console.error("Error saving cart to localStorage:", error);
     }
-  }, [state.items]);
+  }, [state.items, isInitialized]);
 
   const addToCart = (product: Product, quantity: number = 1) => {
     dispatch({ type: 'ADD_TO_CART', payload: {product, quantity} });
-
   };
 
   const removeFromCart = (productId: number) => {
