@@ -6,6 +6,8 @@ import {
 } from "react-router-dom";
 import HomePage from "./pages/Homepage/Homepage.tsx";
 import AuthPage from "./pages/Login-Signup-page.tsx";
+import News from "./pages/Newspage/News.tsx";
+import NewsDetail from "./pages/Newspage/NewsDetail.tsx";
 import ProductPage from "./pages/Products/Product-Page.tsx";
 import NavBar from "./components/Navbar.tsx";
 import ContactPage from "./pages/Contact-page.tsx";
@@ -59,6 +61,9 @@ function AppContent() {
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/blog" element={<News />} />
+        <Route path="/blog/:id" element={<NewsDetail />} />
+        
 
         <Route
           path="/admin"
