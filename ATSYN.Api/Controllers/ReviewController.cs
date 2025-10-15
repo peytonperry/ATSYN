@@ -87,7 +87,7 @@ namespace ATSYN.Api.Controllers
             var isAdmin = User.IsInRole("Admin");
 
 
-            if (review.UserId != userId && isAdmin)
+            if (review.UserId != userId && !isAdmin)
             {
                 return Forbid();
             }
