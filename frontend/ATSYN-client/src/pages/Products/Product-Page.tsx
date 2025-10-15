@@ -16,8 +16,14 @@ import {
   Center,
   Grid,
   Paper,
+  RangeSlider,
 } from "@mantine/core";
-import { IconSearch, IconX } from "@tabler/icons-react";
+import {
+  IconHeart,
+  IconHeartBroken,
+  IconSearch,
+  IconX,
+} from "@tabler/icons-react";
 import { apiService } from "../../config/api";
 import { useCart } from "../../components/Cart/CartContext";
 import CartToast from "../../components/Cart/CartToast";
@@ -65,7 +71,11 @@ export default function ProductPage() {
   const hasFetched = useRef(false);
   const [showToast, setShowToast] = useState(false);
   const [toastProduct, setToastProduct] = useState("");
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(100);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
 
+  //setting categories based on backend
   useEffect(() => {
     const categoryFromUrl = searchParams.get("category");
     if (categoryFromUrl) {
@@ -73,6 +83,7 @@ export default function ProductPage() {
     }
   }, [searchParams]);
 
+  //filtering products
   useEffect(() => {
     let filtered = products;
 
@@ -90,9 +101,15 @@ export default function ProductPage() {
       );
     }
 
-    setFilteredProducts(filtered);
-  }, [products, searchTerm, selectedCategory]);
+    filtered = filtered.filter(
+      (product) =>
+        product.price >= priceRange[0] && product.price <= priceRange[1]
+    );
 
+    setFilteredProducts(filtered);
+  }, [products, searchTerm, selectedCategory, priceRange]);
+
+  //get data from backend
   const fetchData = async () => {
     try {
       const data: Product[] = await apiService.get("/Product");
@@ -114,19 +131,31 @@ export default function ProductPage() {
       console.error("API call failed:", error);
     }
   };
-
-  const clearFilters = () => {
-    setSearchTerm("");
-    setSelectedCategory(null);
-    setSearchParams({});
-  };
-
   useEffect(() => {
     if (!hasFetched.current) {
       fetchData();
       hasFetched.current = true;
     }
   }, []);
+
+  //setting price range for more filtering
+  useEffect(() => {
+    if (products.length > 0) {
+      const prices = products.map((p) => p.price);
+      const min = Math.floor(Math.min(...prices));
+      const max = Math.ceil(Math.max(...prices));
+      setMinPrice(min);
+      setMaxPrice(max);
+      setPriceRange([min, max]);
+    }
+  }, [products]);
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory(null);
+    setPriceRange([minPrice, maxPrice]);
+    setSearchParams({});
+  };
 
   const ProductCard = ({ product }: { product: Product }) => {
     const { addToCart } = useCart();
@@ -273,8 +302,13 @@ export default function ProductPage() {
               borderColor: "rgba(255,255,255,0.1)",
             }}
           >
-            <Group justify="space-between" align="center" gap="md" wrap="wrap">
-              <Group gap="sm" grow>
+            <Group
+              justify="space-between"
+              align="flex-start"
+              gap="md"
+              wrap="wrap"
+            >
+              <Group gap="sm" style={{ flex: 1 }}>
                 <TextInput
                   placeholder="Search products..."
                   value={searchTerm}
@@ -296,9 +330,32 @@ export default function ProductPage() {
                   size="md"
                   w={{ base: "100%", sm: 200 }}
                 />
+
+                <div style={{ minWidth: 250, maxWidth: 300 }}>
+                  <Text size="xs" mb={4} c="dimmed">
+                    Price: ${priceRange[0]} - ${priceRange[1]}
+                  </Text>
+                  <RangeSlider
+                    value={priceRange}
+                    onChange={setPriceRange}
+                    min={minPrice}
+                    max={maxPrice}
+                    step={1}
+                    minRange={0}
+                    size="sm"
+                    styles={{
+                      thumb: { borderWidth: 1, padding: 2 },
+                      track: { height: 4 },
+                      bar: { height: 4 },
+                    }}
+                  />
+                </div>
               </Group>
 
-              {(searchTerm || selectedCategory) && (
+              {(searchTerm ||
+                selectedCategory ||
+                priceRange[0] !== minPrice ||
+                priceRange[1] !== maxPrice) && (
                 <Button
                   variant="light"
                   color="purple"
