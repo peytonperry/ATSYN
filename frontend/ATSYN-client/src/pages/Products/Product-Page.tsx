@@ -96,11 +96,13 @@ export default function ProductPage() {
   const fetchData = async () => {
     try {
       const data: Product[] = await apiService.get("/Product");
-      setProducts(data);
+
+      const visibleProducts = data.filter((product) => product.isVisible);
+      setProducts(visibleProducts);
 
       const uniqueCategories: Category[] = Array.from(
         new Map(
-          data.map((product: Product) => [
+          visibleProducts.map((product: Product) => [
             product.category.id,
             product.category,
           ])
@@ -151,6 +153,9 @@ export default function ProductPage() {
             background: "linear-gradient(145deg, #2a2a2a, #1f1f1f)",
             border: "1px solid #333",
             transition: "transform 0.3s ease, box-shadow 0.3s ease",
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
             "&:hover": {
               transform: "translateY(-5px)",
               boxShadow: "0 20px 40px rgba(138, 0, 196, 0.3)",
@@ -194,37 +199,43 @@ export default function ProductPage() {
           </div>
         </Card.Section>
 
-        <Stack gap="md" mt="md">
-          <Title className="product-title" order={3} lineClamp={2}>
-            <Anchor
-              href={`/product/${product.id}`}
-              underline="never"
-              style={{ color: "inherit" }}
-            >
-              {product.title}
-            </Anchor>
-          </Title>
+        <Stack
+          gap="md"
+          mt="md"
+          style={{ flex: 1, justifyContent: "space-between" }}
+        >
+          <div>
+            <Title className="product-title" order={3} lineClamp={2} mb="sm">
+              <Anchor
+                href={`/product/${product.id}`}
+                underline="never"
+                style={{ color: "inherit" }}
+              >
+                {product.title}
+              </Anchor>
+            </Title>
 
-          {product.description && (
-            <Text className="product-description" lineClamp={3}>
-              {product.description}
-            </Text>
-          )}
+            {product.description && (
+              <Text className="product-description" lineClamp={3} mb="sm">
+                {product.description}
+              </Text>
+            )}
 
-          <Group className="price-amount">
-            <Text>${product.price.toFixed(2)}</Text>
-          </Group>
+            <Group className="price-amount" mb="sm">
+              <Text>${product.price.toFixed(2)}</Text>
+            </Group>
 
-          <Group justify="space-between">
-            <div>
-              <Text>Category:</Text>
-              <Badge className="category-tag">{product.category.name}</Badge>
-            </div>
-            <div>
-              <Text className="stock-badge">Stock:</Text>
-              <Text className="stock-count">{product.stockAmount}</Text>
-            </div>
-          </Group>
+            <Group justify="space-between" mb="md">
+              <div>
+                <Text>Category:</Text>
+                <Badge className="category-tag">{product.category.name}</Badge>
+              </div>
+              <div>
+                <Text className="stock-badge">Stock:</Text>
+                <Text className="stock-count">{product.stockAmount}</Text>
+              </div>
+            </Group>
+          </div>
 
           <Button
             className="add-to-cart-btn"
