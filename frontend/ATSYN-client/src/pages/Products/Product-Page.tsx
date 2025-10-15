@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Container,
   Title,
@@ -54,6 +55,7 @@ interface Product {
 }
 
 export default function ProductPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +66,13 @@ export default function ProductPage() {
   const [showToast, setShowToast] = useState(false);
   const [toastProduct, setToastProduct] = useState("");
 
-  //search tool
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get("category");
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     let filtered = products;
 
@@ -85,11 +93,9 @@ export default function ProductPage() {
     setFilteredProducts(filtered);
   }, [products, searchTerm, selectedCategory]);
 
-  //fetching products from database
   const fetchData = async () => {
     try {
       const data: Product[] = await apiService.get("/Product");
-      console.log(data);
       setProducts(data);
 
       const uniqueCategories: Category[] = Array.from(
@@ -112,6 +118,7 @@ export default function ProductPage() {
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedCategory(null);
+    setSearchParams({});
   };
 
   useEffect(() => {
