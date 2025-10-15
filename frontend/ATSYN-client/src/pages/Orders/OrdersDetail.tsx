@@ -1,18 +1,19 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { apiService } from "../../config/api";
+import { useAuth } from "../../components/Auth/AuthContext";
 import {
   Container,
   Paper,
   Title,
-  Badge,
   Text,
-  Group,
+  Badge,
   Stack,
+  Group,
+  Table,
   Divider,
   Button,
   Grid,
-  Table,
 } from "@mantine/core";
 
 interface CategoryDto {
@@ -67,21 +68,43 @@ interface OrderDto {
 function OrderDetail() {
   const [order, setOrder] = useState<OrderDto | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { id } = useParams();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
-    fetchOrderDetail();
-  }, [id]);
+    if (!user?.email) {
+      navigate('/login');
+      return;
+    }
+    
+    fetchOrderDetails();
+  }, [id, user]);
 
-  const fetchOrderDetail = async () => {
+  const fetchOrderDetails = async () => {
+    if (!user?.email) return;
+    
     try {
-      const data: OrderDto = await apiService.get(`/orders/${id}`);
+      const data: OrderDto = await apiService.get(`/Orders/${id}`);
       setOrder(data);
       setLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       setLoading(false);
+      
+      if (error.message.includes('403')) {
+        setError("You don't have permission to view this order.");
+      } else if (error.message.includes('404')) {
+        setError("Order not found.");
+      } else if (error.message.includes('401')) {
+        setError("Please log in to view this order.");
+        navigate('/login');
+      } else {
+        setError("Failed to load order details.");
+      }
+      
       console.error("API call failed:", error);
+      setTimeout(() => navigate('/orders'), 3000);
     }
   };
 
@@ -100,12 +123,23 @@ function OrderDetail() {
     return <Container>Loading...</Container>;
   }
 
-  if (!order) {
+  if (error) {
     return (
-      <Container>
-        <Text>Order not found</Text>
+      <Container size="lg" py="xl">
+        <Paper p="xl" withBorder>
+          <Text c="red" size="lg" ta="center">
+            {error}
+          </Text>
+          <Text size="sm" ta="center" mt="md" c="dimmed">
+            Redirecting to orders page...
+          </Text>
+        </Paper>
       </Container>
     );
+  }
+
+  if (!order) {
+    return <Container>Order not found</Container>;
   }
 
   return (

@@ -45,13 +45,13 @@ export default function AuthPage() {
         password: loginForm.password,
         rememberMe: loginForm.rememberMe,
       };
-      const data = await apiService.post("/controller/login", loginData);
+      const data = await apiService.post("/auth/login", loginData);
       if (data != null) {
         const role =
           data.userRoles && data.userRoles.length > 0
             ? data.userRoles[0]
             : "User";
-        login(data.userId, role);
+        login(data.userId, role, data.email);
         navigate("/");
       }
     } catch (error: any) {
@@ -65,7 +65,7 @@ export default function AuthPage() {
         password: registerform.password,
       };
       const data = await apiService.post(
-        "/api/controller/register",
+        "/auth/register",
         registerData
       );
     } catch (error: any) {

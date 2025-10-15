@@ -13,7 +13,9 @@ export const API_BASE_URL = getApiBaseUrl();
 
 export const apiService = {
   async get(endpoint: string) {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      credentials: 'include', // ADDed this 
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -23,6 +25,7 @@ export const apiService = {
   async post(endpoint: string, data: any) {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
+      credentials: 'include', // ADDED this 
       headers: {
         'Content-Type': 'application/json',
       },
@@ -37,6 +40,7 @@ export const apiService = {
   async put(endpoint: string, data: any) {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'PUT',
+      credentials: 'include', // ADDED this 
       headers: {
         'Content-Type': 'application/json',
       },
@@ -52,6 +56,7 @@ export const apiService = {
   async delete(endpoint: string) {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'DELETE',
+      credentials: 'include', // ADDED this 
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -64,6 +69,7 @@ export const apiService = {
     console.log('Uploading to:', `${API_BASE_URL}${endpoint}`); // Temporary debug
     const response = await fetch(`${API_BASE_URL}${endpoint}`,{
       method: 'POST',
+      credentials: 'include', // ADDED this 
       body: formData,
     });
 

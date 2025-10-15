@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiService } from "../../config/api";
+import { useAuth } from "../../components/Auth/AuthContext";
 import {
   Container,
   Table,
@@ -46,14 +47,21 @@ function Orders() {
   const [orders, setOrders] = useState<OrderDto[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user } = useAuth(); 
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    if (user?.email) {
+      fetchOrders();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   const fetchOrders = async () => {
+    if (!user?.email) return;
+    
     try {
-      const data: OrderDto[] = await apiService.get("/orders");
+      const data: OrderDto[] = await apiService.get(`/Orders/customer/${user.email}`);
       setOrders(data);
       setLoading(false);
     } catch (error) {
