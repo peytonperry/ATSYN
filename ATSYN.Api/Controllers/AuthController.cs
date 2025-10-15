@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace ATSYN.Api.Controllers { 
 
 [ApiController]
-[Route("api/controller")]
+[Route("api/[controller]")]
     public class AuthController : ControllerBase {  
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
