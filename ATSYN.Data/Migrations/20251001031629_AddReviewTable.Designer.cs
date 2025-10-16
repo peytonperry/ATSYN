@@ -4,6 +4,7 @@ using ATSYN.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ATSYN.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251001031629_AddReviewTable")]
+    partial class AddReviewTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -218,90 +221,7 @@ namespace ATSYN.Data.Migrations
                     b.ToTable("ProductAttributeValues", (string)null);
                 });
 
-            modelBuilder.Entity("ATSYN.Data.Data.Entities.News.News", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("News", (string)null);
-                });
-
-            modelBuilder.Entity("ATSYN.Data.Data.Entities.Photo.Photo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AltText")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<byte[]>("ImageData")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<bool>("IsPrimary")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId")
-                        .HasDatabaseName("IX_Photos_ProductId");
-
-                    b.HasIndex("ProductId", "IsPrimary")
-                        .HasDatabaseName("IX_Photos_ProductId_IsPrimary");
-
-                    b.ToTable("Photos", (string)null);
-                });
-                
-                  modelBuilder.Entity("ATSYN.Data.Data.Entities.Products.Review", b =>
+            modelBuilder.Entity("ATSYN.Data.Data.Entities.Products.Review", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -337,7 +257,6 @@ namespace ATSYN.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
-
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -564,9 +483,6 @@ namespace ATSYN.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<bool>("IsPickup")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Notes")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
@@ -749,18 +665,7 @@ namespace ATSYN.Data.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("ATSYN.Data.Data.Entities.Photo.Photo", b =>
-                {
-                    b.HasOne("ATSYN.Api.Features.Product", "Product")
-                        .WithMany("Photos")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-                
-                 modelBuilder.Entity("ATSYN.Data.Data.Entities.Products.Review", b =>
+            modelBuilder.Entity("ATSYN.Data.Data.Entities.Products.Review", b =>
                 {
                     b.HasOne("ATSYN.Api.Features.Product", "Product")
                         .WithMany("Reviews")
@@ -778,7 +683,6 @@ namespace ATSYN.Data.Migrations
 
                     b.Navigation("User");
                 });
-
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
@@ -877,7 +781,6 @@ namespace ATSYN.Data.Migrations
                 {
                     b.Navigation("AttributeValues");
 
-                    b.Navigation("Photos");
                     b.Navigation("Reviews");
                 });
 

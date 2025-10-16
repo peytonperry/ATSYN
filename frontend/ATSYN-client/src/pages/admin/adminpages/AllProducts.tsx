@@ -125,7 +125,10 @@ const AllProducts = () => {
             >
               <Card.Section>
                 <img
-                  src={getProductImageUrl(p) || "https://via.placeholder.com/300x300"}
+                  src={
+                    getProductImageUrl(p) ||
+                    "https://via.placeholder.com/300x300"
+                  }
                   alt={p.title}
                   height={180}
                   style={{ objectFit: "cover", width: "100%" }}
