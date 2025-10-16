@@ -40,6 +40,29 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.User.RequireUniqueEmail = true;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// added this for cookie auth
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = ".AspNetCore.Identity.Application";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.ExpireTimeSpan = TimeSpan.FromDays(14);
+    options.SlidingExpiration = true;
+
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = 403;
+        return Task.CompletedTask;
+    };
+});
+
 //codegen
 builder.Services
   .AddControllers()
@@ -99,8 +122,8 @@ app.MapOpenApi();
 app.UseCors("AllowReactApp");
 
 
-app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
 
 app.Run();

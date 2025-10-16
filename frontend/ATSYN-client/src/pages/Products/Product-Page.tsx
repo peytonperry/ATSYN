@@ -16,8 +16,14 @@ import {
   Center,
   Grid,
   Paper,
+  RangeSlider,
 } from "@mantine/core";
-import { IconSearch, IconX } from "@tabler/icons-react";
+import {
+  IconHeart,
+  IconHeartBroken,
+  IconSearch,
+  IconX,
+} from "@tabler/icons-react";
 import { apiService } from "../../config/api";
 import { useCart } from "../../components/Cart/CartContext";
 import CartToast from "../../components/Cart/CartToast";
@@ -65,7 +71,11 @@ export default function ProductPage() {
   const hasFetched = useRef(false);
   const [showToast, setShowToast] = useState(false);
   const [toastProduct, setToastProduct] = useState("");
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(100);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
 
+  //setting categories based on backend
   useEffect(() => {
     const categoryFromUrl = searchParams.get("category");
     if (categoryFromUrl) {
@@ -73,6 +83,7 @@ export default function ProductPage() {
     }
   }, [searchParams]);
 
+  //filtering products
   useEffect(() => {
     let filtered = products;
 
@@ -90,17 +101,25 @@ export default function ProductPage() {
       );
     }
 
-    setFilteredProducts(filtered);
-  }, [products, searchTerm, selectedCategory]);
+    filtered = filtered.filter(
+      (product) =>
+        product.price >= priceRange[0] && product.price <= priceRange[1]
+    );
 
+    setFilteredProducts(filtered);
+  }, [products, searchTerm, selectedCategory, priceRange]);
+
+  //get data from backend
   const fetchData = async () => {
     try {
       const data: Product[] = await apiService.get("/Product");
-      setProducts(data);
+
+      const visibleProducts = data.filter((product) => product.isVisible);
+      setProducts(visibleProducts);
 
       const uniqueCategories: Category[] = Array.from(
         new Map(
-          data.map((product: Product) => [
+          visibleProducts.map((product: Product) => [
             product.category.id,
             product.category,
           ])
@@ -114,19 +133,31 @@ export default function ProductPage() {
       console.error("API call failed:", error);
     }
   };
-
-  const clearFilters = () => {
-    setSearchTerm("");
-    setSelectedCategory(null);
-    setSearchParams({});
-  };
-
   useEffect(() => {
     if (!hasFetched.current) {
       fetchData();
       hasFetched.current = true;
     }
   }, []);
+
+  //setting price range for more filtering
+  useEffect(() => {
+    if (products.length > 0) {
+      const prices = products.map((p) => p.price);
+      const min = Math.floor(Math.min(...prices));
+      const max = Math.ceil(Math.max(...prices));
+      setMinPrice(min);
+      setMaxPrice(max);
+      setPriceRange([min, max]);
+    }
+  }, [products]);
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory(null);
+    setPriceRange([minPrice, maxPrice]);
+    setSearchParams({});
+  };
 
   const ProductCard = ({ product }: { product: Product }) => {
     const { addToCart } = useCart();
@@ -151,6 +182,9 @@ export default function ProductPage() {
             background: "linear-gradient(145deg, #2a2a2a, #1f1f1f)",
             border: "1px solid #333",
             transition: "transform 0.3s ease, box-shadow 0.3s ease",
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
             "&:hover": {
               transform: "translateY(-5px)",
               boxShadow: "0 20px 40px rgba(138, 0, 196, 0.3)",
@@ -194,37 +228,43 @@ export default function ProductPage() {
           </div>
         </Card.Section>
 
-        <Stack gap="md" mt="md">
-          <Title className="product-title" order={3} lineClamp={2}>
-            <Anchor
-              href={`/product/${product.id}`}
-              underline="never"
-              style={{ color: "inherit" }}
-            >
-              {product.title}
-            </Anchor>
-          </Title>
+        <Stack
+          gap="md"
+          mt="md"
+          style={{ flex: 1, justifyContent: "space-between" }}
+        >
+          <div>
+            <Title className="product-title" order={3} lineClamp={2} mb="sm">
+              <Anchor
+                href={`/product/${product.id}`}
+                underline="never"
+                style={{ color: "inherit" }}
+              >
+                {product.title}
+              </Anchor>
+            </Title>
 
-          {product.description && (
-            <Text className="product-description" lineClamp={3}>
-              {product.description}
-            </Text>
-          )}
+            {product.description && (
+              <Text className="product-description" lineClamp={3} mb="sm">
+                {product.description}
+              </Text>
+            )}
 
-          <Group className="price-amount">
-            <Text>${product.price.toFixed(2)}</Text>
-          </Group>
+            <Group className="price-amount" mb="sm">
+              <Text>${product.price.toFixed(2)}</Text>
+            </Group>
 
-          <Group justify="space-between">
-            <div>
-              <Text>Category:</Text>
-              <Badge className="category-tag">{product.category.name}</Badge>
-            </div>
-            <div>
-              <Text className="stock-badge">Stock:</Text>
-              <Text className="stock-count">{product.stockAmount}</Text>
-            </div>
-          </Group>
+            <Group justify="space-between" mb="md">
+              <div>
+                <Text>Category:</Text>
+                <Badge className="category-tag">{product.category.name}</Badge>
+              </div>
+              <div>
+                <Text className="stock-badge">Stock:</Text>
+                <Text className="stock-count">{product.stockAmount}</Text>
+              </div>
+            </Group>
+          </div>
 
           <Button
             className="add-to-cart-btn"
@@ -273,8 +313,13 @@ export default function ProductPage() {
               borderColor: "rgba(255,255,255,0.1)",
             }}
           >
-            <Group justify="space-between" align="center" gap="md" wrap="wrap">
-              <Group gap="sm" grow>
+            <Group
+              justify="space-between"
+              align="flex-start"
+              gap="md"
+              wrap="wrap"
+            >
+              <Group gap="sm" style={{ flex: 1 }}>
                 <TextInput
                   placeholder="Search products..."
                   value={searchTerm}
@@ -296,9 +341,32 @@ export default function ProductPage() {
                   size="md"
                   w={{ base: "100%", sm: 200 }}
                 />
+
+                <div style={{ minWidth: 250, maxWidth: 300 }}>
+                  <Text size="xs" mb={4} c="dimmed">
+                    Price: ${priceRange[0]} - ${priceRange[1]}
+                  </Text>
+                  <RangeSlider
+                    value={priceRange}
+                    onChange={setPriceRange}
+                    min={minPrice}
+                    max={maxPrice}
+                    step={1}
+                    minRange={0}
+                    size="sm"
+                    styles={{
+                      thumb: { borderWidth: 1, padding: 2 },
+                      track: { height: 4 },
+                      bar: { height: 4 },
+                    }}
+                  />
+                </div>
               </Group>
 
-              {(searchTerm || selectedCategory) && (
+              {(searchTerm ||
+                selectedCategory ||
+                priceRange[0] !== minPrice ||
+                priceRange[1] !== maxPrice) && (
                 <Button
                   variant="light"
                   color="purple"

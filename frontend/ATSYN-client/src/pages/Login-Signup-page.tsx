@@ -50,13 +50,13 @@ export default function AuthPage() {
         password: loginForm.password,
         rememberMe: loginForm.rememberMe,
       };
-      const data = await apiService.post("/controller/login", loginData);
+      const data = await apiService.post("/auth/login", loginData);
       if (data != null) {
         const role =
           data.userRoles && data.userRoles.length > 0
             ? data.userRoles[0]
             : "User";
-        login(data.userId, role);
+        login(data.userId, role, data.email);
         setLoading(false);
         navigate("/");
       }
@@ -71,26 +71,23 @@ export default function AuthPage() {
         email: registerform.email,
         password: registerform.password,
       };
-      const data = await apiService.post(
-        "/api/controller/register",
-        registerData
-      );
+      const data = await apiService.post("/auth/register", registerData);
     } catch (error: any) {
       console.error("error creating account:", error);
     }
   };
   if (loading) {
-      return (
-        <Container size="xl" py="xl">
-          <Center h={400}>
-            <Stack align="center" gap="md">
-              <Title order={2}>Logging In...</Title>
-              <Loader size="lg" />
-            </Stack>
-          </Center>
-        </Container>
-      );
-    }
+    return (
+      <Container size="xl" py="xl">
+        <Center h={400}>
+          <Stack align="center" gap="md">
+            <Title order={2}>Logging In...</Title>
+            <Loader size="lg" />
+          </Stack>
+        </Center>
+      </Container>
+    );
+  }
 
   return (
     <Container size={420} my={60}>
