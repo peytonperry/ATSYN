@@ -20,7 +20,7 @@ const AdminProfile    = () => {
   useEffect(() => {
     const fetchAdminProfile = async () => {
       try {
-        const response = await apiService.get("/auth/profile")
+        const response = await apiService.get("/Auth/profile")
         console.log("Profile data received:", response);
         setAdmin(response);
       } catch (error) {
@@ -48,12 +48,12 @@ const AdminProfile    = () => {
       <Card shadow="md" padding="xl" radius="lg" withBorder className="admin-profile-card">
         <Group justify="center" mb="md">
           <Avatar
-            src={admin?.userName || "CW"}
-            alt={admin?.userName  || "CW"}
+            src={admin?.userName || "EX"}
+            alt={admin?.userName  || "EX"}
             size={100}
             radius={100}
           >
-            {admin?.userName  || "CW"}
+            {admin?.userName.slice(0,2)  || "EX"}
           </Avatar>
         </Group>
 
