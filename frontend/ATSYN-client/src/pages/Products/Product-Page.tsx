@@ -201,6 +201,7 @@ export default function ProductPage() {
                   src={imageUrl}
                   alt={primaryPhoto?.altText || product.title}
                   height={200}
+                  fit="contain"
                   fallbackSrc="https://placehold.co/400x300?text=No+Image"
                 />
               </Anchor>

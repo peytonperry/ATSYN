@@ -13,12 +13,11 @@ import {
   Alert,
   Text,
   Paper,
-  Select,
 } from "@mantine/core";
 import { IconUpload, IconCheck, IconAlertCircle } from "@tabler/icons-react";
 import { apiService } from "../../../config/api";
 import { CategorySelect } from "./CategorySelect";
-
+import { BrandSelect } from "../../../components/BrandSelect";
 interface Category {
   id: number;
   name: string;
@@ -161,8 +160,6 @@ const CreateProduct: React.FC = () => {
     }
   };
 
-  {console.log(formData.stockAmount, formData.inStock)}
-
   return (
     <Container size="md" py="xl">
       <Paper shadow="sm" p="xl" radius="md" withBorder>
@@ -220,7 +217,6 @@ const CreateProduct: React.FC = () => {
               />
             </Group>
 
-            <label>Category</label>
             <CategorySelect
               categories={categories}
               onCategoryChange={(category) =>
@@ -231,7 +227,7 @@ const CreateProduct: React.FC = () => {
                 })
               }
               onCategoryCreate={async (newCategoryName) => {
-                const response = await apiService.post("/api/Category", {
+                const response = await apiService.post("/Category", {
                   name: newCategoryName,
                 });
                 const createdCategory: Category = response;
@@ -240,22 +236,23 @@ const CreateProduct: React.FC = () => {
               }}
             />
 
-            <Select
-              label="Brand (Optional)"
-              placeholder="Select a brand"
-              data={brands.map((brand) => ({
-                value: brand.id.toString(),
-                label: brand.name,
-              }))}
-              value={formData.brandId?.toString() || null}
-              onChange={(value) =>
+            <BrandSelect
+              brands={brands}
+              value={formData.brandId}
+              onBrandChange={(brand) =>
                 setFormData({
                   ...formData,
-                  brandId: value ? parseInt(value) : null,
+                  brandId: brand.id,
                 })
               }
-              clearable
-              searchable
+              onBrandCreate={async (newBrandName) => {
+                const response = await apiService.post("/Brand", {
+                  name: newBrandName,
+                });
+                const createdBrand: Brand = response;
+                setBrands((prev) => [...prev, createdBrand]);
+                return createdBrand;
+              }}
             />
 
             <FileInput
@@ -273,16 +270,6 @@ const CreateProduct: React.FC = () => {
                 {photos.length} photo(s) selected. First photo will be primary.
               </Text>
             )}
-
-            <TextInput
-              label="Image URL (Optional - deprecated)"
-              placeholder="https://example.com/image.jpg"
-              description="Use photo upload above instead"
-              value={formData.imageUrl}
-              onChange={(e) =>
-                setFormData({ ...formData, imageUrl: e.currentTarget.value })
-              }
-            />
 
             <Checkbox
               label="Visible to customers"
