@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://192.168.69.21:5173", "http://172.26.196.155:5173", "http://172.23.219.57:5173")
+        policy.WithOrigins("http://localhost:5173", "https://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -83,6 +83,18 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddHttpClient<IEmailService, EmailService>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.HttpOnly = true;
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+});
 
 var app = builder.Build();
 

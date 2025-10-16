@@ -8,6 +8,9 @@ import {
   Button,
   Title,
   Checkbox,
+  Center,
+  Stack,
+  Loader,
 } from "@mantine/core";
 import { Navigate, useNavigate } from "react-router-dom";
 import { apiService } from "../config/api";
@@ -17,6 +20,7 @@ export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   interface RegisterDto {
     email: string;
@@ -40,6 +44,7 @@ export default function AuthPage() {
 
   const handleLogin = async () => {
     try {
+      setLoading(true);
       const loginData: LoginDto = {
         email: loginForm.email,
         password: loginForm.password,
@@ -52,9 +57,11 @@ export default function AuthPage() {
             ? data.userRoles[0]
             : "User";
         login(data.userId, role, data.email);
+        setLoading(false);
         navigate("/");
       }
     } catch (error: any) {
+      setLoading(false);
       console.error("error logging in:", error);
     }
   };
@@ -72,6 +79,18 @@ export default function AuthPage() {
       console.error("error creating account:", error);
     }
   };
+  if (loading) {
+      return (
+        <Container size="xl" py="xl">
+          <Center h={400}>
+            <Stack align="center" gap="md">
+              <Title order={2}>Logging In...</Title>
+              <Loader size="lg" />
+            </Stack>
+          </Center>
+        </Container>
+      );
+    }
 
   return (
     <Container size={420} my={60}>

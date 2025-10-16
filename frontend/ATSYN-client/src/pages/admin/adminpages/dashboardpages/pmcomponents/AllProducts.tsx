@@ -91,14 +91,14 @@ const AllProducts = () => {
         <Group>
           <Button
             variant={view === "card" ? "filled" : "outline"}
-            color={view === "card" ? "blue" : "black"}
+            color={view === "card" ? "purple" : "purple"}
             onClick={() => setView("card")}
           >
             Card View
           </Button>
           <Button
             variant={view === "table" ? "filled" : "outline"}
-            color={view === "table" ? "blue" : "black"}
+            color={view === "table" ? "purple" : "purple"}
             onClick={() => setView("table")}
           >
             Table View
@@ -125,7 +125,10 @@ const AllProducts = () => {
             >
               <Card.Section>
                 <img
-                  src={getProductImageUrl(p) || "https://via.placeholder.com/300x300"}
+                  src={
+                    getProductImageUrl(p) ||
+                    "https://via.placeholder.com/300x300"
+                  }
                   alt={p.title}
                   height={180}
                   style={{ objectFit: "cover", width: "100%" }}
@@ -134,9 +137,7 @@ const AllProducts = () => {
 
               <Stack gap={4} mt="sm">
                 <Text fw={600}>{p.title}</Text>
-                <Text c="blue" fw={500}>
-                  ${p.price.toFixed(2)}
-                </Text>
+                <Text c="green" fw={500}>${p.price.toFixed(2)}</Text>
                 <Text
                   size="sm"
                   c={p.stockAmount > 0 ? "green" : "red"}

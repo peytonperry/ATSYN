@@ -1,3 +1,4 @@
+using ATSYN.Data.Data.Entities.Products;
 using ATSYN.Data.Data.Entities.Photo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,6 +22,7 @@ public class Product
     public Category Category { get; set; } = null!;
     public Brand? Brand { get; set; }
     public ICollection<ProductAttributeValue> AttributeValues { get; set; } = new List<ProductAttributeValue>();
+    public ICollection<Review> Reviews { get; set; } = new List<Review>();
 
     public ICollection<Photo> Photos { get; set; } = new List<Photo>();
     public Photo? PrimaryPhoto => Photos.FirstOrDefault(p => p.IsPrimary)
@@ -33,17 +35,22 @@ public class ProductDto
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
+    public int ReviewCount { get; set; }
+    public double AverageRating { get; set; }
     public int CategoryId { get; set; }
     public int? BrandId { get; set; } 
     public int StockAmount { get; set; }
     public bool IsVisible { get; set; }
     public int ShippingTypeId { get; set; }
     public bool InStock { get; set; }
+
     public string ImageUrl { get; set; } = string.Empty;
     public CategoryDto Category { get; init; } = null!;
     public BrandDto? Brand { get; init; }
     public List<ProductAttributeValueDto> AttributeValues { get; init; } = new();
     public List<PhotoDto> Photos { get; init; } = new();
+    public List<ReviewDto> Reviews { get; set; } = new();
+
 }
 
 
