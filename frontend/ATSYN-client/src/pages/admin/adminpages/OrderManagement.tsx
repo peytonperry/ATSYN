@@ -154,7 +154,7 @@ function OrderManagement() {
       <Table highlightOnHover verticalSpacing="sm">
         <Table.Thead>
           <Table.Tr>
-            <Table.Th bg = "#8a00c4">Order ID</Table.Th>
+            <Table.Th bg = "#8a00c4">Order #</Table.Th>
             <Table.Th bg = "#8a00c4">Customer</Table.Th>
             <Table.Th bg = "#8a00c4">Email</Table.Th>
             <Table.Th bg = "#8a00c4">Product</Table.Th>
@@ -174,9 +174,9 @@ function OrderManagement() {
             </Table.Tr>
           ) : (
             orders.map((order) => (
-              <Table.Tr key={order.id}>
+              <Table.Tr key={order.orderNumber}>
                 <Table.Td>
-                  <Text fw={500}>{order.id}</Text>
+                  <Text fw={500}>{order.orderNumber}</Text>
                 </Table.Td>
                 <Table.Td>
                   <Text fw={500}> 

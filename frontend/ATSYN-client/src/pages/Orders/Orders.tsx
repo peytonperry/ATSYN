@@ -100,11 +100,11 @@ function Orders() {
           <Table highlightOnHover>
             <Table.Thead>
               <Table.Tr>
-                <Table.Th>Order Number</Table.Th>
-                <Table.Th>Date</Table.Th>
-                <Table.Th>Items</Table.Th>
-                <Table.Th>Total</Table.Th>
-                <Table.Th>Status</Table.Th>
+                <Table.Th bg= "#2a2a2a">Order Number</Table.Th>
+                <Table.Th bg= "#2a2a2a">Date</Table.Th>
+                <Table.Th bg= "#2a2a2a">Items</Table.Th>
+                <Table.Th bg= "#2a2a2a">Total</Table.Th>
+                <Table.Th bg= "#2a2a2a">Status</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>

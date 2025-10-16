@@ -26,6 +26,7 @@ import ProductManagement from "./pages/admin/adminpages/ProductManagement.tsx";
 import AllProducts from "./pages/admin/adminpages/AllProducts.tsx";
 import CreateProduct from "./pages/admin/adminpages/CreateProduct.tsx";
 import ProductDetailAdminPage from "./pages/admin/adminpages/ProductDetailAdminPage.tsx";
+import Contacts from "./pages/admin/adminpages/Contacts.tsx"
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoutes.tsx";
 import AdminProfile from "./pages/admin/adminpages/AdminProfile.tsx";
@@ -80,6 +81,7 @@ function AppContent() {
           <Route path="productmanagement" element={<ProductManagement />} />
           <Route path="order-management" element={<OrderManagement />} />
           <Route path="Reports" element={<Reports />} />
+          <Route path = "Contacts" element ={<Contacts/>} />
           <Route path="all-products" element={<AllProducts />} />
           <Route path="products/:id" element={<ProductDetailAdminPage />} />
           <Route path="create-product" element={<CreateProduct />} />

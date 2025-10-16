@@ -11,7 +11,8 @@ const Sidebar = () => {
     { name: "Profile", path: "/admin" },
     { name: "Product Management", path: "/admin/all-products" },
     { name: "Order Management", path: "/admin/order-management" },
-    { name: "Contacts", path: "/admin/reports" },
+    { name: "Contacts", path: "/admin/contacts" },
+    {name: "Reports", path: "/admin/reports"}
   ];
 
   const navSubItems = [

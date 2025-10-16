@@ -9,6 +9,7 @@ const Header= () => {
     const routeTitles: Record<string, string> = {
         "/admin": "Dashboard",
         "/admin/reports": "Reports",
+        "/admin/contacts": "Contacts",
         "/admin/productmanagement": "Product Management",
         "/admin/all-products": "View All Products",
         "/admin/create-product": "Add New Product",
