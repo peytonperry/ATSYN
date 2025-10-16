@@ -1,5 +1,6 @@
 import React from "react";
 import { useCart } from "../../components/Cart/CartContext";
+import { apiService } from "../../config/api";
 import "./CartPage.css";
 
 const CartPage: React.FC = () => {
@@ -11,6 +12,13 @@ const CartPage: React.FC = () => {
     } else {
       updateQuantity(productId, newQuantity);
     }
+  };
+
+  const getProductImageUrl = (product: any) => {
+    const primaryPhoto = product.photos?.find((p: any) => p.isPrimary) || product.photos?.[0];
+    return primaryPhoto
+      ? apiService.getImageUrl(primaryPhoto.id)
+      : product.imageUrl || "";
   };
 
   if (state.items.length === 0) {
@@ -47,66 +55,70 @@ const CartPage: React.FC = () => {
 
         <div className="cart-content">
           <div className="cart-items">
-            {state.items.map((item) => (
-              <div key={item.product.id} className="cart-item">
-                <div className="item-image">
-                  {item.product.imageUrl ? (
-                    <img src={item.product.imageUrl} alt={item.product.title} />
-                  ) : (
-                    <div className="image-placeholder">No Image</div>
-                  )}
-                </div>
-
-                <div className="item-details">
-                  <h3 className="item-title">{item.product.title}</h3>
-                  <div className="item-category">
-                    {item.product.category.name}
+            {state.items.map((item) => {
+              const imageUrl = getProductImageUrl(item.product);
+              
+              return (
+                <div key={item.product.id} className="cart-item">
+                  <div className="item-image">
+                    {imageUrl ? (
+                      <img src={imageUrl} alt={item.product.title} />
+                    ) : (
+                      <div className="image-placeholder">No Image</div>
+                    )}
                   </div>
-                  <div className="item-price">
-                    <span className="price-symbol">$</span>
-                    <span className="price-amount">
-                      {item.product.price.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
 
-                <div className="item-controls">
-                  <div className="quantity-controls">
+                  <div className="item-details">
+                    <h3 className="item-title">{item.product.title}</h3>
+                    <div className="item-category">
+                      {item.product.category.name}
+                    </div>
+                    <div className="item-price">
+                      <span className="price-symbol">$</span>
+                      <span className="price-amount">
+                        {item.product.price.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="item-controls">
+                    <div className="quantity-controls">
+                      <button
+                        className="quantity-btn"
+                        onClick={() =>
+                          handleQuantityChange(item.product.id, item.quantity - 1)
+                        }
+                      >
+                        -
+                      </button>
+                      <span className="quantity">{item.quantity}</span>
+                      <button
+                        className="quantity-btn"
+                        onClick={() =>
+                          handleQuantityChange(item.product.id, item.quantity + 1)
+                        }
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <div className="item-total">
+                      <span className="total-label">Total:</span>
+                      <span className="total-price">
+                        ${(item.product.price * item.quantity).toFixed(2)}
+                      </span>
+                    </div>
+
                     <button
-                      className="quantity-btn"
-                      onClick={() =>
-                        handleQuantityChange(item.product.id, item.quantity - 1)
-                      }
+                      className="remove-btn"
+                      onClick={() => removeFromCart(item.product.id)}
                     >
-                      -
-                    </button>
-                    <span className="quantity">{item.quantity}</span>
-                    <button
-                      className="quantity-btn"
-                      onClick={() =>
-                        handleQuantityChange(item.product.id, item.quantity + 1)
-                      }
-                    >
-                      +
+                      Remove
                     </button>
                   </div>
-
-                  <div className="item-total">
-                    <span className="total-label">Total:</span>
-                    <span className="total-price">
-                      ${(item.product.price * item.quantity).toFixed(2)}
-                    </span>
-                  </div>
-
-                  <button
-                    className="remove-btn"
-                    onClick={() => removeFromCart(item.product.id)}
-                  >
-                    Remove
-                  </button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="cart-sidebar">
