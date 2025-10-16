@@ -50,7 +50,7 @@ export default function AuthPage() {
         password: loginForm.password,
         rememberMe: loginForm.rememberMe,
       };
-      const data = await apiService.post("/controller/login", loginData);
+      const data = await apiService.post("/auth/login", loginData);
       if (data != null) {
         const role =
           data.userRoles && data.userRoles.length > 0
