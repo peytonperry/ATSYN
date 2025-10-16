@@ -141,79 +141,79 @@ function OrderManagement() {
       
     return(
         <div className="admin-orders-container">
-      <Card shadow="md" padding="xl" radius="lg" withBorder className="orders-card">
-        <Group align="apart" mb="md">
-          <Title order={3}>Recent Orders</Title>
-          <Text c="dimmed" size="sm">
-            {orders.length} total
-          </Text>
-        </Group>
-        <Divider mb="md" />
+  <Card shadow="md" padding="xl" radius="lg" withBorder className="orders-card">
+    <Group align="apart" mb="md">
+      <Title order={3} className='title'>Recent Orders</Title>
+      <Text c="white" size="sm">
+        {orders.length} total
+      </Text>
+    </Group>
+    <Divider mb="md" />
 
-        <ScrollArea>
-          <Table highlightOnHover verticalSpacing="sm">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Email</th>
-                <th>Product</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.length === 0 ? (
-                <tr>
-                  <td colSpan={6}>
-                    <Text c="dimmed">
-                      No orders found
+    <ScrollArea>
+      <Table highlightOnHover verticalSpacing="sm">
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th bg = "#8a00c4">Order ID</Table.Th>
+            <Table.Th bg = "#8a00c4">Customer</Table.Th>
+            <Table.Th bg = "#8a00c4">Email</Table.Th>
+            <Table.Th bg = "#8a00c4">Product</Table.Th>
+            <Table.Th bg = "#8a00c4">Total</Table.Th>
+            <Table.Th bg = "#8a00c4">Status</Table.Th>
+            <Table.Th bg = "#8a00c4">Date</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {orders.length === 0 ? (
+            <Table.Tr>
+              <Table.Td colSpan={7}>
+                <Text c="dimmed">
+                  No orders found
+                </Text>
+              </Table.Td>
+            </Table.Tr>
+          ) : (
+            orders.map((order) => (
+              <Table.Tr key={order.id}>
+                <Table.Td>
+                  <Text fw={500}>{order.id}</Text>
+                </Table.Td>
+                <Table.Td>
+                  <Text fw={500}> 
+                    {order.customerName}
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  <Text fw={500}>
+                    {order.customerEmail}
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  {order.orderItems.map((item) => (
+                    <Text fw={500} key={item.id}>
+                      {item.productName}
                     </Text>
-                  </td>
-                </tr>
-              ) : (
-                orders.map((order) => (
-                  <tr key={order.id}>
-                    <td>
-                      <Text fw={500}>{order.id}</Text>
-                    </td>
-                    <td>
-                      <Text fw={500}> 
-                      {order.customerName}
-                      </Text>
-                      </td>
-                    <td>
-                      <Text fw={500}>
-                      {order.customerEmail}
-                      </Text>
-                      </td>
-                    <td>
-                     {order.orderItems.map((item) =>(
-                      <Text fw={500}>
-                        {item.productName}
-                      </Text>
-                     ))}
-                    </td>
-                    <td>
-                      <Text fw={500}>
-                      ${order.totalAmount}
-                      </Text>
-                      </td>
-                    <td>
-                      <Badge color={getStatusColor(order.statusName)}>
-                        {order.statusName}
-                      </Badge>
-                    </td>
-                    <td>{new Date(order.orderDate).toLocaleDateString()}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </Table>
-        </ScrollArea>
-      </Card>
-    </div>
+                  ))}
+                </Table.Td>
+                <Table.Td>
+                  <Text fw={500}>
+                    ${order.totalAmount}
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  <Badge color={getStatusColor(order.statusName)}>
+                    {order.statusName}
+                  </Badge>
+                </Table.Td>
+                <Table.Td>{new Date(order.orderDate).toLocaleDateString()}</Table.Td>
+              </Table.Tr>
+            ))
+          )}
+        </Table.Tbody>
+      </Table>
+    </ScrollArea>
+  </Card>
+</div>
     );
 }
 

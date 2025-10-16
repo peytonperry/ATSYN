@@ -15,12 +15,13 @@ interface Admin {
 const AdminProfile    = () => {
   const [admin, setAdmin] = useState<Admin | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAdminProfile = async () => {
       try {
-        const response = await apiService.get("/controller/profile")
+        const response = await apiService.get("/auth/profile")
+        console.log("Profile data received:", response);
         setAdmin(response);
       } catch (error) {
         console.error("Error fetching admin profile:", error);
@@ -39,6 +40,7 @@ const AdminProfile    = () => {
       </Group>
     );
   }
+
 
 
   return (
@@ -65,11 +67,6 @@ const AdminProfile    = () => {
 
         <Divider my="md" />
 
-        <Stack gap="xs" className="admin-info">
-          <Text size="sm">
-            <strong>ID:</strong> {1}
-          </Text>
-        </Stack>
       </Card>
     </div>
   );

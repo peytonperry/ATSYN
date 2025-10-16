@@ -34,11 +34,51 @@
 }
 
 
-.sidebar-link:hover {
-  background-color: #374151;
-}
+
 
 
 .sidebar-link.active {
   background-color: #374151; 
+}
+
+.sidebar-itemNew{
+  list-style: none;
+  margin-bottom: 8px;
+}
+
+
+
+/* For the dropdown button */
+.sidebar-item button {
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+
+
+/* Sub-navigation styling */
+.sidebar-subnav {
+  padding-left: 20px;
+  list-style: none;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.sidebar-subitem {
+  list-style: none;
+}
+
+.sidebar-sublink {
+  display: block;
+  padding: 8px 12px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.9em;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+
+.sidebar-sublink.active {
+  color: #8a00c4;
+  font-weight: 500;
 }

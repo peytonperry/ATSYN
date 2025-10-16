@@ -91,14 +91,14 @@ const AllProducts = () => {
         <Group>
           <Button
             variant={view === "card" ? "filled" : "outline"}
-            color={view === "card" ? "blue" : "black"}
+            color={view === "card" ? "#8a00c4" : "white"}
             onClick={() => setView("card")}
           >
             Card View
           </Button>
           <Button
             variant={view === "table" ? "filled" : "outline"}
-            color={view === "table" ? "blue" : "black"}
+            color={view === "table" ? "#8a00c4" : "white"}
             onClick={() => setView("table")}
           >
             Table View
@@ -134,7 +134,7 @@ const AllProducts = () => {
 
               <Stack gap={4} mt="sm">
                 <Text fw={600}>{p.title}</Text>
-                <Text c="blue" fw={500}>
+                <Text c="#8a00c4" fw={500}>
                   ${p.price.toFixed(2)}
                 </Text>
                 <Text
@@ -160,10 +160,10 @@ const AllProducts = () => {
           className="product-table"
         >
           <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Name</Table.Th>
-              <Table.Th ta="right">Price</Table.Th>
-              <Table.Th ta="right">Stock</Table.Th>
+            <Table.Tr color="#8a00c4">
+              <Table.Th bg = "#8a00c4">Name</Table.Th>
+              <Table.Th ta="right" bg = "#8a00c4">Price</Table.Th>
+              <Table.Th ta="right" bg = "#8a00c4">Stock</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
