@@ -15,10 +15,9 @@
   <component name="ChangeListManager">
     <list default="true" id="f1b6c2bb-3028-4c33-aefb-425564ed5242" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Products/Product-Page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Products/Product-Page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/admincomponents/Header.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/admincomponents/Header.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/adminpages/dashboardpages/pmcomponents/AllProducts.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/adminpages/dashboardpages/pmcomponents/AllProducts.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ATSYN.Api/Controllers/OrderController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Api/Controllers/OrderController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Login-Signup-page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Login-Signup-page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Orders/Orders.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Orders/Orders.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +61,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "fix/Cart-Clears-From-Individual-View",
+    "git-widget-placeholder": "orders-table",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
