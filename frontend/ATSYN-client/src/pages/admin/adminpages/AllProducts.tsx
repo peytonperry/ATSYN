@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./AllProducts.css";
-import { apiService } from "../../../../../config/api";
-import ProductDetailAdminPage from "./ProductDetailAdminPage";
+import { apiService } from "../../../config/api";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -54,6 +53,7 @@ const AllProducts = () => {
     try {
       const data: Product[] = await apiService.get("/Product");
       setProducts(data);
+      console.log(data);
       const sorted = data.sort((a, b) =>
         a.title.localeCompare(b.title, "en", { sensitivity: "base" })
       );
@@ -91,14 +91,14 @@ const AllProducts = () => {
         <Group>
           <Button
             variant={view === "card" ? "filled" : "outline"}
-            color={view === "card" ? "purple" : "purple"}
+            color={view === "card" ? "#8a00c4" : "white"}
             onClick={() => setView("card")}
           >
             Card View
           </Button>
           <Button
             variant={view === "table" ? "filled" : "outline"}
-            color={view === "table" ? "purple" : "purple"}
+            color={view === "table" ? "#8a00c4" : "white"}
             onClick={() => setView("table")}
           >
             Table View
@@ -137,7 +137,9 @@ const AllProducts = () => {
 
               <Stack gap={4} mt="sm">
                 <Text fw={600}>{p.title}</Text>
-                <Text c="green" fw={500}>${p.price.toFixed(2)}</Text>
+                <Text c="#8a00c4" fw={500}>
+                  ${p.price.toFixed(2)}
+                </Text>
                 <Text
                   size="sm"
                   c={p.stockAmount > 0 ? "green" : "red"}
@@ -161,10 +163,10 @@ const AllProducts = () => {
           className="product-table"
         >
           <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Name</Table.Th>
-              <Table.Th ta="right">Price</Table.Th>
-              <Table.Th ta="right">Stock</Table.Th>
+            <Table.Tr color="#8a00c4">
+              <Table.Th bg = "#8a00c4">Name</Table.Th>
+              <Table.Th ta="right" bg = "#8a00c4">Price</Table.Th>
+              <Table.Th ta="right" bg = "#8a00c4">Stock</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>

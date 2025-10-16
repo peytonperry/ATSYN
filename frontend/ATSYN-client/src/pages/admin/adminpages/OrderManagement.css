@@ -1,0 +1,37 @@
+.admin-orders-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 3rem;
+  min-height: 100vh;
+  min-width: 600px;
+  background-color:  #2a2a2a;
+
+}
+
+.orders-card {
+  width: 90%;
+  max-width: 1100px;
+  background-color: #fff;
+  transition: box-shadow 0.2s ease;
+}
+
+.orders-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+th {
+  background-color: #f1f3f5;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem;
+  color:#fff
+}
+
+td {
+  padding: 0.75rem;
+}
+
+.title{
+  color: white;
+}
