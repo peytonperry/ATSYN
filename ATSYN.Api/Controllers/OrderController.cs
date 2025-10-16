@@ -360,13 +360,14 @@ public class OrdersController : ControllerBase
     [HttpGet("customer/{customerEmail}")]
     public async Task<ActionResult<IEnumerable<OrderDto>>> GetCustomerOrders(string customerEmail)
     {
+        var projection = MapToOrderDtoExpression();
         var orders = await _context.Orders
     .Include(o => o.OrderItems)
         .ThenInclude(oi => oi.Product)
             .ThenInclude(p => p.Category)
     .Where(o => o.CustomerEmail == customerEmail)
     .OrderByDescending(o => o.CreatedAt)
-    .Select(MapToOrderDtoExpression())  // Remove .Compile()
+    .Select(projection)
     .ToListAsync();
 
         return Ok(orders);

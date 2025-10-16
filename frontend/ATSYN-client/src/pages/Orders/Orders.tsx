@@ -47,7 +47,7 @@ function Orders() {
   const [orders, setOrders] = useState<OrderDto[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { user } = useAuth(); 
+  const { user } = useAuth();
 
   useEffect(() => {
     if (user?.email) {
@@ -59,9 +59,12 @@ function Orders() {
 
   const fetchOrders = async () => {
     if (!user?.email) return;
-    
+
     try {
-      const data: OrderDto[] = await apiService.get(`/Orders/customer/${user.email}`);
+      console.log("Trying to get an order");
+      const data: OrderDto[] = await apiService.get(
+        `/Orders/customer/${user.email}`
+      );
       setOrders(data);
       setLoading(false);
     } catch (error) {
@@ -69,7 +72,6 @@ function Orders() {
       console.error("API call failed:", error);
     }
   };
-
   const getStatusColor = (status: number) => {
     const colors: { [key: number]: string } = {
       0: "gray",
