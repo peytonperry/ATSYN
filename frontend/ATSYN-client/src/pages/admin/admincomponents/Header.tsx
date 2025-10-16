@@ -20,10 +20,17 @@ const Header= () => {
     const isProductDetailPage = () => {
         return /^\/admin\/products\/\d+$/.test(location.pathname);
     };
+    const isOrderDetailPage = () => {
+        return /^\/admin\/order-detail\/\d+$/.test(location.pathname);
+    };
 
     const getSettingName = () => {
         if (isProductDetailPage()) {
             return "Product Details";
+        } 
+
+        if(isOrderDetailPage()){
+            return "Order Details"
         }
         return routeTitles[location.pathname] || "Admin Panel";
     };

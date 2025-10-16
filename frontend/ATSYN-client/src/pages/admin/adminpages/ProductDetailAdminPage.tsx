@@ -133,6 +133,13 @@ const ProductDetailAdminPage = () => {
 
   return (
     <Container my="md" className="admin-product-container">
+        <Button 
+        className="button"
+        variant="subtle"
+        onClick={() => navigate("/admin/all-products")}
+        >
+        ← Back to View All Products
+      </Button>
       {message && (
         <Notification
           color={message.includes("successfully") ? "green" : "red"}

@@ -174,7 +174,7 @@ function OrderManagement() {
             </Table.Tr>
           ) : (
             orders.map((order) => (
-              <Table.Tr key={order.orderNumber}>
+              <Table.Tr key={order.orderNumber} onClick={() => navigate(`/admin/order-detail/${order.id}`)}>
                 <Table.Td>
                   <Text fw={500}>{order.orderNumber}</Text>
                 </Table.Td>
