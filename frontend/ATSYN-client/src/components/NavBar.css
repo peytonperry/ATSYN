@@ -68,7 +68,7 @@
   width: 80%;
 }
 
-.cart-button {
+.cart-button, .user {
   background-color: #8a00c4;
   color: white;
   border: none;
@@ -85,7 +85,7 @@
   position: relative;
 }
 
-.cart-button:hover {
+.cart-button:hover, .user:hover {
   background-color: #7a00b0;
   transform: translateY(-1px);
 }
