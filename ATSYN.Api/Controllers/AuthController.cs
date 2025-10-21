@@ -116,7 +116,8 @@ namespace ATSYN.Api.Controllers {
                 Email = user.Email,
                 UserName = user.UserName,
                 role = role,
-                EmailConfirmed = user.EmailConfirmed
+                EmailConfirmed = user.EmailConfirmed,
+                PhoneNumber = user.PhoneNumber,
             });
         }
 
