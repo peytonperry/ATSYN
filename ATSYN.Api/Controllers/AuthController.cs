@@ -166,6 +166,32 @@ namespace ATSYN.Api.Controllers {
             return BadRequest(new { Message = "Failed to update profile", Errors = result.Errors });
         }
 
+        [HttpPut("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePassword)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            var result = await _userManager.ChangePasswordAsync(
+                user,
+                changePassword.CurrentPassword,
+                changePassword.NewPassword
+            );
+
+            if (result.Succeeded)
+            {
+                // Re-sign in the user to refresh the security stamp
+                await _signInManager.RefreshSignInAsync(user);
+                return Ok(new { Message = "Password changed successfully" });
+            }
+
+            return BadRequest(new { Message = "Failed to change password", Errors = result.Errors });
+        }
+
 
         public class RegisterDto
         {
@@ -187,6 +213,12 @@ namespace ATSYN.Api.Controllers {
             public string? UserName { get; set; }
             public string? Email { get; set; }
             public string? Phone { get; set; }
+        }
+
+        public class ChangePasswordDto
+        {
+            public string CurrentPassword { get; set; } = string.Empty;
+            public string NewPassword { get; set; } = string.Empty;
         }
     }
 }
