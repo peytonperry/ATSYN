@@ -120,6 +120,52 @@ namespace ATSYN.Api.Controllers {
             });
         }
 
+        [HttpPut("update-profile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateProfile)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            // Update username if changed
+            if (!string.IsNullOrEmpty(updateProfile.UserName) && user.UserName != updateProfile.UserName)
+            {
+                user.UserName = updateProfile.UserName;
+            }
+
+            // Update email if changed
+            if (!string.IsNullOrEmpty(updateProfile.Email) && user.Email != updateProfile.Email)
+            {
+                // Check if email is already taken
+                var existingUser = await _userManager.FindByEmailAsync(updateProfile.Email);
+                if (existingUser != null && existingUser.Id != user.Id)
+                {
+                    return BadRequest(new { Message = "Email is already taken" });
+                }
+
+                user.Email = updateProfile.Email;
+                user.UserName = updateProfile.Email; // Since you use email as username
+            }
+
+            // Update phone number if provided
+            if (!string.IsNullOrEmpty(updateProfile.Phone))
+            {
+                user.PhoneNumber = updateProfile.Phone;
+            }
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return Ok(new { Message = "Profile updated successfully" });
+            }
+
+            return BadRequest(new { Message = "Failed to update profile", Errors = result.Errors });
+        }
+
 
         public class RegisterDto
         {
@@ -134,6 +180,13 @@ namespace ATSYN.Api.Controllers {
             public string Email { get; set; } = string.Empty;
             public string Password { get; set; } = string.Empty;
             public bool RememberMe { get; set; } = false;
+        }
+
+        public class UpdateProfileDto
+        {
+            public string? UserName { get; set; }
+            public string? Email { get; set; }
+            public string? Phone { get; set; }
         }
     }
 }
