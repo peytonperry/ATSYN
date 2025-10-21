@@ -148,7 +148,7 @@ namespace ATSYN.Api.Controllers {
                 }
 
                 user.Email = updateProfile.Email;
-                user.UserName = updateProfile.Email; // Since you use email as username
+              //  user.UserName = updateProfile.Email; // Since you use email as username
             }
 
             // Update phone number if provided
