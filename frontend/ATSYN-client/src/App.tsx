@@ -11,7 +11,7 @@ import NewsDetail from "./pages/Newspage/NewsDetail.tsx";
 import Orders from "./pages/Orders/Orders.tsx";
 import OrderDetail from "./pages/Orders/OrdersDetail.tsx";
 import ProductPage from "./pages/Products/Product-Page.tsx";
-import Profile from "./pages/profile.tsx";
+import Profile from "./pages/profile/profile.tsx";
 import NavBar from "./components/Navbar.tsx";
 import ContactPage from "./pages/Contact-page.tsx";
 import { CartProvider } from "./components/Cart/CartContext.tsx";

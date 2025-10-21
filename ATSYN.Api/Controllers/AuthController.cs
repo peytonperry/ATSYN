@@ -192,6 +192,30 @@ namespace ATSYN.Api.Controllers {
             return BadRequest(new { Message = "Failed to change password", Errors = result.Errors });
         }
 
+        [HttpDelete("delete-account")]
+        [Authorize]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            // Sign out the user first
+            await _signInManager.SignOutAsync();
+
+            // Delete the user
+            var result = await _userManager.DeleteAsync(user);
+
+            if (result.Succeeded)
+            {
+                return Ok(new { Message = "Account deleted successfully" });
+            }
+
+            return BadRequest(new { Message = "Failed to delete account", Errors = result.Errors });
+        }
+
 
         public class RegisterDto
         {

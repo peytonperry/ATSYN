@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/Auth/AuthContext';
+import { useAuth } from '../../components/Auth/AuthContext';
+import { apiService } from '../../config/api';
 import {
   Container,
   Paper,
@@ -24,10 +25,10 @@ function Profile() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [loading, setLoading] = useState(true);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(true);
   
   // UI states
   const [isEditing, setIsEditing] = useState(false);
@@ -38,34 +39,25 @@ function Profile() {
   // Fetch user data on component mount
   const fetchUserData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/profile', {
-        method: 'GET',
-        credentials: 'include', // Important for cookies
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      console.log("Fetching user profile data");
+      const userData = await apiService.get('/auth/profile');
       
-      if (!response.ok) {
-        if (response.status === 401) {
-          navigate('/login');
-          return;
-        }
-        throw new Error('Failed to fetch user data');
-      }
-      
-      const userData = await response.json();
       setName(userData.userName || '');
       setEmail(userData.email || '');
-      setPhone(''); // Phone not in your current model
-    } catch (err) {
-      setError('Failed to load profile data');
-    } finally {
+      setPhone(userData.phoneNumber || '');
       setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Failed to fetch profile:", error);
+      
+      if (error instanceof Error && error.message.includes('401')) {
+        navigate('/login');
+        return;
+      }
+      setError('Failed to load profile data');
     }
   };
 
-  // Load user data when component mounts
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -77,25 +69,21 @@ function Profile() {
     setLoading(true);
 
     try {
-      // TODO: You'll need to create this endpoint in your AuthController
-      const response = await fetch('http://localhost:5000/api/auth/update-profile', {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ userName: name, email, phone })
+      console.log("Updating profile");
+      await apiService.put('/auth/update-profile', { 
+        userName: name, 
+        email, 
+        phone 
       });
-
-      if (!response.ok) throw new Error('Failed to update profile');
 
       setSuccess('Profile updated successfully!');
       setIsEditing(false);
-      await fetchUserData(); // Refresh data
-    } catch (err) {
-      setError('Failed to update profile. Please try again.');
-    } finally {
       setLoading(false);
+      await fetchUserData();
+    } catch (error) {
+      setLoading(false);
+      console.error("Failed to update profile:", error);
+      setError('Failed to update profile. Please try again.');
     }
   };
 
@@ -117,26 +105,21 @@ function Profile() {
     setLoading(true);
 
     try {
-      // TODO: Replace with your actual API call
-      const response = await fetch('/api/user/change-password', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ currentPassword, newPassword })
+      console.log("Changing password");
+      await apiService.put('/auth/change-password', { 
+        currentPassword, 
+        newPassword 
       });
-
-      if (!response.ok) throw new Error('Failed to change password');
 
       setSuccess('Password changed successfully!');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch (err) {
-      setError('Failed to change password. Please check your current password.');
-    } finally {
       setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Failed to change password:", error);
+      setError('Failed to change password. Please check your current password.');
     }
   };
 
@@ -145,23 +128,17 @@ function Profile() {
     setError('');
 
     try {
-      // TODO: Replace with your actual API call
-      const response = await fetch('/api/user/delete', {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (!response.ok) throw new Error('Failed to delete account');
-
+      console.log("Deleting account");
+      await apiService.delete('/auth/delete-account');
+      
+      setLoading(false);
       logout();
       navigate('/');
-    } catch (err) {
+    } catch (error) {
+      setLoading(false);
+      console.error("Failed to delete account:", error);
       setError('Failed to delete account. Please try again.');
       setShowDeleteModal(false);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -226,7 +203,7 @@ function Profile() {
                   variant="default"
                   onClick={() => {
                     setIsEditing(false);
-                    fetchUserData(); // Reload original data
+                    fetchUserData();
                   }}
                   disabled={loading}
                 >
