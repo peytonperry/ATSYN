@@ -38,18 +38,26 @@ function Profile() {
   // Fetch user data on component mount
   const fetchUserData = async () => {
     try {
-      const response = await fetch('/api/user/profile', {
+      const response = await fetch('http://localhost:5000/api/auth/profile', {
+        method: 'GET',
+        credentials: 'include', // Important for cookies
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'application/json'
         }
       });
       
-      if (!response.ok) throw new Error('Failed to fetch user data');
+      if (!response.ok) {
+        if (response.status === 401) {
+          navigate('/login');
+          return;
+        }
+        throw new Error('Failed to fetch user data');
+      }
       
       const userData = await response.json();
-      setName(userData.name || '');
+      setName(userData.userName || '');
       setEmail(userData.email || '');
-      setPhone(userData.phone || '');
+      setPhone(''); // Phone not in your current model
     } catch (err) {
       setError('Failed to load profile data');
     } finally {
@@ -69,20 +77,21 @@ function Profile() {
     setLoading(true);
 
     try {
-      // TODO: Replace with your actual API call
-      const response = await fetch('/api/user/update', {
+      // TODO: You'll need to create this endpoint in your AuthController
+      const response = await fetch('http://localhost:5000/api/auth/update-profile', {
         method: 'PUT',
+        credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name, email, phone })
+        body: JSON.stringify({ userName: name, email, phone })
       });
 
       if (!response.ok) throw new Error('Failed to update profile');
 
       setSuccess('Profile updated successfully!');
       setIsEditing(false);
+      await fetchUserData(); // Refresh data
     } catch (err) {
       setError('Failed to update profile. Please try again.');
     } finally {
