@@ -16,6 +16,7 @@ import {
   Group,
   Center,
   Loader,
+  ActionIcon,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
@@ -25,6 +26,7 @@ import CartToast from "../../components/Cart/CartToast";
 import { useAuth } from "../../components/Auth/AuthContext";
 import WriteReviewModal from "../Write-Review-Modal";
 import ReviewToast from "../../components/Review/ReviewToast";
+import { IconMinus, IconPlus } from "@tabler/icons-react";
 
 interface Category {
   id: number;
@@ -80,7 +82,7 @@ function ProductDetailPage() {
   const [shippingOption, setShippingOption] = useState("shipping");
   const [showToast, setShowToast] = useState(false);
   const [toastProduct, setToastProduct] = useState("");
-  const [quantity, setQuantity] = useState<string | null>("1");
+  const [quantity, setQuantity] = useState(1);
   const [reviewModalOpened, setReviewModalOpened] = useState(false);
   const { id } = useParams();
   const { addToCart } = useCart();
@@ -88,27 +90,24 @@ function ProductDetailPage() {
 
   const handleAddToCart = () => {
     if (product && quantity) {
-      addToCart(product, parseInt(quantity));
+      addToCart(product, quantity);
       setToastProduct(product.title);
       setShowToast(true);
     }
   };
 
+  const handleQuantityChange = (change: number) => {
+    setQuantity((prev) => {
+      const newQuantity = prev + change;
 
-  function ReviewButton() {
-    const navigate = useNavigate();
-    const { user } = useAuth();
+      if (newQuantity < 1) return 1;
 
-    const handleClick = () => {
-      if (user) {
-        navigate(`/write-review/${product?.id}`);
-      } else {
-        navigate("/login", { state: { from: `/write-review/${product?.id}` } });
+      if (product && newQuantity > product.stockAmount) {
+        return product.stockAmount;
       }
-    };
-
-    return <Button onClick={handleClick}>Write a review</Button>;
-  }
+      return newQuantity;
+    });
+  };
 
   const fetchData = async () => {
     try {
@@ -178,14 +177,45 @@ function ProductDetailPage() {
               <Text size="xl" fw={700}>
                 ${product?.price}
               </Text>
-              <div>
-                <Text size="sm">Quantity:</Text>
-                <Select
-                  value={quantity}
-                  onChange={setQuantity}
-                  data={quantityOptions}
-                />
-              </div>
+              {/*<div className="quantity-controls">
+                      <button
+                        className="quantity-btn"
+                        onClick={() =>
+                          handleQuantityChange(item.product.id, item.quantity - 1)
+                        }
+                      >
+                        -
+                      </button>
+                      <span className="quantity">{item.quantity}</span>
+                      <button
+                        className="quantity-btn"
+                        onClick={() =>
+                          handleQuantityChange(item.product.id, item.quantity + 1)
+                        }
+                      >
+                        +
+                      </button>
+                    </div>*/}
+              <Group>
+                <ActionIcon
+                  variant="filled"
+                  onClick={() => handleQuantityChange(-1)}
+                  disabled={quantity <= 1}
+                >
+                  <IconMinus size={16} />
+                </ActionIcon>
+                <Text fw={500} style={{ minWidth: 30, textAlign: "center" }}>
+                  {quantity}
+                </Text>
+
+                <ActionIcon
+                  variant="filled"
+                  onClick={() => handleQuantityChange(1)}
+                  disabled={!product || quantity >= product.stockAmount}
+                >
+                  <IconPlus size={16} />
+                </ActionIcon>
+              </Group>
               <div>
                 <Text size="sm" mb="xs">
                   Shipping:
