@@ -4,7 +4,6 @@ import {
   Image,
   Title,
   Text,
-  Select,
   Stack,
   Paper,
   Radio,
@@ -20,12 +19,11 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useCart } from "../../components/Cart/CartContext";
 import CartToast from "../../components/Cart/CartToast";
 import { useAuth } from "../../components/Auth/AuthContext";
 import WriteReviewModal from "../Write-Review-Modal";
-import ReviewToast from "../../components/Review/ReviewToast";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 
 interface Category {
@@ -125,16 +123,9 @@ function ProductDetailPage() {
     ? apiService.getImageUrl(primaryPhoto.id)
     : product?.imageUrl || "";
 
-  const quantityOptions = product
-    ? Array.from({ length: product.stockAmount }, (_, i) => ({
-        value: String(i + 1),
-        label: String(i + 1),
-      }))
-    : [];
-
   useEffect(() => {
     fetchData();
-  }, [id]);
+  }, [id, product?.reviewCount]);
 
   if (loading) {
     return (
@@ -177,26 +168,7 @@ function ProductDetailPage() {
               <Text size="xl" fw={700}>
                 ${product?.price}
               </Text>
-              {/*<div className="quantity-controls">
-                      <button
-                        className="quantity-btn"
-                        onClick={() =>
-                          handleQuantityChange(item.product.id, item.quantity - 1)
-                        }
-                      >
-                        -
-                      </button>
-                      <span className="quantity">{item.quantity}</span>
-                      <button
-                        className="quantity-btn"
-                        onClick={() =>
-                          handleQuantityChange(item.product.id, item.quantity + 1)
-                        }
-                      >
-                        +
-                      </button>
-                    </div>*/}
-              <Group>
+              <Group justify = "center"> {/* Need to change the look of this panel */}
                 <ActionIcon
                   variant="filled"
                   onClick={() => handleQuantityChange(-1)}
