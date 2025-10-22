@@ -250,8 +250,8 @@ function ProductDetailPage() {
                 <Paper withBorder p="md" radius="md" mt="xl">
                   <Text fw={500}>{review.userName}</Text>
                   <Group>
-                    <Rating value={review.rating} readOnly />
                     <Text fw={700}>{review.title}</Text>
+                    <Rating value={review.rating} readOnly />
                   </Group>
                   <Text>{review.comment}</Text>
                 </Paper>
