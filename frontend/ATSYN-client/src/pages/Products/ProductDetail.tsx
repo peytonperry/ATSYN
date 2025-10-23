@@ -18,6 +18,7 @@ import {
   ActionIcon,
   NumberInput,
 } from "@mantine/core";
+
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
 import { useParams } from "react-router-dom";
@@ -26,6 +27,7 @@ import CartToast from "../../components/Cart/CartToast";
 import { useAuth } from "../../components/Auth/AuthContext";
 import WriteReviewModal from "../Write-Review-Modal";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
+import "./ProductDetail.css"
 
 interface Category {
   id: number;
@@ -169,31 +171,25 @@ function ProductDetailPage() {
               <Text size="xl" fw={700}>
                 ${product?.price}
               </Text>
-              <NumberInput
-                label="Quantity"
-                min={1}
-                max={product?.stockAmount}
-              />
-              {/*<Group justify = "center">
-                <ActionIcon
-                  variant="filled"
-                  onClick={() => handleQuantityChange(-1)}
-                  disabled={quantity <= 1}
-                >
+              <Group>
+                <ActionIcon onClick={() => handleQuantityChange(-1)}>
                   <IconMinus size={16} />
                 </ActionIcon>
-                <Text fw={500} style={{ minWidth: 30, textAlign: "center" }}>
-                  {quantity}
-                </Text>
 
-                <ActionIcon
-                  variant="filled"
-                  onClick={() => handleQuantityChange(1)}
-                  disabled={!product || quantity >= product.stockAmount}
-                >
+                <NumberInput className="wrapper"
+                  value={quantity}
+                  onChange={(val) => setQuantity(Number(val))}
+                  min={1}
+                  max={product?.stockAmount}
+                  clampBehavior="strict"
+                  hideControls
+                  allowDecimal={false}
+                  allowNegative={false}
+                />
+                <ActionIcon onClick={() => handleQuantityChange(1)}>
                   <IconPlus size={16} />
                 </ActionIcon>
-              </Group>*/}
+              </Group>
               <div>
                 <Text size="sm" mb="xs">
                   Shipping:
