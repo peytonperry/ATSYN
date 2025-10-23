@@ -16,6 +16,7 @@ import {
   Center,
   Loader,
   ActionIcon,
+  NumberInput,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
@@ -168,7 +169,12 @@ function ProductDetailPage() {
               <Text size="xl" fw={700}>
                 ${product?.price}
               </Text>
-              <Group justify = "center"> {/* Need to change the look of this panel */}
+              <NumberInput
+                label="Quantity"
+                min={1}
+                max={product?.stockAmount}
+              />
+              {/*<Group justify = "center">
                 <ActionIcon
                   variant="filled"
                   onClick={() => handleQuantityChange(-1)}
@@ -187,7 +193,7 @@ function ProductDetailPage() {
                 >
                   <IconPlus size={16} />
                 </ActionIcon>
-              </Group>
+              </Group>*/}
               <div>
                 <Text size="sm" mb="xs">
                   Shipping:
