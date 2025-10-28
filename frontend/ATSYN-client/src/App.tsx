@@ -31,6 +31,7 @@ import Contacts from "./pages/admin/adminpages/Contacts.tsx"
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoutes.tsx";
 import AdminProfile from "./pages/admin/adminpages/AdminProfile.tsx";
+import CreateNewsForm from "./pages/admin/adminpages/BlogCreate.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -87,6 +88,8 @@ function AppContent() {
           <Route path="all-products" element={<AllProducts />} />
           <Route path="products/:id" element={<ProductDetailAdminPage />} />
           <Route path="create-product" element={<CreateProduct />} />
+          <Route path="blogs" element={<CreateNewsForm />} />
+
         </Route>
       </Routes>
     </>

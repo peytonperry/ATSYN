@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Collapse, UnstyledButton, Group, Text } from "@mantine/core";
 import { IconChevronDown } from "@tabler/icons-react";
+import CreateNewsForm from "../adminpages/BlogCreate";
 import "./Sidebar.css";
 
 const Sidebar = () => {
@@ -12,7 +13,8 @@ const Sidebar = () => {
     { name: "Product Management", path: "/admin/all-products" },
     { name: "Order Management", path: "/admin/order-management" },
     { name: "Contacts", path: "/admin/contacts" },
-    {name: "Reports", path: "/admin/reports"}
+    {name: "Reports", path: "/admin/reports"},
+    {name: "Blog", path: "/admin/blogs"},
   ];
 
   const navSubItems = [
