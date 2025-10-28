@@ -42,7 +42,7 @@ namespace ATSYN.Data.Data.Entities.News
 
             builder.Property(x => x.Content)
                 .IsRequired()
-                .HasColumnType("varchar(max)");
+                .HasColumnType("nvarchar(max)");
 
             builder.Property(x => x.CreatedAt)
                 .HasDefaultValueSql("GETUTCDATE()");
