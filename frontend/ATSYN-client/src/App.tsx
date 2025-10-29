@@ -32,6 +32,8 @@ import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoutes.tsx";
 import AdminProfile from "./pages/admin/adminpages/AdminProfile.tsx";
 import CreateNewsForm from "./pages/admin/adminpages/BlogCreate.tsx";
+import AllBlogs from "./pages/admin/adminpages/AllBlogs.tsx";
+import EditBlog from "./pages/admin/adminpages/EditBlog.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -88,7 +90,9 @@ function AppContent() {
           <Route path="all-products" element={<AllProducts />} />
           <Route path="products/:id" element={<ProductDetailAdminPage />} />
           <Route path="create-product" element={<CreateProduct />} />
-          <Route path="blogs" element={<CreateNewsForm />} />
+          <Route path="all-blogs" element={<AllBlogs/>} />
+          <Route path="create-blog" element={<CreateNewsForm />} />
+          <Route path="edit-blog/:id" element={<EditBlog />} />
 
         </Route>
       </Routes>

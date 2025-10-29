@@ -34,7 +34,9 @@ export const apiService = {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return response.json();
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+    //return response.json();
   },
 
   async put(endpoint: string, data: any) {

@@ -31,7 +31,7 @@ export function CreateNewsForm() {
       SubScript,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content: '<p>Start writing your news content...</p>',
+    content: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,9 +63,9 @@ export function CreateNewsForm() {
       await apiService.post('/news', newPost);
       
       setTitle('');
-      editor.commands.setContent('<p>Start writing your news content...</p>');
+      //editor.commands.setContent('');
       
-      alert('News post created successfully!');
+      //alert('News post created successfully!');
       navigate('/blog');
       
     } catch (error) {
