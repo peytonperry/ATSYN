@@ -31,9 +31,9 @@ import Contacts from "./pages/admin/adminpages/Contacts.tsx"
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoutes.tsx";
 import AdminProfile from "./pages/admin/adminpages/AdminProfile.tsx";
-import CreateNewsForm from "./pages/admin/adminpages/BlogCreate.tsx";
-import AllBlogs from "./pages/admin/adminpages/AllBlogs.tsx";
-import EditBlog from "./pages/admin/adminpages/EditBlog.tsx";
+import CreateNewsForm from "./pages/admin/adminpages/Admin Blog Pages/BlogCreate.tsx";
+import AllBlogs from "./pages/admin/adminpages/Admin Blog Pages/AllBlogs.tsx";
+import EditBlog from "./pages/admin/adminpages/Admin Blog Pages/EditBlog.tsx";
 
 function AppContent() {
   const location = useLocation();

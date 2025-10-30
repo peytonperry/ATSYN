@@ -9,7 +9,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import { Link } from '@mantine/tiptap';
-import { apiService } from '../../../config/api';
+import { apiService } from '../../../../config/api';
 
 interface CreateNewsDto {
   title: string;
