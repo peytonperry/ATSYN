@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextInput, Button, Paper, Stack, Title, Group, Modal, Container } from '@mantine/core';
+import { TextInput, Button, Paper, Stack, Title, Group, Modal, Container, Alert } from '@mantine/core';
+import { IconCheck, IconAlertCircle } from '@tabler/icons-react';
 import { RichTextEditor } from '@mantine/tiptap';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -37,7 +38,8 @@ export function NewsForm({ editingPost, onSuccess }: NewsFormProps) {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const isEditMode = !!editingPost;
@@ -64,19 +66,20 @@ export function NewsForm({ editingPost, onSuccess }: NewsFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setErrorMsg('');
+    setSuccessMsg('');
     
     if (!editor) return;
 
     const htmlContent = editor.getHTML();
     
     if (!title.trim()) {
-      setError('Please enter a title');
+      setErrorMsg('Please enter a title');
       return;
     }
 
     if (htmlContent === '<p></p>' || !htmlContent.trim()) {
-      setError('Please enter some content');
+      setErrorMsg('Please enter some content');
       return;
     }
 
@@ -91,7 +94,15 @@ export function NewsForm({ editingPost, onSuccess }: NewsFormProps) {
         };
 
         await apiService.put(`/news/${editingPost.id}`, updateData);
-        alert('Blog post updated successfully!');
+        setSuccessMsg('Blog post updated successfully!');
+        
+        setTimeout(() => {
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            navigate('/admin/all-blogs');
+          }
+        }, 1500);
       } else {
         // CREATE new post
         const newPost: CreateNewsDto = {
@@ -100,23 +111,24 @@ export function NewsForm({ editingPost, onSuccess }: NewsFormProps) {
         };
 
         await apiService.post('/news', newPost);
-        alert('Blog post created successfully!');
+        setSuccessMsg('Blog post created successfully!');
 
         // Clear form only for new posts
         setTitle('');
         editor.commands.setContent('');
-      }
-
-      // Call success callback
-      if (onSuccess) {
-        onSuccess();
-      } else {
-        navigate('/admin/all-blogs');
+        
+        setTimeout(() => {
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            navigate('/admin/all-blogs');
+          }
+        }, 1500);
       }
       
     } catch (error) {
       console.error('Error with blog post:', error);
-      setError(`Failed to ${isEditMode ? 'update' : 'create'} blog post. Please try again.`);
+      setErrorMsg(`Failed to ${isEditMode ? 'update' : 'create'} blog post. Please try again.`);
     } finally {
       setLoading(false);
     }
@@ -126,22 +138,26 @@ export function NewsForm({ editingPost, onSuccess }: NewsFormProps) {
     if (!editingPost) return;
 
     setLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('');
 
     try {
       await apiService.delete(`/news/${editingPost.id}`);
-      alert('Blog post deleted successfully!');
+      setSuccessMsg('Blog post deleted successfully!');
       setDeleteModalOpen(false);
 
-      // Call success callback
-      if (onSuccess) {
-        onSuccess();
-      } else {
-        navigate('/admin/all-blogs');
-      }
+      setTimeout(() => {
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          navigate('/admin/all-blogs');
+        }
+      }, 1500);
       
     } catch (error) {
       console.error('Error deleting blog:', error);
-      setError('Failed to delete blog post. Please try again.');
+      setErrorMsg('Failed to delete blog post. Please try again.');
+      setDeleteModalOpen(false);
     } finally {
       setLoading(false);
     }
@@ -168,17 +184,6 @@ export function NewsForm({ editingPost, onSuccess }: NewsFormProps) {
                   </Button>
                 )}
               </Group>
-
-              {error && (
-                <div style={{ 
-                  padding: '12px', 
-                  backgroundColor: '#ff6b6b', 
-                  color: 'white', 
-                  borderRadius: '4px' 
-                }}>
-                  {error}
-                </div>
-              )}
 
               <TextInput
                 label="Title"
@@ -234,6 +239,28 @@ export function NewsForm({ editingPost, onSuccess }: NewsFormProps) {
                 </RichTextEditor>
               </div>
 
+              {successMsg && (
+                <Alert
+                  icon={<IconCheck size={16} />}
+                  color="green"
+                  withCloseButton
+                  onClose={() => setSuccessMsg('')}
+                >
+                  {successMsg}
+                </Alert>
+              )}
+
+              {errorMsg && (
+                <Alert
+                  icon={<IconAlertCircle size={16} />}
+                  color="red"
+                  withCloseButton
+                  onClose={() => setErrorMsg('')}
+                >
+                  {errorMsg}
+                </Alert>
+              )}
+
               <Group justify="space-between">
                 <Button
                   variant="subtle"
@@ -251,7 +278,7 @@ export function NewsForm({ editingPost, onSuccess }: NewsFormProps) {
         </Paper>
       </Container>
 
-        {/* Delete Confirmation Modal */}
+      {/* Delete Confirmation Modal */}
       <Modal
         opened={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}

@@ -10,6 +10,8 @@ import {
   Group,
   Badge,
   ActionIcon,
+  Modal,
+  Text,
 } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 
@@ -23,6 +25,9 @@ interface NewsPost {
 function AllBlogs() {
   const [news, setNews] = useState<NewsPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [postToDelete, setPostToDelete] = useState<{ id: number; title: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,16 +45,26 @@ function AllBlogs() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this blog post?")) return;
+  const openDeleteModal = (id: number, title: string) => {
+    setPostToDelete({ id, title });
+    setDeleteModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!postToDelete) return;
+
+    setDeleting(true);
 
     try {
-      await apiService.delete(`/news/${id}`);
-      setNews(news.filter((post) => post.id !== id));
-      alert("Blog post deleted successfully!");
+      await apiService.delete(`/news/${postToDelete.id}`);
+      setNews(news.filter((post) => post.id !== postToDelete.id));
+      setDeleteModalOpen(false);
+      setPostToDelete(null);
     } catch (error) {
       console.error("Delete failed:", error);
-      alert("Failed to delete blog post");
+      alert("Failed to delete blog post. Please try again.");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -58,49 +73,84 @@ function AllBlogs() {
   }
 
   return (
-    <Container size="lg" py="xl">
-      <Stack gap="lg">
-        <Group justify="space-between">
-          <Title order={1}>Manage Blogs</Title>
-          <Button onClick={() => navigate("/admin/create-blog")}>
-            Create New Blog
-          </Button>
-        </Group>
+    <>
+      <Container size="lg" py="xl">
+        <Stack gap="lg">
+          <Group justify="space-between">
+            <Title order={1}>Manage Blogs</Title>
+            <Button onClick={() => navigate("/admin/create-blog")}>
+              Create New Blog
+            </Button>
+          </Group>
 
-        <Stack gap="md">
-          {news.map((newsPost) => (
-            <Paper key={newsPost.id} shadow="sm" p="lg" withBorder>
-              <Group justify="space-between" align="flex-start">
-                <div style={{ flex: 1 }}>
-                  <Title order={3}>{newsPost.title}</Title>
-                  <Badge color="blue" variant="light" mt="xs">
-                    {new Date(newsPost.createdAt).toLocaleDateString()}
-                  </Badge>
-                </div>
-                <Group gap="xs">
-                  <ActionIcon
-                    color="blue"
-                    variant="light"
-                    size="lg"
-                    onClick={() => navigate(`/admin/edit-blog/${newsPost.id}`)}
-                  >
-                    <IconEdit size={18} />
-                  </ActionIcon>
-                  <ActionIcon
-                    color="red"
-                    variant="light"
-                    size="lg"
-                    onClick={() => handleDelete(newsPost.id)}
-                  >
-                    <IconTrash size={18} />
-                  </ActionIcon>
+          <Stack gap="md">
+            {news.map((newsPost) => (
+              <Paper key={newsPost.id} shadow="sm" p="lg" withBorder>
+                <Group justify="space-between" align="flex-start">
+                  <div style={{ flex: 1 }}>
+                    <Title order={3}>{newsPost.title}</Title>
+                    <Badge color="blue" variant="light" mt="xs">
+                      {new Date(newsPost.createdAt).toLocaleDateString()}
+                    </Badge>
+                  </div>
+                  <Group gap="xs">
+                    <ActionIcon
+                      color="blue"
+                      variant="light"
+                      size="lg"
+                      onClick={() => navigate(`/admin/edit-blog/${newsPost.id}`)}
+                    >
+                      <IconEdit size={18} />
+                    </ActionIcon>
+                    <ActionIcon
+                      color="red"
+                      variant="light"
+                      size="lg"
+                      onClick={() => openDeleteModal(newsPost.id, newsPost.title)}
+                    >
+                      <IconTrash size={18} />
+                    </ActionIcon>
+                  </Group>
                 </Group>
-              </Group>
-            </Paper>
-          ))}
+              </Paper>
+            ))}
+          </Stack>
         </Stack>
-      </Stack>
-    </Container>
+      </Container>
+
+      {/* Custom Delete Confirmation Modal */}
+      <Modal
+        opened={deleteModalOpen}
+        onClose={() => !deleting && setDeleteModalOpen(false)}
+        title="Delete Blog Post"
+        centered
+      >
+        <Stack gap="md">
+          <Text>
+            Are you sure you want to delete <strong>"{postToDelete?.title}"</strong>?
+          </Text>
+          <Text size="sm" c="dimmed">
+            This action cannot be undone.
+          </Text>
+          <Group justify="flex-end" mt="md">
+            <Button
+              variant="subtle"
+              onClick={() => setDeleteModalOpen(false)}
+              disabled={deleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="red"
+              onClick={handleDelete}
+              loading={deleting}
+            >
+              Delete
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
+    </>
   );
 }
 
