@@ -58,6 +58,8 @@ function WriteReviewModal({
 
       setToastType("success");
       setShowToast(true);
+
+      window.location.reload();
     } catch (error) {
       onClose();
 

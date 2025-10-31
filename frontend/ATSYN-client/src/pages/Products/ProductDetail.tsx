@@ -122,7 +122,7 @@ function ProductDetailPage() {
     });
   };
 
-  const fetchData = async () => {
+  const fetchProduct = async () => {
     try {
       const productData: Product = await apiService.get(`/Product/${id}`);
       setProduct(productData);
@@ -139,7 +139,7 @@ function ProductDetailPage() {
     : product?.imageUrl || "";
 
   useEffect(() => {
-    fetchData();
+    fetchProduct();
   }, [id, product?.reviewCount]);
 
   if (loading) {
