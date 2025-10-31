@@ -1,4 +1,5 @@
 import { Avatar, Card, Divider, Group, Image, Loader, Stack, Text, Title } from "@mantine/core";
+import { IconCamera, IconUser } from '@tabler/icons-react';
 import "./AdminProfile.css";
 import { useNavigate } from "react-router-dom";
 import { apiService } from "../../../config/api";
@@ -15,7 +16,19 @@ interface Admin {
 const AdminProfile    = () => {
   const [admin, setAdmin] = useState<Admin | null>(null);
   const [loading, setLoading] = useState(true);
-  //const navigate = useNavigate();
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);;
+  
+  const handleFileChange = (newFile:any) => {
+    setFile(newFile);
+    if(newFile){
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(newFile)
+    }
+  };
 
   useEffect(() => {
     const fetchAdminProfile = async () => {
@@ -58,7 +71,7 @@ const AdminProfile    = () => {
         </Group>
 
         <Stack align="center" gap="xs" mb="md">
-          <Title order={2}>{"carringtonADMIN.test@gmail.com" }</Title>
+          <Title order={2}>{"" }</Title>
           <Text c="dimmed" size="sm">
             {admin?.email}
           </Text>

@@ -160,7 +160,7 @@ const getStatusColor = (status: OrderStatus) => {
               variant="subtle"
               onClick={() => navigate("/admin/order-management")}
             >
-              ← Back to Orders
+              ← Back to Order Management
             </Button>
             <Title order={2}>Order Details</Title>
           </Group>
