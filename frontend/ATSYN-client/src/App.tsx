@@ -11,6 +11,7 @@ import NewsDetail from "./pages/Newspage/NewsDetail.tsx";
 import Orders from "./pages/Orders/Orders.tsx";
 import OrderDetail from "./pages/Orders/OrdersDetail.tsx";
 import ProductPage from "./pages/Products/Product-Page.tsx";
+import Profile from "./pages/profile/profile.tsx";
 import NavBar from "./components/Navbar.tsx";
 import ContactPage from "./pages/Contact-page.tsx";
 import { CartProvider } from "./components/Cart/CartContext.tsx";
@@ -31,6 +32,9 @@ import Contacts from "./pages/admin/adminpages/Contacts.tsx"
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoutes.tsx";
 import AdminProfile from "./pages/admin/adminpages/AdminProfile.tsx";
+import CreateNewsForm from "./pages/admin/adminpages/Admin Blog Pages/BlogCreate.tsx";
+import AllBlogs from "./pages/admin/adminpages/Admin Blog Pages/AllBlogs.tsx";
+import EditBlog from "./pages/admin/adminpages/Admin Blog Pages/EditBlog.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -68,6 +72,7 @@ function AppContent() {
         <Route path="/blog/:id" element={<NewsDetail />} />
         <Route path="/orders/" element={<Orders />} />
         <Route path="/orders/:id" element={<OrderDetail />} />
+        <Route path="/profile" element={<Profile />} />
         
 
         <Route
@@ -87,6 +92,10 @@ function AppContent() {
           <Route path="all-products" element={<AllProducts />} />
           <Route path="products/:id" element={<ProductDetailAdminPage />} />
           <Route path="create-product" element={<CreateProduct />} />
+          <Route path="all-blogs" element={<AllBlogs/>} />
+          <Route path="create-blog" element={<CreateNewsForm />} />
+          <Route path="edit-blog/:id" element={<EditBlog />} />
+
         </Route>
       </Routes>
     </>

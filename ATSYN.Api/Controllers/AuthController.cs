@@ -116,8 +116,104 @@ namespace ATSYN.Api.Controllers {
                 Email = user.Email,
                 UserName = user.UserName,
                 role = role,
-                EmailConfirmed = user.EmailConfirmed
+                EmailConfirmed = user.EmailConfirmed,
+                PhoneNumber = user.PhoneNumber,
             });
+        }
+
+        [HttpPut("update-profile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateProfile)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            // Update username if changed
+            if (!string.IsNullOrEmpty(updateProfile.UserName) && user.UserName != updateProfile.UserName)
+            {
+                user.UserName = updateProfile.UserName;
+            }
+
+            // Update email if changed
+            if (!string.IsNullOrEmpty(updateProfile.Email) && user.Email != updateProfile.Email)
+            {
+                // Check if email is already taken
+                var existingUser = await _userManager.FindByEmailAsync(updateProfile.Email);
+                if (existingUser != null && existingUser.Id != user.Id)
+                {
+                    return BadRequest(new { Message = "Email is already taken" });
+                }
+
+                user.Email = updateProfile.Email;
+            }
+
+            // Update phone number if provided
+            if (!string.IsNullOrEmpty(updateProfile.Phone))
+            {
+                user.PhoneNumber = updateProfile.Phone;
+            }
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return Ok(new { Message = "Profile updated successfully" });
+            }
+
+            return BadRequest(new { Message = "Failed to update profile", Errors = result.Errors });
+        }
+
+        [HttpPut("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePassword)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            var result = await _userManager.ChangePasswordAsync(
+                user,
+                changePassword.CurrentPassword,
+                changePassword.NewPassword
+            );
+
+            if (result.Succeeded)
+            {
+                // Re-sign in the user to refresh the security stamp
+                await _signInManager.RefreshSignInAsync(user);
+                return Ok(new { Message = "Password changed successfully" });
+            }
+
+            return BadRequest(new { Message = "Failed to change password", Errors = result.Errors });
+        }
+
+        [HttpDelete("delete-account")]
+        [Authorize]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            // Sign out the user first
+            await _signInManager.SignOutAsync();
+
+            // Delete the user
+            var result = await _userManager.DeleteAsync(user);
+
+            if (result.Succeeded)
+            {
+                return Ok(new { Message = "Account deleted successfully" });
+            }
+
+            return BadRequest(new { Message = "Failed to delete account", Errors = result.Errors });
         }
 
 
@@ -134,6 +230,19 @@ namespace ATSYN.Api.Controllers {
             public string Email { get; set; } = string.Empty;
             public string Password { get; set; } = string.Empty;
             public bool RememberMe { get; set; } = false;
+        }
+
+        public class UpdateProfileDto
+        {
+            public string? UserName { get; set; }
+            public string? Email { get; set; }
+            public string? Phone { get; set; }
+        }
+
+        public class ChangePasswordDto
+        {
+            public string CurrentPassword { get; set; } = string.Empty;
+            public string NewPassword { get; set; } = string.Empty;
         }
     }
 }
