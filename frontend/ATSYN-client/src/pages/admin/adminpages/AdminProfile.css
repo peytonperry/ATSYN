@@ -1,0 +1,31 @@
+
+.admin-profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1em;
+  min-height: 50vh;
+  background-color: #2a2a2a
+}
+
+.admin-profile-card {
+  width: 600px;
+  text-align: center;
+  transition: box-shadow 0.2s ease;
+  background-color: #2a2a2a
+}
+
+.admin-profile-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.admin-role {
+  color: #228be6;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.admin-info {
+  text-align: left;
+  margin-top: 1rem;
+}

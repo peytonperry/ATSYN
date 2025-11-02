@@ -11,6 +11,7 @@ import NewsDetail from "./pages/Newspage/NewsDetail.tsx";
 import Orders from "./pages/Orders/Orders.tsx";
 import OrderDetail from "./pages/Orders/OrdersDetail.tsx";
 import ProductPage from "./pages/Products/Product-Page.tsx";
+import Profile from "./pages/profile/profile.tsx";
 import NavBar from "./components/Navbar.tsx";
 import ContactPage from "./pages/Contact-page.tsx";
 import { CartProvider } from "./components/Cart/CartContext.tsx";
@@ -20,16 +21,16 @@ import { MantineProvider } from "@mantine/core";
 
 // Admin Routes
 import AppShell from "./pages/admin/admincomponents/Appshell.tsx";
-import Dashboard from "./pages/admin/adminpages/Dashboard.tsx";
-import Customers from "./pages/admin/adminpages/OrderManagement/Customers.tsx";
+import OrderManagement from "./pages/admin/adminpages/OrderManagement.tsx";
 import Reports from "./pages/admin/adminpages/Reports.tsx";
-import Settings from "./pages/admin/adminpages/Settings.tsx";
-import ProductManagement from "./pages/admin/adminpages/dashboardpages/ProductManagement.tsx";
-import AllProducts from "./pages/admin/adminpages/dashboardpages/pmcomponents/AllProducts.tsx";
-import CreateProduct from "./pages/admin/adminpages/dashboardpages/pmcomponents/CreateProduct.tsx";
-import ProductDetailAdminPage from "./pages/admin/adminpages/dashboardpages/pmcomponents/ProductDetailAdminPage.tsx";
+import ProductManagement from "./pages/admin/adminpages/ProductManagement.tsx";
+import AllProducts from "./pages/admin/adminpages/AllProducts.tsx";
+import CreateProduct from "./pages/admin/adminpages/CreateProduct.tsx";
+import ProductDetailAdminPage from "./pages/admin/adminpages/ProductDetailAdminPage.tsx";
+import Contacts from "./pages/admin/adminpages/Contacts.tsx"
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoutes.tsx";
+import AdminProfile from "./pages/admin/adminpages/AdminProfile.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -67,6 +68,7 @@ function AppContent() {
         <Route path="/blog/:id" element={<NewsDetail />} />
         <Route path="/orders/" element={<Orders />} />
         <Route path="/orders/:id" element={<OrderDetail />} />
+        <Route path="/profile" element={<Profile />} />
         
 
         <Route
@@ -77,11 +79,11 @@ function AppContent() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Dashboard />} />
-          <Route path="Customers" element={<Customers />} />
-          <Route path="Reports" element={<Reports />} />
-          <Route path="Settings" element={<Settings />} />
+          <Route index element={<AdminProfile />} />
           <Route path="productmanagement" element={<ProductManagement />} />
+          <Route path="order-management" element={<OrderManagement />} />
+          <Route path="Reports" element={<Reports />} />
+          <Route path = "Contacts" element ={<Contacts/>} />
           <Route path="all-products" element={<AllProducts />} />
           <Route path="products/:id" element={<ProductDetailAdminPage />} />
           <Route path="create-product" element={<CreateProduct />} />

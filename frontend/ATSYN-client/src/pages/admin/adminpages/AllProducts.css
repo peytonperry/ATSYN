@@ -64,7 +64,11 @@
 .product-table {
   width: 100%;
   border-collapse: collapse;
-  color:#ffffff
+  color:#ffffff;
+  .Tr{
+
+    background-color: #2a2a2a
+  }
 }
 
 .product-card {
