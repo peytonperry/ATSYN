@@ -6,6 +6,7 @@ import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/notifications/styles.css";
 import { createTheme, DEFAULT_THEME } from "@mantine/core";
+import '@mantine/tiptap/styles.css';
 
 const theme = createTheme({
   ...DEFAULT_THEME,
