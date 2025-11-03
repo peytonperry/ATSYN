@@ -20,7 +20,7 @@ const AdminProfile    = () => {
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);;
   
   const handleFileChange = (newFile:any) => {
-    setFile(newFile);
+    setFile(newFile)
     if(newFile){
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -71,7 +71,7 @@ const AdminProfile    = () => {
         </Group>
 
         <Stack align="center" gap="xs" mb="md">
-          <Title order={2}>{"" }</Title>
+          <Title order={2}>{"carringtonADMIN.test@gmail.com" }</Title>
           <Text c="dimmed" size="sm">
             {admin?.email}
           </Text>

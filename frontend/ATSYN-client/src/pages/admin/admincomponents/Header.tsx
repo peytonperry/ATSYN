@@ -14,6 +14,8 @@ const Header= () => {
         "/admin/all-products": "View All Products",
         "/admin/create-product": "Add New Product",
         "/admin/order-management": "Order Management",
+        "/admin/all-blogs": "Blog Management",
+        "/admin/create-blog": "Create Blog"
     };
     
 
@@ -23,6 +25,9 @@ const Header= () => {
     const isOrderDetailPage = () => {
         return /^\/admin\/order-detail\/\d+$/.test(location.pathname);
     };
+    const isBlogDetailPage = () => {
+        return /^\/admin\/edit-blog\/\d+$/.test(location.pathname)
+    }
 
     const getSettingName = () => {
         if (isProductDetailPage()) {
@@ -31,6 +36,9 @@ const Header= () => {
 
         if(isOrderDetailPage()){
             return "Order Details"
+        }
+        if(isBlogDetailPage()){
+            return "Blog Details"
         }
         return routeTitles[location.pathname] || "Admin Panel";
     };
