@@ -18,6 +18,12 @@ interface NewsPost {
   createdAt: string;
 }
 
+function stripHtml(html: string): string {
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || "";
+}
+
 function News() {
   const [news, setNews] = useState<NewsPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,8 +80,9 @@ function News() {
                     {new Date(newsPost.createdAt).toLocaleDateString()}
                   </Badge>
                 </Group>
+                {/* Updated: Strip HTML tags for preview */}
                 <Text lineClamp={3} c="dimmed">
-                  {newsPost.content}
+                  {stripHtml(newsPost.content)}
                 </Text>
                 <Text size="sm" c="blue" style={{ alignSelf: "flex-end" }}>
                   Read more →

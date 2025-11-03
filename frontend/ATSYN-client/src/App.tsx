@@ -22,6 +22,7 @@ import { MantineProvider } from "@mantine/core";
 // Admin Routes
 import AppShell from "./pages/admin/admincomponents/Appshell.tsx";
 import OrderManagement from "./pages/admin/adminpages/OrderManagement.tsx";
+import OrderManagementDetail from "./pages/admin/adminpages/OrderDetailPage.tsx";
 import Reports from "./pages/admin/adminpages/Reports.tsx";
 import ProductManagement from "./pages/admin/adminpages/ProductManagement.tsx";
 import AllProducts from "./pages/admin/adminpages/AllProducts.tsx";
@@ -31,6 +32,9 @@ import Contacts from "./pages/admin/adminpages/Contacts.tsx"
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoutes.tsx";
 import AdminProfile from "./pages/admin/adminpages/AdminProfile.tsx";
+import CreateNewsForm from "./pages/admin/adminpages/Admin Blog Pages/BlogCreate.tsx";
+import AllBlogs from "./pages/admin/adminpages/Admin Blog Pages/AllBlogs.tsx";
+import EditBlog from "./pages/admin/adminpages/Admin Blog Pages/EditBlog.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -82,11 +86,16 @@ function AppContent() {
           <Route index element={<AdminProfile />} />
           <Route path="productmanagement" element={<ProductManagement />} />
           <Route path="order-management" element={<OrderManagement />} />
+          <Route path="order-detail/:id" element = {<OrderManagementDetail />} />
           <Route path="Reports" element={<Reports />} />
-          <Route path = "Contacts" element ={<Contacts/>} />
+          <Route path ="Contacts" element ={<Contacts/>} />
           <Route path="all-products" element={<AllProducts />} />
           <Route path="products/:id" element={<ProductDetailAdminPage />} />
           <Route path="create-product" element={<CreateProduct />} />
+          <Route path="all-blogs" element={<AllBlogs/>} />
+          <Route path="create-blog" element={<CreateNewsForm />} />
+          <Route path="edit-blog/:id" element={<EditBlog />} />
+
         </Route>
       </Routes>
     </>

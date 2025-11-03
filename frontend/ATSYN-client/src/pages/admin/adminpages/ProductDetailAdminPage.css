@@ -1,9 +1,13 @@
 .admin-product-container {
-  background-color: #f9fafc;
+  background-color: #494444;
   padding: 2rem;
   border-radius: 16px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   animation: fadeIn 0.3s ease-in-out;
+}
+
+.button{
+  background-color: #2a2a2a
 }
 
 .admin-product-title {

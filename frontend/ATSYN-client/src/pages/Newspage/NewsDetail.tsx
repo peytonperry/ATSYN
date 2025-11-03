@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { apiService } from "../../config/api";
 import {
   Container,
-  Text,
   Paper,
   Stack,
   Title,
@@ -69,9 +68,15 @@ function NewsDetail() {
               </Badge>
             </Group>
             
-            <Text style={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}>
-              {news.content}
-            </Text>
+            {/* Updated: Render HTML content */}
+            <div 
+              dangerouslySetInnerHTML={{ __html: news.content }}
+              style={{
+                lineHeight: 1.6,
+                fontSize: '16px',
+              }}
+              className="news-content"
+            />
           </Stack>
         </Paper>
       </Stack>

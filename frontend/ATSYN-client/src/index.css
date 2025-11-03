@@ -1000,3 +1000,83 @@ a:hover {
   background: var(--primary-purple);
   color: var(--accent-white);
 }
+
+.news-content p {
+  margin-bottom: 1rem;
+}
+
+.news-content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.news-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.news-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.news-content h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.news-content strong {
+  font-weight: 700;
+}
+
+.news-content em {
+  font-style: italic;
+}
+
+.news-content ul, .news-content ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.news-content li {
+  margin-bottom: 0.5rem;
+}
+
+.news-content a {
+  color: #228be6;
+  text-decoration: underline;
+}
+
+.news-content a:hover {
+  color: #1971c2;
+}
+
+.news-content blockquote {
+  border-left: 4px solid #228be6;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: #666;
+  font-style: italic;
+}
+
+.news-content hr {
+  margin: 1.5rem 0;
+  border: none;
+  border-top: 1px solid #e9ecef;
+}
+
+.news-content code {
+  background-color: #f1f3f5;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}

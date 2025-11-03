@@ -74,7 +74,8 @@ namespace ATSYN.Api.Controllers
                 CreatedAt = DateTime.UtcNow,
             };
 
-            return CreatedAtAction(nameof(GetNewsById), new {id = news.Id, newsDto});
+            // return CreatedAtAction(nameof(GetNewsById), new {id = news.Id, newsDto});
+            return Ok(newsDto);
         }
 
         [HttpPut("{id}")]
