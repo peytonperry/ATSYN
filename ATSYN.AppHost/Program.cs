@@ -37,6 +37,7 @@ var frontend = builder.AddNpmApp("frontend", "../frontend/ATSYN-client")
     .WithReference(api)
     .WithEnvironment("BROWSER", "none")
     .WithEnvironment("VITE_API_URL", api.GetEndpoint("https")).WaitFor(api)
+    .WithEnvironment("VITE_STRIPE_PUBLISHABLE_KEY", stripePublishableKey)    
     .WithHttpEndpoint(env: "PORT");
 
 builder.Build().Run();
