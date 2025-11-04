@@ -67,16 +67,38 @@ function AppContent() {
         <Route path="/products" element={<ProductPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
-        <Route path="/cart" element={<CartPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/blog" element={<News />} />
         <Route path="/blog/:id" element={<NewsDetail />} />
-        <Route path="/orders/" element={<Orders />} />
-        <Route path="/orders/:id" element={<OrderDetail />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/order-success" element={<OrderSuccessPage />} />
         
+        {/* Protected Routes - Require Login */}
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders/:id"
+          element={
+            <ProtectedRoute>
+              <OrderDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
 
+        {/* Admin Routes */}
         <Route
           path="/admin"
           element={
@@ -97,7 +119,6 @@ function AppContent() {
           <Route path="all-blogs" element={<AllBlogs/>} />
           <Route path="create-blog" element={<CreateNewsForm />} />
           <Route path="edit-blog/:id" element={<EditBlog />} />
-
         </Route>
       </Routes>
     </>
@@ -129,11 +150,11 @@ function App() {
     >
       <AuthProvider>
         <StripeProvider>
-        <CartProvider>
-          <Router>
-            <AppContent />
-          </Router>
-        </CartProvider>
+          <CartProvider>
+            <Router>
+              <AppContent />
+            </Router>
+          </CartProvider>
         </StripeProvider>
       </AuthProvider>
     </MantineProvider>

@@ -13,21 +13,31 @@ import {
   Divider,
   Badge,
   Box,
+  TextInput,
+  Collapse,
 } from "@mantine/core";
 import {
   IconTrash,
   IconMinus,
   IconPlus,
   IconShoppingCart,
+  IconMail,
 } from "@tabler/icons-react";
 import { useCart } from "../../components/Cart/CartContext";
 import { apiService } from "../../config/api";
 import { PaymentForm } from "../../components/Stripe/PaymentForm";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../components/Auth/AuthContext";
 
 const CartPage: React.FC = () => {
   const { state, removeFromCart, updateQuantity, clearCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
+
+  const [guestEmail, setGuestEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+
   const subtotal = state.totalPrice;
   const shipping = 5.99;
   const tax = subtotal * 0.08;
@@ -49,15 +59,54 @@ const CartPage: React.FC = () => {
       ? apiService.getImageUrl(primaryPhoto.id)
       : product.imageUrl || "";
   };
+
+  const handleProceedToCheckout = () => {
+    if (user) {
+      setShowPaymentForm(true);
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!guestEmail) {
+        setEmailError("Email is required");
+        return;
+      }
+
+      if (!emailRegex.test(guestEmail)) {
+        setEmailError("Please enter a valid email address");
+        return;
+      }
+
+      setEmailError("");
+      setShowPaymentForm(true);
+    }
+  };
+
   const handlePaymentSuccess = () => {
-    //put a toast here
-    navigate("/order-success");
+    const orderData = {
+      email: user?.email || guestEmail,
+      items: state.items,
+      total: total,
+      subtotal: subtotal,
+      shipping: shipping,
+      tax: tax,
+      isGuest: !user,
+    };
+
+    // TODO: Send order data to backend
+    console.log("Order data:", orderData);
+
     clearCart();
+    navigate("/order-success", {
+      state: {
+        order: orderData,
+        email: orderData.email,
+      },
+    });
   };
 
   const handlePaymentError = (error: string) => {
-    //need to add some stuff here.
     console.log(error);
+    // TODO: Add toast notification
   };
 
   if (state.items.length === 0) {
@@ -284,19 +333,74 @@ const CartPage: React.FC = () => {
                     Total:
                   </Text>
                   <Text size="xl" fw={700} c="purple">
-                    $
-                    {(
-                      state.totalPrice +
-                      5.99 +
-                      state.totalPrice * 0.08
-                    ).toFixed(2)}
+                    ${total.toFixed(2)}
                   </Text>
                 </Group>
-                <PaymentForm
-                  amount={totalInCents}
-                  onSuccess={handlePaymentSuccess}
-                  onError={handlePaymentError}
-                />
+
+                {!user && !showPaymentForm && (
+                  <>
+                    <Divider />
+                    <Stack gap="xs">
+                      <Text size="sm" fw={500}>
+                        Email for Order Confirmation
+                      </Text>
+                      <TextInput
+                        placeholder="your.email@example.com"
+                        value={guestEmail}
+                        onChange={(e) => {
+                          setGuestEmail(e.target.value);
+                          setEmailError("");
+                        }}
+                        error={emailError}
+                        leftSection={<IconMail size={16} />}
+                        size="md"
+                      />
+                      <Text size="xs" c="dimmed">
+                        Already have an account?{" "}
+                        <Text
+                          component="a"
+                          href="/login"
+                          c="purple"
+                          inherit
+                          style={{ cursor: "pointer" }}
+                        >
+                          Sign in
+                        </Text>
+                      </Text>
+                    </Stack>
+                  </>
+                )}
+
+                {(user || (showPaymentForm && guestEmail)) && (
+                  <Paper p="sm" withBorder bg="dark.6" radius="md">
+                    <Group gap="xs">
+                      <IconMail size={16} />
+                      <Text size="sm">
+                        Confirmation to:{" "}
+                        <Text component="span" fw={500} c="purple">
+                          {user?.email || guestEmail}
+                        </Text>
+                      </Text>
+                    </Group>
+                  </Paper>
+                )}
+
+                {showPaymentForm ? (
+                  <PaymentForm
+                    amount={totalInCents}
+                    onSuccess={handlePaymentSuccess}
+                    onError={handlePaymentError}
+                  />
+                ) : (
+                  <Button
+                    size="lg"
+                    fullWidth
+                    radius="md"
+                    onClick={handleProceedToCheckout}
+                  >
+                    Proceed to Checkout
+                  </Button>
+                )}
 
                 <Button
                   component="a"
