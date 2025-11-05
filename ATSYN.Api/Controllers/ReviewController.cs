@@ -34,6 +34,7 @@ namespace ATSYN.Api.Controllers
                 {
                     Id = r.Id,
                     ProductId = r.ProductId,
+                    UserId = userId,
                     Rating = r.Rating,
                     Title = r.Title,
                     Comment = r.Comment,

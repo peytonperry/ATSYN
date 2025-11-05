@@ -51,7 +51,7 @@ function WriteReviewModal({
     }
 
     try {
-      //const response = await apiService.post("/Review/create-review", formData);
+      await apiService.post("/Review/create-review", formData);
 
       setFormData({ productId, rating: 0, title: "", comment: "" });
       onClose();
