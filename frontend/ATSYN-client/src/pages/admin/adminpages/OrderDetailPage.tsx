@@ -87,6 +87,8 @@ const OrderDetail = () =>  {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -108,6 +110,21 @@ const OrderDetail = () =>  {
     
     fetchOrderDetails();
   },);
+
+    //**continue with handling update order status (also think abt creating a way to send in notes back to the customer for any issues) */
+    const handleUpdate = async () => {
+    if (!order) return;
+    setSaving(true);
+    try {
+      await apiService.put(`/admin/order-detail/${order.id}`, order);
+      setMessage("Order Status updated successfully!");
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      setMessage("Failed to update order status.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   
 
