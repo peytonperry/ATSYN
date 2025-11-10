@@ -87,42 +87,9 @@ const CartPage: React.FC = () => {
 
   };
 
-//   const handleProceedToPayment = () => {
-//   if (!customerName.trim()) {
-//     alert("Please enter your name");
-//     return;
-//   }
-//   if (!shippingAddress.trim()) {
-//     alert("Please enter your shipping address");
-//     return;
-//   }
-//   if (!billingAddress.trim()) {
-//     alert("Please enter your billing address");
-//     return;
-//   }
-//   setShowPaymentForm(true);
-// };
-
-  // const orderData = {
-  //   email: user?.email || guestEmail,
-  //   items: state.items,
-  //   total: total,
-  //   subtotal: subtotal,
-  //   shipping: shipping,
-  //   tax: tax,
-  //   isGuest: !user,
-  // };
-
-  // console.log("Order data:", orderData);
 
   const handlePaymentSuccess = async () => {
 
-  console.log('Creating order with:', {
-    userEmail: user?.email,
-    guestEmail: guestEmail,
-    willUse: user?.email || guestEmail
-  });
-  // Create the order DTO with available data
   const newOrder = {
     id: 0,
     orderNumber: `ORD-${Date.now()}`, // Temporary order number
@@ -142,7 +109,7 @@ const CartPage: React.FC = () => {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     orderItems: state.items.map((item) => ({
-      id: 0, //temparary 
+      id: 0, //temporary 
       productId: item.product.id,
       productName: item.product.title,
       unitPrice: item.product.price,
