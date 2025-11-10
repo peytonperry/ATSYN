@@ -18,7 +18,6 @@ import { CartProvider } from "./components/Cart/CartContext.tsx";
 import CartPage from "./pages/Cartpage/CartPage.tsx";
 import ProductDetailPage from "./pages/Products/ProductDetail.tsx";
 import { MantineProvider } from "@mantine/core";
-
 // Admin Routes
 import AppShell from "./pages/admin/admincomponents/Appshell.tsx";
 import OrderManagement from "./pages/admin/adminpages/OrderManagement.tsx";
@@ -35,6 +34,8 @@ import AdminProfile from "./pages/admin/adminpages/AdminProfile.tsx";
 import CreateNewsForm from "./pages/admin/adminpages/Admin Blog Pages/BlogCreate.tsx";
 import AllBlogs from "./pages/admin/adminpages/Admin Blog Pages/AllBlogs.tsx";
 import EditBlog from "./pages/admin/adminpages/Admin Blog Pages/EditBlog.tsx";
+import { StripeProvider } from "./components/Stripe/StripeProvider.tsx";
+import OrderSuccessPage from "./pages/Cartpage/OrderSuccess.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -66,15 +67,38 @@ function AppContent() {
         <Route path="/products" element={<ProductPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
-        <Route path="/cart" element={<CartPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/blog" element={<News />} />
         <Route path="/blog/:id" element={<NewsDetail />} />
-        <Route path="/orders/" element={<Orders />} />
-        <Route path="/orders/:id" element={<OrderDetail />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/order-success" element={<OrderSuccessPage />} />
         
+        {/* Protected Routes - Require Login */}
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders/:id"
+          element={
+            <ProtectedRoute>
+              <OrderDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
 
+        {/* Admin Routes */}
         <Route
           path="/admin"
           element={
@@ -95,7 +119,6 @@ function AppContent() {
           <Route path="all-blogs" element={<AllBlogs/>} />
           <Route path="create-blog" element={<CreateNewsForm />} />
           <Route path="edit-blog/:id" element={<EditBlog />} />
-
         </Route>
       </Routes>
     </>
@@ -126,11 +149,13 @@ function App() {
       defaultColorScheme="dark"
     >
       <AuthProvider>
-        <CartProvider>
-          <Router>
-            <AppContent />
-          </Router>
-        </CartProvider>
+        <StripeProvider>
+          <CartProvider>
+            <Router>
+              <AppContent />
+            </Router>
+          </CartProvider>
+        </StripeProvider>
       </AuthProvider>
     </MantineProvider>
   );
