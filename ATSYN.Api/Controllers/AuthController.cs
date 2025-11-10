@@ -64,21 +64,26 @@ namespace ATSYN.Api.Controllers {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var user = await _userManager.FindByEmailAsync(login.Email);
+            if (user == null)
+            {
+                return BadRequest(new { Message = "Invalid login attempt." });
+            }
+
             var result = await _signInManager.PasswordSignInAsync(
-                login.Email,
+                user.UserName,  
                 login.Password,
                 login.RememberMe,
                 lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByNameAsync(login.Email);
                 var role = await _userManager.GetRolesAsync(user);
                 return Ok(new
                 {
                     Message = "Login successful",
-                    UserId = user?.Id,
-                    Email = user?.Email,
+                    UserId = user.Id,
+                    Email = user.Email,
                     userRoles = role,
                 });
             }

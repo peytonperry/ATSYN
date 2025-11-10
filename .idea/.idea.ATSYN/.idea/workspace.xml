@@ -15,9 +15,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f1b6c2bb-3028-4c33-aefb-425564ed5242" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Cartpage/CartPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Cartpage/CartPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ATSYN.Api/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Api/Controllers/AuthController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Products/Product-Page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Products/Product-Page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +60,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "feat/Stripe-Integration",
+    "git-widget-placeholder": "fix/login-email-after-changed-username",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -145,7 +144,7 @@
       <option name="presentableId" value="Default" />
       <updated>1760055138448</updated>
       <workItem from="1760055140203" duration="566000" />
-      <workItem from="1761663797837" duration="11662000" />
+      <workItem from="1761663797837" duration="19357000" />
     </task>
     <servers />
   </component>
