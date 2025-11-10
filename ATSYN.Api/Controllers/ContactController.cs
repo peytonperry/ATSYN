@@ -47,6 +47,20 @@ namespace ATSYN.Api.Controllers
             await _context.SaveChangesAsync();
             return Ok(contactSubmission);
         }
+
+        [HttpDelete("delete-contact/{id}")]
+        public async Task<IActionResult> DeleteContactSubmission(int id)
+        {
+            var submission = await _context.ContactSubmissions.FindAsync(id);
+            if (submission == null) 
+                { 
+                return NotFound(); 
+            }
+
+            _context.ContactSubmissions.Remove(submission);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
     } 
 }
 
