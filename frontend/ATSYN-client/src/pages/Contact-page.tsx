@@ -154,6 +154,7 @@ function ContactPage() {
             <Text fw={700} size="xl" ta="center" mb="lg">
               Contact Us
             </Text>
+            {/*Needs to be wrapped in a form */}
             <Stack gap="md">
               <TextInput label="Name" placeholder="Your name" required />
               <TextInput
