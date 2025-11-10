@@ -29,6 +29,7 @@ import { PaymentForm } from "../../components/Stripe/PaymentForm";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/Auth/AuthContext";
 
+
 const CartPage: React.FC = () => {
   const { state, removeFromCart, updateQuantity, clearCart } = useCart();
   const { user } = useAuth();
@@ -37,6 +38,10 @@ const CartPage: React.FC = () => {
   const [guestEmail, setGuestEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [customerName, setCustomerName] = useState("");
+  const [shippingAddress, setShippingAddress] = useState("");
+  const [billingAddress, setBillingAddress] = useState("");
+  const [showAddressForm, setShowAddressForm] = useState(false);
 
   const subtotal = state.totalPrice;
   const shipping = 5.99;
@@ -61,48 +66,110 @@ const CartPage: React.FC = () => {
   };
 
   const handleProceedToCheckout = () => {
-    if (user) {
-      setShowPaymentForm(true);
-    } else {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (user) {
+    setShowAddressForm(true); // Show address form for logged-in users
+  } else {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-      if (!guestEmail) {
-        setEmailError("Email is required");
-        return;
-      }
-
-      if (!emailRegex.test(guestEmail)) {
-        setEmailError("Please enter a valid email address");
-        return;
-      }
-
-      setEmailError("");
-      setShowPaymentForm(true);
+    if (!guestEmail) {
+      setEmailError("Email is required");
+      return;
     }
+
+    if (!emailRegex.test(guestEmail)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+
+    setEmailError("");
+    setShowAddressForm(true); // Show address form for guests
+  }
+
   };
 
-  const handlePaymentSuccess = () => {
-    const orderData = {
-      email: user?.email || guestEmail,
-      items: state.items,
-      total: total,
-      subtotal: subtotal,
-      shipping: shipping,
-      tax: tax,
-      isGuest: !user,
-    };
+//   const handleProceedToPayment = () => {
+//   if (!customerName.trim()) {
+//     alert("Please enter your name");
+//     return;
+//   }
+//   if (!shippingAddress.trim()) {
+//     alert("Please enter your shipping address");
+//     return;
+//   }
+//   if (!billingAddress.trim()) {
+//     alert("Please enter your billing address");
+//     return;
+//   }
+//   setShowPaymentForm(true);
+// };
 
-    // TODO: Send order data to backend
-    console.log("Order data:", orderData);
+  // const orderData = {
+  //   email: user?.email || guestEmail,
+  //   items: state.items,
+  //   total: total,
+  //   subtotal: subtotal,
+  //   shipping: shipping,
+  //   tax: tax,
+  //   isGuest: !user,
+  // };
 
-    clearCart();
+  // console.log("Order data:", orderData);
+
+  const handlePaymentSuccess = async () => {
+
+  console.log('Creating order with:', {
+    userEmail: user?.email,
+    guestEmail: guestEmail,
+    willUse: user?.email || guestEmail
+  });
+  // Create the order DTO with available data
+  const newOrder = {
+    id: 0,
+    orderNumber: `ORD-${Date.now()}`, // Temporary order number
+    orderDate: new Date().toISOString(),
+    customerName: customerName.trim() || user?.email?.split('@')[0] || "Guest",
+    customerEmail: user?.email || guestEmail,
+    shippingAddress: shippingAddress.trim() || "Address to be provided",
+    isPickup: false,
+    billingAddress: billingAddress.trim() || "Address to be provided",
+    subTotal: subtotal,
+    taxAmount: tax,
+    shippingCost: shipping,
+    totalAmount: total,
+    status: 1, 
+    statusName: "Pending",
+    notes: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    orderItems: state.items.map((item) => ({
+      id: 0, //temparary 
+      productId: item.product.id,
+      productName: item.product.title,
+      unitPrice: item.product.price,
+      quantity: item.quantity,
+      totalPrice: item.product.price * item.quantity,
+    })),
+  };
+
+  try {
+    const response = await apiService.post('/Orders', newOrder);
+    
+    console.log('Order created successfully:', response);
+
     navigate("/order-success", {
       state: {
-        order: orderData,
-        email: orderData.email,
+        order: response,
+        email: newOrder.customerEmail,
       },
     });
-  };
+
+    clearCart();
+  } catch (error) {
+    console.error('Order creation failed:', error);
+    // TODO: Show error notification to user
+    handlePaymentError('Failed to create order. Please contact support.');
+  }
+};
 
   const handlePaymentError = (error: string) => {
     console.log(error);
@@ -385,22 +452,49 @@ const CartPage: React.FC = () => {
                   </Paper>
                 )}
 
-                {showPaymentForm ? (
-                  <PaymentForm
-                    amount={totalInCents}
-                    onSuccess={handlePaymentSuccess}
-                    onError={handlePaymentError}
-                  />
-                ) : (
-                  <Button
-                    size="lg"
-                    fullWidth
-                    radius="md"
-                    onClick={handleProceedToCheckout}
-                  >
-                    Proceed to Checkout
-                  </Button>
-                )}
+                {showAddressForm ? (
+                  <>
+                    <Divider />
+                      <Stack gap="xs">
+                        <Text size="sm" fw={500}>Shipping Information</Text>
+                        <TextInput
+                          placeholder="Full Name"
+                          value={customerName}
+                          onChange={(e) => setCustomerName(e.target.value)}
+                          required
+                        />
+                        <TextInput
+                          placeholder="Shipping Address"
+                          value={shippingAddress}
+                          onChange={(e) => setShippingAddress(e.target.value)}
+                          required
+                        />
+                        <TextInput
+                          placeholder="Billing Address"
+                          value={billingAddress}
+                          onChange={(e) => setBillingAddress(e.target.value)}
+                          required
+                        />  
+                    </Stack>
+    
+                    <Divider />
+    
+                    <PaymentForm
+                      amount={totalInCents}
+                      onSuccess={handlePaymentSuccess}
+                      onError={handlePaymentError}
+                    />
+                  </>
+                  ) : (
+                    <Button
+                      size="lg"
+                      fullWidth
+                      radius="md"
+                      onClick={handleProceedToCheckout}
+                    >
+                      Proceed to Checkout
+                    </Button>
+              )}
 
                 <Button
                   component="a"
