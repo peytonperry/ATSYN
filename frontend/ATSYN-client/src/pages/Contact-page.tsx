@@ -10,9 +10,34 @@ import {
   Button,
   Textarea,
 } from "@mantine/core";
+import { apiService } from "../config/api";
+import { useState } from "react";
 
 function ContactPage() {
   const SPACING = "lg";
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleChange = (field: string, value: string | number) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      await apiService.post("/Contact/submit-contact", formData);
+      alert("Success! Your message has been sent");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (error) {
+      alert("Failed to send message. Please try again");
+      console.error(error);
+    }
+  };
 
   return (
     <Container size="xl" py="xl">
@@ -154,28 +179,43 @@ function ContactPage() {
             <Text fw={700} size="xl" ta="center" mb="lg">
               Contact Us
             </Text>
-            {/*Needs to be wrapped in a form */}
-            <Stack gap="md">
-              <TextInput label="Name" placeholder="Your name" required />
-              <TextInput
-                label="Email"
-                placeholder="your@email.com"
-                type="email"
-                required
-              />
-              <TextInput
-                label="Subject"
-                placeholder="What's this about?"
-                required
-              />
-              <Textarea
-                label="Message"
-                placeholder="Your message..."
-                minRows={4}
-                required
-              />
-              <Button fullWidth>Send Message</Button>
-            </Stack>
+            <form onSubmit={handleSubmit}>
+              <Stack gap="md">
+                <TextInput
+                  label="Name"
+                  placeholder="Your name"
+                  required
+                  onChange={(e) => handleChange("name", e.currentTarget.value)}
+                />
+                <TextInput
+                  label="Email"
+                  placeholder="your@email.com"
+                  type="email"
+                  required
+                  onChange={(e) => handleChange("email", e.currentTarget.value)}
+                />
+                <TextInput
+                  label="Subject"
+                  placeholder="What's this about?"
+                  required
+                  onChange={(e) =>
+                    handleChange("subject", e.currentTarget.value)
+                  }
+                />
+                <Textarea
+                  label="Message"
+                  placeholder="Your message..."
+                  minRows={4}
+                  required
+                  onChange={(e) =>
+                    handleChange("message", e.currentTarget.value)
+                  }
+                />
+                <Button fullWidth type="submit">
+                  Send Message
+                </Button>
+              </Stack>
+            </form>
           </Paper>
         </Grid.Col>
       </Grid>
