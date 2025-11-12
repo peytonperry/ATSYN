@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { apiService } from "../../../config/api";
-import { Badge, Container, Group, Paper, Stack, Text } from "@mantine/core";
+import {
+  Badge,
+  Container,
+  Divider,
+  Group,
+  Paper,
+  Stack,
+  Text,
+} from "@mantine/core";
 
 interface Contact {
   id: number;
@@ -33,24 +41,45 @@ function AdminContacts() {
     <Container size="lg" py="xl">
       <Stack gap="md">
         {contacts.map((contact) => (
-            <Paper key={contact.id} withBorder p="md" radius="md">
-              <Group justify="space-between" mb="xs">
-                <div>
-                  <Text fw={700}>{contact.subject}</Text>
-                  <Text size="sm" c="dimmed">
-                    From: {contact.name} ({contact.email})
-                  </Text>
-                </div>
-                <div>
-                  <Badge color={contact.isRead ? "green" : "red"}>
-                    {contact.isRead ? "Read" : "Unread"}
-                  </Badge>
-                  <Text size="xs" c="dimmed" mt="xs">
-                    {new Date(contact.submittedAt).toLocaleDateString()}
-                  </Text>
-                </div>
+          <Paper key={contact.id} withBorder p="md" radius="md" shadow="sm">
+            <Group justify="space-between" mb="sm" wrap="wrap">
+              <Group gap="xs" wrap="wrap">
+                <Badge color={contact.isRead ? "green" : "red"}>
+                  {contact.isRead ? "Read" : "Unread"}
+                </Badge>
+                <Text size="sm" c="dimmed">
+                  {new Date(contact.submittedAt).toLocaleDateString()}
+                </Text>
               </Group>
-            </Paper>
+            </Group>
+
+            <Stack gap="xs">
+              <Text fw={700} size="lg">
+                {contact.subject}
+              </Text>
+              <Group gap="md" wrap="wrap">
+                <Group gap="xs">
+                  <Text size="sm" c="dimmed" fw={500}>
+                    From:
+                  </Text>
+                  <Text size="sm">{contact.name}</Text>
+                </Group>
+
+                <Group gap="xs">
+                  <Text size="sm" c="dimmed" fw={500}>
+                    Email:
+                  </Text>
+                  <Text size="sm">{contact.email}</Text>
+                </Group>
+              </Group>
+
+              <Divider my="xs" />
+
+              <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>
+                {contact.message}
+              </Text>
+            </Stack>
+          </Paper>
         ))}
       </Stack>
     </Container>
