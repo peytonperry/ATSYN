@@ -15,6 +15,7 @@ import {
   Box,
   TextInput,
   Collapse,
+  SegmentedControl,
 } from "@mantine/core";
 import {
   IconTrash,
@@ -22,6 +23,8 @@ import {
   IconPlus,
   IconShoppingCart,
   IconMail,
+  IconTruck,
+  IconBuilding,
 } from "@tabler/icons-react";
 import { useCart } from "../../components/Cart/CartContext";
 import { apiService } from "../../config/api";
@@ -42,6 +45,7 @@ const CartPage: React.FC = () => {
   const [shippingAddress, setShippingAddress] = useState("");
   const [billingAddress, setBillingAddress] = useState("");
   const [showAddressForm, setShowAddressForm] = useState(false);
+  const [isPickup, setIsPickup] = useState(false);
 
   const subtotal = state.totalPrice;
   const shipping = 5.99;
@@ -96,7 +100,7 @@ const CartPage: React.FC = () => {
     orderDate: new Date().toISOString(),
     customerName: customerName.trim() || user?.email?.split('@')[0] || "Guest",
     customerEmail: user?.email || guestEmail,
-    shippingAddress: shippingAddress.trim() || "Address to be provided",
+    shippingAddress: shippingAddress.trim() || "Pick Up In Store",
     isPickup: false,
     billingAddress: billingAddress.trim() || "Address to be provided",
     subTotal: subtotal,
@@ -367,7 +371,7 @@ const CartPage: React.FC = () => {
                     Total:
                   </Text>
                   <Text size="xl" fw={700} c="purple">
-                    ${total.toFixed(2)}
+                    ${isPickup? (total-5.99).toFixed(2):total.toFixed(2)}
                   </Text>
                 </Group>
 
@@ -422,26 +426,60 @@ const CartPage: React.FC = () => {
                 {showAddressForm ? (
                   <>
                     <Divider />
-                      <Stack gap="xs">
-                        <Text size="sm" fw={500}>Shipping Information</Text>
-                        <TextInput
-                          placeholder="Full Name"
-                          value={customerName}
-                          onChange={(e) => setCustomerName(e.target.value)}
-                          required
-                        />
+                    <Stack gap="xs">
+                      <Text size="sm" fw={500}>Delivery Method</Text>
+                      <SegmentedControl
+                        value={isPickup ? "pickup" : "delivery"}
+                        onChange={(value) => setIsPickup(value === "pickup")}
+                        fullWidth
+                        data={[
+                          {
+                            label: (
+                              <Group gap="xs" justify="center">
+                                <IconTruck size={16} />
+                                <span>Delivery</span>
+                              </Group>
+                            ),
+                            value: "delivery",
+                          },
+                          {
+                            label: (
+                              <Group gap="xs" justify="center">
+                                <IconBuilding size={16} />
+                                <span>Pickup</span>
+                              </Group>
+                            ),
+                            value: "pickup",
+                          },
+                        ]}
+                      />
+                    </Stack>
+
+                    <Divider />
+                    
+                    <Stack gap="xs">
+                      <Text size="sm" fw={500}>
+                        {isPickup ? "Pickup Information" : "Shipping Information"}
+                      </Text>
+                      <TextInput
+                        placeholder="Full Name"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        required
+                      />
+                      {!isPickup && (
                         <TextInput
                           placeholder="Shipping Address"
                           value={shippingAddress}
                           onChange={(e) => setShippingAddress(e.target.value)}
-                          required
                         />
-                        <TextInput
-                          placeholder="Billing Address"
-                          value={billingAddress}
-                          onChange={(e) => setBillingAddress(e.target.value)}
-                          required
-                        />  
+                      )}
+                      <TextInput
+                        placeholder="Billing Address"
+                        value={billingAddress}
+                        onChange={(e) => setBillingAddress(e.target.value)}
+                        required
+                      />  
                     </Stack>
     
                     <Divider />
