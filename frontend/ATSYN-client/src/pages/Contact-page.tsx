@@ -6,7 +6,6 @@ import {
   Stack,
   TextInput,
   Grid,
-  GridCol,
   Button,
   Textarea,
 } from "@mantine/core";
@@ -34,8 +33,6 @@ function ContactPage() {
       alert("Success! Your message has been sent");
       setFormData({ name: "", email: "", subject: "", message: "" });
       window.location.reload();
-
-
     } catch (error) {
       alert("Failed to send message. Please try again");
       console.error(error);
