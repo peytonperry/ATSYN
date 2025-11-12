@@ -41,7 +41,8 @@ namespace ATSYN.Api.Controllers
                 Name = dto.Name,
                 Email = dto.Email,
                 Subject = dto.Subject,
-                Message = dto.Message
+                Message = dto.Message,
+                SubmittedAt = DateTime.UtcNow
             };
             _context.ContactSubmissions.Add(contactSubmission);
             await _context.SaveChangesAsync();
