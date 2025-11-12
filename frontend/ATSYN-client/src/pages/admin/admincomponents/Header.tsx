@@ -15,7 +15,15 @@ const Header= () => {
         "/admin/create-product": "Add New Product",
         "/admin/order-management": "Order Management",
         "/admin/all-blogs": "Blog Management",
-        "/admin/create-blog": "Create Blog"
+        "/admin/create-blog": "Create Blog",
+        "/admin/processing-orders": "Processing Orders",
+        "/admin/pending-orders": "Pending Orders",
+        "/admin/confirmed-orders": "Confirmed Orders",
+        "/admin/shipped-orders": "Shipped Orders",
+        "/admin/delivered-orders": "Delivered Orders",
+        "/admin/returned-orders": "Returned Orders",
+        "/admin/refunded-orders": "Refunded Orders",
+        "/admin/cancelled-orders": "Cancelled Orders",
     };
     
 

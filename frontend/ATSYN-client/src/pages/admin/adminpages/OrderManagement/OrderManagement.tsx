@@ -1,8 +1,9 @@
 import React, { use, useEffect, useState } from 'react';
 import "./OrderManagement.css";
-import { apiService } from "../../../config/api";
+import { apiService } from "../../../../config/api";
 import { useNavigate } from 'react-router-dom';
 import { Badge, Card, Divider, Group, Loader, ScrollArea, Table, Title, Text, Stack  } from '@mantine/core';
+import CancelledOrders from './CancelledOrders';
 
 type OrderStatus = 'Pending' | 'Confirmed' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Returned' | 'Refunded';
 
@@ -75,15 +76,20 @@ function OrderManagement() {
     // const [filterStatus, setFilterStatus] = useState<OrderStatus | 'All'>('All');
     // const [searchTerm, setSearchTerm] = useState('');
 
+    //'Pending' | 'Confirmed' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Returned' | 'Refunded';
+
     const [orders,  setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const hasFetched = React.useRef(false);
     const [pendingOrders, setPendingOrders] = useState<Order[]>([])
-    const [proccessingOrders, setProcessingOrders] = useState<Order[]>([])
+    const [confirmedOrders, setConfirmedOrders] = useState<Order[]>([])
+    const [processingOrders, setProcessingOrders] = useState<Order[]>([])
     const [shippedOrders, setShippedOrders] = useState<Order[]>([])
     const [deliveredOrders, setDeliveredOrders] = useState<Order[]>([])
-    const [canceledOrders, setCancelledOrders] = useState<Order[]>([])
+    const [cancelledOrders, setCancelledOrders] = useState<Order[]>([])
+    const [returnedOrders, setReturnedOrders] = useState<Order[]>([])
+    const [refundedOrders, setRefundedOrders] = useState<Order[]>([])
 
 
     const navigate = useNavigate();
@@ -94,10 +100,13 @@ function OrderManagement() {
             setOrders(response);
 
             setPendingOrders(response.filter(order => order.statusName === 'Pending'));
+            setConfirmedOrders(response.filter(order => order.statusName === "Confirmed"));
             setProcessingOrders(response.filter(order => order.statusName === 'Processing'));
             setShippedOrders(response.filter(order => order.statusName === 'Shipped'));
             setDeliveredOrders(response.filter(order => order.statusName === 'Delivered'));
             setCancelledOrders(response.filter(order => order.statusName === 'Cancelled'));
+            setReturnedOrders(response.filter(order => order.statusName === 'Returned'));
+            setRefundedOrders(response.filter(order => order.statusName === 'Refunded'))
 
         } catch (error) {
             console.error('Error fetching orders:', error);
@@ -124,6 +133,8 @@ function OrderManagement() {
           switch (status) {
             case "Pending":
           return "yellow";
+          case "Confirmed":
+            return "purple"
           case "Processing":
           return "blue";
           case "Shipped":
@@ -132,6 +143,10 @@ function OrderManagement() {
           return "green";
           case "Cancelled":
           return "red";
+          case "Refunded":
+            return "cyan"
+          case "Returned":
+            return "orange"
           default:
           return "gray";
         }
@@ -161,12 +176,12 @@ function OrderManagement() {
             );
         }
       
-    return (
+        return (
             <ScrollArea>
                 <Table highlightOnHover verticalSpacing="sm" striped>
                     <Table.Thead>
                         <Table.Tr>
-                            <Table.Th>Order #</Table.Th>
+                            <Table.Th color='#2a2a2a'>Order #</Table.Th>
                             <Table.Th>Customer</Table.Th>
                             <Table.Th>Email</Table.Th>
                             <Table.Th>Product(s)</Table.Th>
@@ -242,7 +257,16 @@ function OrderManagement() {
             </Group>
 
             <Stack gap="lg">
-                <Card shadow="sm" padding="lg" radius="md" withBorder>
+                <Card 
+                    shadow="sm" 
+                    padding="lg" 
+                    radius="md" 
+                    withBorder 
+                    onClick={() => navigate("/admin/pending-orders", { 
+                        state: { orders: pendingOrders } 
+                    })}
+                    style={{ cursor: 'pointer' }}
+                >
                     <Group justify="space-between" mb="md">
                         <Group gap="sm">
                             <Title order={4}>Pending Orders</Title>
@@ -255,20 +279,60 @@ function OrderManagement() {
                     {renderOrderTable(pendingOrders)}
                 </Card>
 
-                <Card shadow="sm" padding="lg" radius="md" withBorder>
+                <Card 
+                    shadow="sm" 
+                    padding="lg" 
+                    radius="md" 
+                    withBorder 
+                    onClick={() => navigate("/admin/confirmed-orders", { 
+                        state: { orders: confirmedOrders } 
+                    })}
+                    style={{ cursor: 'pointer' }}
+                >
                     <Group justify="space-between" mb="md">
                         <Group gap="sm">
-                            <Title order={4}>Processing Orders</Title>
-                            <Badge color={getStatusColor('Processing')} size="lg">
-                                {proccessingOrders.length}
+                            <Title order={4}>Confirmed Orders</Title>
+                            <Badge color={getStatusColor('Confirmed')} size="lg">
+                                {confirmedOrders.length}
                             </Badge>
                         </Group>
                     </Group>
                     <Divider mb="md" />
-                    {renderOrderTable(proccessingOrders)}
+                    {renderOrderTable(confirmedOrders)}
                 </Card>
 
-                <Card shadow="sm" padding="lg" radius="md" withBorder>
+                <Card 
+                    shadow="sm" 
+                    padding="lg" 
+                    radius="md" 
+                    withBorder 
+                    onClick={() => navigate("/admin/processing-orders", { 
+                        state: { orders: processingOrders } 
+                    })}
+                    style={{ cursor: 'pointer' }}
+                >
+                    <Group justify="space-between" mb="md">
+                        <Group gap="sm">
+                            <Title order={4}>Processing Orders</Title>
+                            <Badge color={getStatusColor('Processing')} size="lg">
+                                {processingOrders.length}
+                            </Badge>
+                        </Group>
+                    </Group>
+                    <Divider mb="md" />
+                    {renderOrderTable(processingOrders)}
+                </Card>
+
+                <Card 
+                    shadow="sm" 
+                    padding="lg" 
+                    radius="md" 
+                    withBorder 
+                    onClick={() => navigate("/admin/shipped-orders", { 
+                        state: { orders: shippedOrders } 
+                    })}
+                    style={{ cursor: 'pointer' }}
+                >
                     <Group justify="space-between" mb="md">
                         <Group gap="sm">
                             <Title order={4}>Shipped Orders</Title>
@@ -281,7 +345,16 @@ function OrderManagement() {
                     {renderOrderTable(shippedOrders)}
                 </Card>
 
-                <Card shadow="sm" padding="lg" radius="md" withBorder>
+                <Card 
+                    shadow="sm" 
+                    padding="lg" 
+                    radius="md" 
+                    withBorder 
+                    onClick={() => navigate("/admin/delivered-orders", { 
+                        state: { orders: deliveredOrders } 
+                    })}
+                    style={{ cursor: 'pointer' }}
+                >
                     <Group justify="space-between" mb="md">
                         <Group gap="sm">
                             <Title order={4}>Delivered Orders</Title>
@@ -294,17 +367,70 @@ function OrderManagement() {
                     {renderOrderTable(deliveredOrders)}
                 </Card>
 
-                <Card shadow="sm" padding="lg" radius="md" withBorder>
+                <Card 
+                    shadow="sm" 
+                    padding="lg" 
+                    radius="md" 
+                    withBorder 
+                    onClick={() => navigate("/admin/returned-orders", { 
+                        state: { orders: returnedOrders } 
+                    })}
+                    style={{ cursor: 'pointer' }}
+                >
                     <Group justify="space-between" mb="md">
                         <Group gap="sm">
-                            <Title order={4}>Cancelled Orders</Title>
-                            <Badge color={getStatusColor('Cancelled')} size="lg">
-                                {canceledOrders.length}
+                            <Title order={4}>Returned Orders</Title>
+                            <Badge color={getStatusColor('Returned')} size="lg">
+                                {returnedOrders.length}
                             </Badge>
                         </Group>
                     </Group>
                     <Divider mb="md" />
-                    {renderOrderTable(canceledOrders)}
+                    {renderOrderTable(returnedOrders)}
+                </Card>
+
+                <Card 
+                    shadow="sm" 
+                    padding="lg" 
+                    radius="md" 
+                    withBorder 
+                    onClick={() => navigate("/admin/refunded-orders", { 
+                        state: { orders: refundedOrders } 
+                    })}
+                    style={{ cursor: 'pointer' }}
+                >
+                    <Group justify="space-between" mb="md">
+                        <Group gap="sm">
+                            <Title order={4}>Refunded Orders</Title>
+                            <Badge color={getStatusColor('Refunded')} size="lg">
+                                {refundedOrders.length}
+                            </Badge>
+                        </Group>
+                    </Group>
+                    <Divider mb="md" />
+                    {renderOrderTable(refundedOrders)}
+                </Card>
+
+                <Card 
+                    shadow="sm" 
+                    padding="lg" 
+                    radius="md" 
+                    withBorder 
+                    onClick={() => navigate("/admin/cancelled-orders", { 
+                        state: { orders: cancelledOrders } 
+                    })}
+                    style={{ cursor: 'pointer' }}
+                >
+                    <Group justify="space-between" mb="md">
+                        <Group gap="sm">
+                            <Title order={4}>Cancelled Orders</Title>
+                            <Badge color={getStatusColor('Cancelled')} size="lg">
+                                {cancelledOrders.length}
+                            </Badge>
+                        </Group>
+                    </Group>
+                    <Divider mb="md" />
+                    {renderOrderTable(cancelledOrders)}
                 </Card>
             </Stack>
         </div>
