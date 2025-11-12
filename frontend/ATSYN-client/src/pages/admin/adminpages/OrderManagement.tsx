@@ -2,7 +2,7 @@ import React, { use, useEffect, useState } from 'react';
 import "./OrderManagement.css";
 import { apiService } from "../../../config/api";
 import { useNavigate } from 'react-router-dom';
-import { Badge, Card, Divider, Group, Loader, ScrollArea, Table, Title, Text  } from '@mantine/core';
+import { Badge, Card, Divider, Group, Loader, ScrollArea, Table, Title, Text, Stack  } from '@mantine/core';
 
 type OrderStatus = 'Pending' | 'Confirmed' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Returned' | 'Refunded';
 
@@ -71,19 +71,34 @@ interface Order {
 }
 
 function OrderManagement() {
+    // const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    // const [filterStatus, setFilterStatus] = useState<OrderStatus | 'All'>('All');
+    // const [searchTerm, setSearchTerm] = useState('');
+
     const [orders,  setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-    const [filterStatus, setFilterStatus] = useState<OrderStatus | 'All'>('All');
-    const [searchTerm, setSearchTerm] = useState('');
     const [error, setError] = useState<string | null>(null);
     const hasFetched = React.useRef(false);
+    const [pendingOrders, setPendingOrders] = useState<Order[]>([])
+    const [proccessingOrders, setProcessingOrders] = useState<Order[]>([])
+    const [shippedOrders, setShippedOrders] = useState<Order[]>([])
+    const [deliveredOrders, setDeliveredOrders] = useState<Order[]>([])
+    const [canceledOrders, setCancelledOrders] = useState<Order[]>([])
+
+
     const navigate = useNavigate();
 
     const fetchOrders = async () => {
         try {
             const response: Order[] = await apiService.get('/Orders');
             setOrders(response);
+
+            setPendingOrders(response.filter(order => order.statusName === 'Pending'));
+            setProcessingOrders(response.filter(order => order.statusName === 'Processing'));
+            setShippedOrders(response.filter(order => order.statusName === 'Shipped'));
+            setDeliveredOrders(response.filter(order => order.statusName === 'Delivered'));
+            setCancelledOrders(response.filter(order => order.statusName === 'Cancelled'));
+
         } catch (error) {
             console.error('Error fetching orders:', error);
             setError('Failed to fetch orders. Please try again later.');
@@ -137,83 +152,162 @@ function OrderManagement() {
     );
 
 
-
-      
-    return(
-        <div className="admin-orders-container">
-  <Card shadow="md" padding="xl" radius="lg" withBorder className="orders-card">
-    <Group align="apart" mb="md">
-      <Title order={3} className='title'>Recent Orders</Title>
-      <Text c="white" size="sm">
-        {orders.length} total
-      </Text>
-    </Group>
-    <Divider mb="md" />
-
-    <ScrollArea>
-      <Table highlightOnHover verticalSpacing="sm">
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th bg = "#8a00c4">Order #</Table.Th>
-            <Table.Th bg = "#8a00c4">Customer</Table.Th>
-            <Table.Th bg = "#8a00c4">Email</Table.Th>
-            <Table.Th bg = "#8a00c4">Product</Table.Th>
-            <Table.Th bg = "#8a00c4">Total</Table.Th>
-            <Table.Th bg = "#8a00c4">Status</Table.Th>
-            <Table.Th bg = "#8a00c4">Date</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {orders.length === 0 ? (
-            <Table.Tr>
-              <Table.Td colSpan={7}>
-                <Text c="dimmed">
-                  No orders found
+    const renderOrderTable = (orderList: Order[]) => {
+        if (orderList.length === 0) {
+            return (
+                <Text c="dimmed" ta="center" py="md">
+                    No orders in this status
                 </Text>
-              </Table.Td>
-            </Table.Tr>
-          ) : (
-            orders.map((order) => (
-              <Table.Tr key={order.orderNumber} onClick={() => navigate(`/admin/order-detail/${order.id}`)}>
-                <Table.Td>
-                  <Text fw={500}>{order.orderNumber}</Text>
-                </Table.Td>
-                <Table.Td>
-                  <Text fw={500}> 
-                    {order.customerName}
-                  </Text>
-                </Table.Td>
-                <Table.Td>
-                  <Text fw={500}>
-                    {order.customerEmail}
-                  </Text>
-                </Table.Td>
-                <Table.Td>
-                  {order.orderItems.map((item) => (
-                    <Text fw={500} key={item.id}>
-                      {item.productName}
-                    </Text>
-                  ))}
-                </Table.Td>
-                <Table.Td>
-                  <Text fw={500}>
-                    ${order.totalAmount}
-                  </Text>
-                </Table.Td>
-                <Table.Td>
-                  <Badge color={getStatusColor(order.statusName)}>
-                    {order.statusName}
-                  </Badge>
-                </Table.Td>
-                <Table.Td>{new Date(order.orderDate).toLocaleDateString()}</Table.Td>
-              </Table.Tr>
-            ))
-          )}
-        </Table.Tbody>
-      </Table>
-    </ScrollArea>
-  </Card>
-</div>
+            );
+        }
+      
+    return (
+            <ScrollArea>
+                <Table highlightOnHover verticalSpacing="sm" striped>
+                    <Table.Thead>
+                        <Table.Tr>
+                            <Table.Th>Order #</Table.Th>
+                            <Table.Th>Customer</Table.Th>
+                            <Table.Th>Email</Table.Th>
+                            <Table.Th>Product(s)</Table.Th>
+                            <Table.Th>Total</Table.Th>
+                            <Table.Th>Date</Table.Th>
+                        </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                        {orderList.map((order) => (
+                            <Table.Tr 
+                                key={order.orderNumber} 
+                                onClick={() => navigate(`/admin/order-detail/${order.id}`)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <Table.Td>
+                                    <Text fw={500}>{order.orderNumber}</Text>
+                                </Table.Td>
+                                <Table.Td>
+                                    <Text fw={500}>{order.customerName}</Text>
+                                </Table.Td>
+                                <Table.Td>
+                                    <Text size="sm">{order.customerEmail}</Text>
+                                </Table.Td>
+                                <Table.Td>
+                                    {order.orderItems.map((item, index) => (
+                                        <Text size="sm" key={item.id}>
+                                            {item.productName}
+                                            {index < order.orderItems.length - 1 && ', '}
+                                        </Text>
+                                    ))}
+                                </Table.Td>
+                                <Table.Td>
+                                    <Text fw={500}>${order.totalAmount.toFixed(2)}</Text>
+                                </Table.Td>
+                                <Table.Td>
+                                    <Text size="sm">
+                                        {new Date(order.orderDate).toLocaleDateString()}
+                                    </Text>
+                                </Table.Td>
+                            </Table.Tr>
+                        ))}
+                    </Table.Tbody>
+                </Table>
+            </ScrollArea>
+        );
+    };
+
+    if (loading) {
+        return (
+            <div className="admin-orders-container">
+                <Group justify="center" mt="xl">
+                    <Loader size="lg" />
+                </Group>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="admin-orders-container">
+                <Text c="red" ta="center" mt="xl">{error}</Text>
+            </div>
+        );
+    }
+
+    return (
+        <div className="admin-orders-container">
+            <Group justify="space-between" mb="xl">
+                <Title order={2} className='title'>Order Management</Title>
+                <Badge size="lg" variant="filled" color="grape">
+                    {orders.length} Total Orders
+                </Badge>
+            </Group>
+
+            <Stack gap="lg">
+                <Card shadow="sm" padding="lg" radius="md" withBorder>
+                    <Group justify="space-between" mb="md">
+                        <Group gap="sm">
+                            <Title order={4}>Pending Orders</Title>
+                            <Badge color={getStatusColor('Pending')} size="lg">
+                                {pendingOrders.length}
+                            </Badge>
+                        </Group>
+                    </Group>
+                    <Divider mb="md" />
+                    {renderOrderTable(pendingOrders)}
+                </Card>
+
+                <Card shadow="sm" padding="lg" radius="md" withBorder>
+                    <Group justify="space-between" mb="md">
+                        <Group gap="sm">
+                            <Title order={4}>Processing Orders</Title>
+                            <Badge color={getStatusColor('Processing')} size="lg">
+                                {proccessingOrders.length}
+                            </Badge>
+                        </Group>
+                    </Group>
+                    <Divider mb="md" />
+                    {renderOrderTable(proccessingOrders)}
+                </Card>
+
+                <Card shadow="sm" padding="lg" radius="md" withBorder>
+                    <Group justify="space-between" mb="md">
+                        <Group gap="sm">
+                            <Title order={4}>Shipped Orders</Title>
+                            <Badge color={getStatusColor('Shipped')} size="lg">
+                                {shippedOrders.length}
+                            </Badge>
+                        </Group>
+                    </Group>
+                    <Divider mb="md" />
+                    {renderOrderTable(shippedOrders)}
+                </Card>
+
+                <Card shadow="sm" padding="lg" radius="md" withBorder>
+                    <Group justify="space-between" mb="md">
+                        <Group gap="sm">
+                            <Title order={4}>Delivered Orders</Title>
+                            <Badge color={getStatusColor('Delivered')} size="lg">
+                                {deliveredOrders.length}
+                            </Badge>
+                        </Group>
+                    </Group>
+                    <Divider mb="md" />
+                    {renderOrderTable(deliveredOrders)}
+                </Card>
+
+                <Card shadow="sm" padding="lg" radius="md" withBorder>
+                    <Group justify="space-between" mb="md">
+                        <Group gap="sm">
+                            <Title order={4}>Cancelled Orders</Title>
+                            <Badge color={getStatusColor('Cancelled')} size="lg">
+                                {canceledOrders.length}
+                            </Badge>
+                        </Group>
+                    </Group>
+                    <Divider mb="md" />
+                    {renderOrderTable(canceledOrders)}
+                </Card>
+            </Stack>
+        </div>
     );
 }
 
