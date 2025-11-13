@@ -457,8 +457,9 @@ public class OrdersController : ControllerBase
             OrderStatus.Pending => to is OrderStatus.Confirmed or OrderStatus.Cancelled,
             OrderStatus.Confirmed => to is OrderStatus.Processing or OrderStatus.Cancelled,
             OrderStatus.Processing => to is OrderStatus.Shipped or OrderStatus.Cancelled,
-            OrderStatus.Shipped => to is OrderStatus.Delivered,
-            OrderStatus.Delivered => to is OrderStatus.Refunded,
+            OrderStatus.Shipped => to is OrderStatus.Delivered or OrderStatus.Returned,
+            OrderStatus.Delivered => to is OrderStatus.Returned,
+            OrderStatus.Returned => to is OrderStatus.Refunded,
             OrderStatus.Cancelled => to is OrderStatus.Refunded,
             OrderStatus.Refunded => false, 
             _ => false
