@@ -14,6 +14,9 @@ import {
   Divider,
   Button,
   Grid,
+  Modal,
+  Select,
+  Textarea,
 } from "@mantine/core";
 
 type OrderStatus = 'Pending' | 'Confirmed' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Returned' | 'Refunded';
@@ -22,6 +25,7 @@ interface Category {
   id: number;
   name: string;
 }
+
 interface Photo {
   id: number;
   fileName: string;
@@ -33,6 +37,7 @@ interface Photo {
   altText: string;
   imageUrl: string;
 }
+
 interface Product {
     id: number;
     title: string;
@@ -48,7 +53,6 @@ interface Product {
     photos: Photo[];
 }
 
-
 interface OrderItem {
     id: number;
     productId: number;
@@ -58,7 +62,6 @@ interface OrderItem {
     totalPrice: number;
     product: Product;
 }
-
 
 interface Order {
     id: number;
@@ -79,8 +82,6 @@ interface Order {
     createdAt: Date;
     updatedAt: Date;
     orderItems: OrderItem[];
-
-    
 }
 
 const OrderDetail = () =>  {
@@ -89,61 +90,127 @@ const OrderDetail = () =>  {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<OrderStatus | null>(null);
+  const [statusNotes, setStatusNotes] = useState<string>("");
   const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
-    
-    try {
-      const data: Order = await apiService.get(`/Orders/${id}`);
-      setOrder(data);
-      setLoading(false);
-    } catch (error: any) {
-      setLoading(false);
-      setError("Failed to load order details.");
-      
-      console.error("API call failed:", error);
-      setTimeout(() => navigate('/admin/order-management'), 3000);
-    }
-  };
+      try {
+        const data: Order = await apiService.get(`/Orders/${id}`);
+        setOrder(data);
+        setLoading(false);
+      } catch (error: any) {
+        setLoading(false);
+        setError("Failed to load order details.");
+        console.error("API call failed:", error);
+        setTimeout(() => navigate('/admin/order-management'), 3000);
+      }
+    };
     
     fetchOrderDetails();
-  },);
+  }, [id, navigate]);
 
-    //**continue with handling update order status (also think abt creating a way to send in notes back to the customer for any issues) */
-    const handleUpdate = async () => {
-    if (!order) return;
+  const getStatusColor = (status: OrderStatus) => {
+    switch (status) {
+      case "Pending":
+        return "yellow";
+      case "Confirmed":
+        return "purple";
+      case "Processing":
+        return "blue";
+      case "Shipped":
+        return "indigo";
+      case "Delivered":
+        return "green";
+      case "Cancelled":
+        return "red";
+      case "Refunded":
+        return "cyan";
+      case "Returned":
+        return "orange";
+      default:
+        return "gray";
+    }
+  };
+
+  const getNextStatus = (currentStatus: OrderStatus): OrderStatus | null => {
+    const statusFlow: Record<OrderStatus, OrderStatus | null> = {
+      'Pending': 'Confirmed',
+      'Confirmed': 'Processing',
+      'Processing': 'Shipped',
+      'Shipped': 'Delivered',
+      'Delivered': 'Returned', 
+      'Cancelled': "Refunded", 
+      'Returned': 'Refunded',
+      'Refunded': null, // Terminal status
+    };
+    return statusFlow[currentStatus];
+  };
+
+  const getAllStatuses = (): OrderStatus[] => {
+    return ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned', 'Refunded'];
+  };
+
+  const handleStatusChange = (newStatus: OrderStatus) => {
+    setSelectedStatus(newStatus);
+    setStatusNotes("");
+    setConfirmModalOpen(true);
+  };
+
+  const handleConfirmStatusChange = async () => {
+    if (!order || !selectedStatus) return;
+    
     setSaving(true);
+    setMessage(null);
+    
     try {
-      await apiService.put(`/admin/order-detail/${order.id}`, order);
-      setMessage("Order Status updated successfully!");
+      const updatedOrder = {
+        ...order,
+        statusName: selectedStatus,
+        status: selectedStatus, 
+        notes: statusNotes.trim() || undefined,
+        changedBy: "Admin User"
+      };
+      
+      await apiService.put(`/Orders/${order.id}/status`, updatedOrder);
+      
+
+      setOrder(updatedOrder);
+      setMessage(`Order status updated to ${selectedStatus} successfully!`);
+      setConfirmModalOpen(false);
+      
+      setTimeout(() => setMessage(null), 3000);
     } catch (error) {
       console.error("Error updating order status:", error);
-      setMessage("Failed to update order status.");
+      setMessage("Failed to update order status. Please try again.");
     } finally {
       setSaving(false);
     }
   };
 
-  
+  const handleMoveToNextStage = () => {
+    if (!order) return;
+    const nextStatus = getNextStatus(order.statusName);
+    if (nextStatus) {
+      handleStatusChange(nextStatus);
+    }
+  };
 
-const getStatusColor = (status: OrderStatus) => {
-          switch (status) {
-            case "Pending":
-          return "yellow";
-          case "Processing":
-          return "blue";
-          case "Shipped":
-          return "indigo";
-          case "Delivered":
-          return "green";
-          case "Cancelled":
-          return "red";
-          default:
-          return "gray";
-        }
-      };
+  const handleCloseModal = () => {
+    setConfirmModalOpen(false);
+    setStatusNotes(""); 
+  };
+
+  const orderStatus = order?.statusName;
+
+  const getStatusPagePath = (status?: OrderStatus) => {
+    return status 
+      ? `/admin/${status.toLowerCase()}-orders` 
+      : "/admin/order-management";
+  };
 
   if (loading) {
     return <Container>Loading...</Container>;
@@ -168,6 +235,9 @@ const getStatusColor = (status: OrderStatus) => {
     return <Container>Order not found</Container>;
   }
 
+  const nextStatus = getNextStatus(order.statusName);
+  const isTerminalStatus = nextStatus === null;
+
   return (
     <Container size="lg" py="xl">
       <Stack gap="lg">
@@ -175,9 +245,9 @@ const getStatusColor = (status: OrderStatus) => {
           <Group>
             <Button
               variant="subtle"
-              onClick={() => navigate("/admin/order-management")}
+              onClick={() => navigate(getStatusPagePath(orderStatus))}
             >
-              ← Back to Order Management
+              ← Back to {orderStatus ? `${orderStatus} Orders` : 'Order Management'}
             </Button>
             <Title order={2}>Order Details</Title>
           </Group>
@@ -186,7 +256,116 @@ const getStatusColor = (status: OrderStatus) => {
           </Badge>
         </Group>
 
-        {/* Order Summary */}
+        {message && (
+          <Paper p="md" withBorder bg={message.includes("Failed") ? "#ffe0e0" : "#e0ffe0"}>
+            <Text c={message.includes("Failed") ? "red" : "green"} ta="center" fw={500}>
+              {message}
+            </Text>
+          </Paper>
+        )}
+
+        <Paper shadow="sm" p="lg" withBorder>
+          <Stack gap="md">
+            <Title order={3}>Order Status Management</Title>
+            <Divider />
+            
+            <Group justify="space-between" align="center">
+              <div>
+                <Text size="sm" c="dimmed" mb="xs">
+                  Current Status
+                </Text>
+                <Badge size="xl" color={getStatusColor(order.statusName)}>
+                  {order.statusName}
+                </Badge>
+              </div>
+
+              <Group>
+                {!isTerminalStatus && (
+                  <Button
+                    color={getStatusColor(nextStatus!)}
+                    size="md"
+                    onClick={handleMoveToNextStage}
+                    disabled={saving}
+                  >
+                    Move to {nextStatus} →
+                  </Button>
+                )}
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+
+                <Text>Change status manually</Text>
+                <Select
+                  placeholder="Change status manually"
+                  data={getAllStatuses().map(status => ({
+                    value: status,
+                    label: status,
+                  }))}
+                  value={order.statusName}
+                  onChange={(value) => value && handleStatusChange(value as OrderStatus)}
+                  disabled={saving}
+                  w={220}
+                />
+                </div>
+              </Group>
+            </Group>
+
+            {isTerminalStatus && (
+              <Text size="sm" c="dimmed" ta="center">
+                This order has reached a terminal status. Use manual status selection to change if needed.
+              </Text>
+            )}
+          </Stack>
+        </Paper>
+
+        <Modal
+          opened={confirmModalOpen}
+          onClose={handleCloseModal}
+          title="Confirm Status Change"
+          centered
+        >
+          <Stack gap="md">
+            <Text component="div">
+              Are you sure you want to change the order status from{" "}
+              <Badge color={getStatusColor(order.statusName)}>{order.statusName}</Badge>
+              {" "}to{" "}
+              <Badge color={getStatusColor(selectedStatus!)}>{selectedStatus}</Badge>?
+            </Text>
+
+            <Text size="sm" c="dimmed">
+              This action will update the order status and may trigger notifications to the customer.
+            </Text>
+
+            <Divider />
+
+            <Textarea
+              label="Notes (Optional)"
+              placeholder="Add notes about this status change (e.g., reason for cancellation, tracking number, etc.)"
+              description="These notes will be saved in the order status history"
+              value={statusNotes}
+              onChange={(event) => setStatusNotes(event.currentTarget.value)}
+              minRows={3}
+              maxRows={6}
+              autosize
+            />
+
+            <Group justify="flex-end" mt="md">
+              <Button
+                variant="subtle"
+                onClick={() => setConfirmModalOpen(false)}
+                disabled={saving}
+              >
+                Cancel
+              </Button>
+              <Button
+                color={getStatusColor(selectedStatus!)}
+                onClick={handleConfirmStatusChange}
+                loading={saving}
+              >
+                Confirm Change
+              </Button>
+            </Group>
+          </Stack>
+        </Modal>
+
         <Paper shadow="sm" p="lg" withBorder>
           <Stack gap="md">
             <Group justify="space-between">
@@ -214,7 +393,6 @@ const getStatusColor = (status: OrderStatus) => {
           </Stack>
         </Paper>
 
-        {/* Customer Information */}
         <Paper shadow="sm" p="lg" withBorder>
           <Stack gap="md">
             <Title order={3}>Customer Information</Title>
@@ -236,7 +414,6 @@ const getStatusColor = (status: OrderStatus) => {
           </Stack>
         </Paper>
 
-        {/* Shipping Information */}
         <Paper shadow="sm" p="lg" withBorder>
           <Stack gap="md">
             <Group>
@@ -276,7 +453,6 @@ const getStatusColor = (status: OrderStatus) => {
           </Stack>
         </Paper>
 
-        {/* Order Items */}
         <Paper shadow="sm" p="lg" withBorder>
           <Stack gap="md">
             <Title order={3}>Order Items</Title>
@@ -284,11 +460,11 @@ const getStatusColor = (status: OrderStatus) => {
             <Table>
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th bg = "#8a00c4">Product</Table.Th>
-                  <Table.Th bg = "#8a00c4">Category</Table.Th>
-                  <Table.Th bg = "#8a00c4">Price</Table.Th>
-                  <Table.Th bg = "#8a00c4">Quantity</Table.Th>
-                  <Table.Th bg = "#8a00c4">Total</Table.Th>
+                  <Table.Th bg="#8a00c4">Product</Table.Th>
+                  <Table.Th bg="#8a00c4">Category</Table.Th>
+                  <Table.Th bg="#8a00c4">Price</Table.Th>
+                  <Table.Th bg="#8a00c4">Quantity</Table.Th>
+                  <Table.Th bg="#8a00c4">Total</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
@@ -319,7 +495,6 @@ const getStatusColor = (status: OrderStatus) => {
           </Stack>
         </Paper>
 
-        {/* Order Summary */}
         <Paper shadow="sm" p="lg" withBorder>
           <Stack gap="md">
             <Title order={3}>Order Summary</Title>
@@ -352,7 +527,6 @@ const getStatusColor = (status: OrderStatus) => {
           </Stack>
         </Paper>
 
-        {/* Timestamps */}
         <Paper shadow="sm" p="md" withBorder>
           <Group justify="space-between">
             <div>

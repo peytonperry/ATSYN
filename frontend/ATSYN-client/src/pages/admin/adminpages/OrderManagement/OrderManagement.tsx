@@ -76,7 +76,6 @@ function OrderManagement() {
     // const [filterStatus, setFilterStatus] = useState<OrderStatus | 'All'>('All');
     // const [searchTerm, setSearchTerm] = useState('');
 
-    //'Pending' | 'Confirmed' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled' | 'Returned' | 'Refunded';
 
     const [orders,  setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
