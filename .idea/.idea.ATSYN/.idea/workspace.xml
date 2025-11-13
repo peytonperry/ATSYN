@@ -15,7 +15,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f1b6c2bb-3028-4c33-aefb-425564ed5242" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Cartpage/CartPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Cartpage/CartPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -144,7 +145,7 @@
       <option name="presentableId" value="Default" />
       <updated>1760055138448</updated>
       <workItem from="1760055140203" duration="566000" />
-      <workItem from="1761663797837" duration="8749000" />
+      <workItem from="1761663797837" duration="11662000" />
     </task>
     <servers />
   </component>
