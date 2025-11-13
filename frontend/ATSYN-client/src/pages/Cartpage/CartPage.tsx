@@ -16,6 +16,7 @@ import {
   TextInput,
   Collapse,
   SegmentedControl,
+  NumberInput,
 } from "@mantine/core";
 import {
   IconTrash,
@@ -31,6 +32,7 @@ import { apiService } from "../../config/api";
 import { PaymentForm } from "../../components/Stripe/PaymentForm";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/Auth/AuthContext";
+import { useField } from "@mantine/form";
 
 
 const CartPage: React.FC = () => {
@@ -52,6 +54,10 @@ const CartPage: React.FC = () => {
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
   const totalInCents = Math.round(total * 100);
+
+  const field = useField({
+    initialValue: "",
+  });
 
   const handleQuantityChange = (productId: number, newQuantity: number) => {
     if (newQuantity < 1) {
@@ -276,13 +282,30 @@ const CartPage: React.FC = () => {
                             >
                               <IconMinus size={16} />
                             </ActionIcon>
-                            <Text
-                              size="lg"
+                            <NumberInput
+                              hideControls
+                              size="sm"
                               fw={600}
-                              style={{ minWidth: 40, textAlign: "center" }}
-                            >
-                              {item.quantity}
-                            </Text>
+                              min={1}
+                              max={99}
+                              style={{
+                                minWidth: 40,
+                                maxWidth: 60,
+                                textAlign: "center",
+                              }}
+                              value={item.quantity}
+                              onChange={(value) => {
+                                const newQuantity =
+                                  typeof value === "number"
+                                    ? value
+                                    : parseInt(value) || 1;
+                                handleQuantityChange(
+                                  item.product.id,
+                                  newQuantity
+                                );
+                              }}
+                            />
+
                             <ActionIcon
                               variant="default"
                               size="lg"
