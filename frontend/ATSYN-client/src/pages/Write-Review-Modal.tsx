@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { useState } from "react";
 import { useAuth } from "../components/Auth/AuthContext";
+import ReviewToast from "../components/Review/ReviewToast";
 
 interface WriteReviewModalProps {
   productId: number | undefined;
@@ -26,6 +27,8 @@ function WriteReviewModal({
 }: WriteReviewModalProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [showToast, setShowToast] = useState(false);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
   const [formData, setFormData] = useState({
     productId,
     rating: 0,
@@ -48,62 +51,74 @@ function WriteReviewModal({
     }
 
     try {
-      const response = await apiService.post("/Review/create-review", formData);
-      console.log("Created review:", response);
+      await apiService.post("/Review/create-review", formData);
 
       setFormData({ productId, rating: 0, title: "", comment: "" });
-      alert("Review submitted successfully!");
       onClose();
+
+      setToastType("success");
+      setShowToast(true);
+
+      window.location.reload();
     } catch (error) {
-      console.error("Error creating review", error);
-      alert("Something went wrong while submitting your review.");
+      onClose();
+
+      setToastType("error");
+      setShowToast(true);
     }
   };
 
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title="Write a Review"
-      size="lg"
-      centered
-    >
-      <form onSubmit={handleSubmit}>
-        <Stack gap="md">
-          <div>
-            <Text size="sm" mb="xs">
-              Your Rating
-            </Text>
-            <Rating
-              size="lg"
-              value={formData.rating}
-              onChange={(value) => handleChange("rating", value)}
+    <>
+      <Modal
+        opened={opened}
+        onClose={onClose}
+        title="Write a Review"
+        size="lg"
+        centered
+      >
+        <form onSubmit={handleSubmit}>
+          <Stack gap="md">
+            <div>
+              <Text size="sm" mb="xs">
+                Your Rating
+              </Text>
+              <Rating
+                size="lg"
+                value={formData.rating}
+                onChange={(value) => handleChange("rating", value)}
+              />
+            </div>
+            <TextInput
+              label="Title"
+              placeholder="Sum up your experience"
+              value={formData.title}
+              onChange={(e) => handleChange("title", e.currentTarget.value)}
+              required
             />
-          </div>
-          <TextInput
-            label="Title"
-            placeholder="Sum up your experience"
-            value={formData.title}
-            onChange={(e) => handleChange("title", e.currentTarget.value)}
-            required
-          />
-          <Textarea
-            label="Your review"
-            placeholder="Share your thoughts about this product"
-            minRows={4}
-            value={formData.comment}
-            onChange={(e) => handleChange("comment", e.currentTarget.value)}
-            required
-          />
-          <Group justify="flex-end" mt="md">
-            <Button variant="default" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit">Submit Review</Button>
-          </Group>
-        </Stack>
-      </form>
-    </Modal>
+            <Textarea
+              label="Your review"
+              placeholder="Share your thoughts about this product"
+              minRows={4}
+              value={formData.comment}
+              onChange={(e) => handleChange("comment", e.currentTarget.value)}
+              required
+            />
+            <Group justify="flex-end" mt="md">
+              <Button variant="default" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button type="submit">Submit Review</Button>
+            </Group>
+          </Stack>
+        </form>
+      </Modal>
+      <ReviewToast
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        type={toastType}
+      />
+    </>
   );
 }
 

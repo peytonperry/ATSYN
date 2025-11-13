@@ -34,6 +34,7 @@ namespace ATSYN.Api.Controllers
                 {
                     Id = r.Id,
                     ProductId = r.ProductId,
+                    UserId = userId,
                     Rating = r.Rating,
                     Title = r.Title,
                     Comment = r.Comment,
@@ -51,7 +52,6 @@ namespace ATSYN.Api.Controllers
 
         //endpoint for creating a review (user must be logged in)
         [HttpPost("create-review")]
-        [Authorize]
         public async Task<IActionResult> CreateReview(CreateReviewDto createReviewDto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -88,7 +88,7 @@ namespace ATSYN.Api.Controllers
             var isAdmin = User.IsInRole("Admin");
 
 
-            if (review.UserId != userId && isAdmin)
+            if (review.UserId != userId && !isAdmin)
             {
                 return Forbid();
             }

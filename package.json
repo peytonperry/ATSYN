@@ -29,7 +29,6 @@
     "@hey-api/openapi-ts": "latest",
     "@mantine/notifications": "^8.3.3",
     "@radix-ui/themes": "^3.2.1",
-    "@tabler/icons-react": "^3.35.0",
     "@types/node": "^20.0.0",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.2.0",
