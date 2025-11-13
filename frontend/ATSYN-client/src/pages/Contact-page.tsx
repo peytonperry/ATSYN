@@ -184,19 +184,22 @@ function ContactPage() {
                 <TextInput
                   label="Name"
                   placeholder="Your name"
-                  required
                   onChange={(e) => handleChange("name", e.currentTarget.value)}
+                  maxLength={50}
+                  required
                 />
                 <TextInput
                   label="Email"
                   placeholder="your@email.com"
                   type="email"
-                  required
+                  maxLength={100}
                   onChange={(e) => handleChange("email", e.currentTarget.value)}
+                  required
                 />
                 <TextInput
                   label="Subject"
                   placeholder="What's this about?"
+                  maxLength={200}
                   required
                   onChange={(e) =>
                     handleChange("subject", e.currentTarget.value)
@@ -206,6 +209,7 @@ function ContactPage() {
                   label="Message"
                   placeholder="Your message..."
                   minRows={4}
+                  maxLength={250}
                   required
                   onChange={(e) =>
                     handleChange("message", e.currentTarget.value)
