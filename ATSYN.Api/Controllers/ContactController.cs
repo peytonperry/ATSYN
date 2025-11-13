@@ -49,6 +49,25 @@ namespace ATSYN.Api.Controllers
             return Ok(contactSubmission);
         }
 
+        [HttpPut("toggle-read-unread/{id}")]
+        public async Task<IActionResult> MarkAsRead(int id)
+        {
+            var submission = await _context.ContactSubmissions.FindAsync(id);
+            if (submission == null) 
+                { 
+                return NotFound(); 
+            }
+            if (submission.IsRead)
+            {
+                submission.IsRead = false;
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            submission.IsRead = true;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
         [HttpDelete("delete-contact/{id}")]
         public async Task<IActionResult> DeleteContactSubmission(int id)
         {
