@@ -24,6 +24,11 @@ function AdminContacts() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const markAsRead = async (id: number) => {
+    await apiService.put(`/Contact/toggle-read-unread/${id}`, {});
+    fetchContacts();
+  }
+
   const fetchContacts = async () => {
     try {
       const contactData: Contact[] = await apiService.get("/Contact");
@@ -36,12 +41,8 @@ function AdminContacts() {
 
   useEffect(() => {
     fetchContacts();
-  });
+  }, []);
 
-  const markAsRead = (id: number) => {
-    
-
-  }
   return (
     <Container size="lg" py="xl">
       <Stack gap="md">
@@ -49,7 +50,7 @@ function AdminContacts() {
           <Paper key={contact.id} withBorder p="md" radius="md" shadow="sm">
             <Group justify="space-between" mb="sm" wrap="wrap">
               <Group gap="xs" wrap="wrap">
-                <Badge component="button" onClick={markAsRead(contact.id)} color={contact.isRead ? "green" : "red"}>
+                <Badge component="button" onClick={() => markAsRead(contact.id)} color={contact.isRead ? "green" : "red"}>
                   {contact.isRead ? "Read" : "Unread"}
                 </Badge>
                 <Text size="sm" c="dimmed">
