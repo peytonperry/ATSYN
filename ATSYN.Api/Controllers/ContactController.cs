@@ -36,6 +36,11 @@ namespace ATSYN.Api.Controllers
         [HttpPost("submit-contact")]
         public async Task<IActionResult> SubmitContactForm(CreateContactSubmissionDto dto)
         {
+           if (!string.IsNullOrEmpty(dto.Format))
+            {
+                return Ok(new {Message = "Your message has been sent successfully"});
+            } 
+
             var contactSubmission = new ContactSubmission
             {
                 Name = dto.Name,

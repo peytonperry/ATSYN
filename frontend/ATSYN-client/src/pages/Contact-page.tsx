@@ -19,6 +19,7 @@ function ContactPage() {
     email: "",
     subject: "",
     message: "",
+    format: "",
   });
 
   const handleChange = (field: string, value: string | number) => {
@@ -214,6 +215,17 @@ function ContactPage() {
                   onChange={(e) =>
                     handleChange("message", e.currentTarget.value)
                   }
+                />
+                <input
+                  type="text"
+                  name="format"
+                  value={formData.format}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, format: e.target.value }))
+                  }
+                  style={{ display: "none" }}
+                  tabIndex={-1}
+                  autoComplete="off"
                 />
                 <Button fullWidth type="submit">
                   Send Message

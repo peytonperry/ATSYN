@@ -46,5 +46,7 @@ namespace ATSYN.Data.Data.Entities
 
         [MaxLength(250)]
         public string Message { get; init; } = string.Empty;
+
+        public string? Format { get; init; } = string.Empty;
     }
 }
