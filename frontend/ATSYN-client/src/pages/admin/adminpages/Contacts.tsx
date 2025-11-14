@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { apiService } from "../../../config/api";
+import { TbTrash } from "react-icons/tb";
 import {
+  ActionIcon,
   Badge,
+  Button,
   Container,
   Divider,
   Group,
+  Modal,
   Paper,
   Stack,
   Text,
@@ -23,11 +27,31 @@ interface Contact {
 function AdminContacts() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteModalOpened, setDeleteModalOpened] = useState(false);
+  const [contactToDelete, setContactToDelete] = useState<number | null>(null);
 
   const markAsRead = async (id: number) => {
     await apiService.put(`/Contact/toggle-read-unread/${id}`, {});
     fetchContacts();
-  }
+  };
+
+  const handleDeleteClick = (id: number) => {
+    setContactToDelete(id);
+    setDeleteModalOpened(true);
+  };
+
+  const confirmDelete = async () => {
+    if (contactToDelete === null) return;
+
+    try {
+      await apiService.delete(`/Contact/delete-contact/${contactToDelete}`);
+      setDeleteModalOpened(false);
+      setContactToDelete(null);
+      fetchContacts();
+    } catch (error) {
+      console.error("Error deleting contact:", error);
+    }
+  };
 
   const fetchContacts = async () => {
     try {
@@ -50,13 +74,20 @@ function AdminContacts() {
           <Paper key={contact.id} withBorder p="md" radius="md" shadow="sm">
             <Group justify="space-between" mb="sm" wrap="wrap">
               <Group gap="xs" wrap="wrap">
-                <Badge component="button" onClick={() => markAsRead(contact.id)} color={contact.isRead ? "green" : "red"}>
+                <Badge
+                  component="button"
+                  onClick={() => markAsRead(contact.id)}
+                  color={contact.isRead ? "green" : "red"}
+                >
                   {contact.isRead ? "Read" : "Unread"}
                 </Badge>
                 <Text size="sm" c="dimmed">
                   {new Date(contact.submittedAt).toLocaleDateString()}
                 </Text>
               </Group>
+              <ActionIcon color="red" onClick={() => handleDeleteClick(contact.id)}>
+                <TbTrash />
+              </ActionIcon>
             </Group>
 
             <Stack gap="xs">
@@ -88,6 +119,26 @@ function AdminContacts() {
           </Paper>
         ))}
       </Stack>
+      <Modal
+        opened={deleteModalOpened}
+        onClose={() => setDeleteModalOpened(false)}
+        title="Delete Message"
+        centered
+      >
+        <Text mb="md">
+          Are you sure you want to delete this message? This action cannot be
+          undone.
+        </Text>
+
+        <Group justify="flex-end" gap="sm">
+          <Button variant="default" onClick={() => setDeleteModalOpened(false)}>
+            Cancel
+          </Button>
+          <Button color="red" onClick={confirmDelete}>
+            Delete
+          </Button>
+        </Group>
+      </Modal>
     </Container>
   );
 }
