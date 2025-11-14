@@ -32,7 +32,7 @@ function ContactPage() {
     try {
       await apiService.post("/Contact/submit-contact", formData);
       alert("Success! Your message has been sent");
-      setFormData({ name: "", email: "", subject: "", message: "" });
+      setFormData({ name: "", email: "", subject: "", message: "", format: ""});
       window.location.reload();
     } catch (error) {
       alert("Failed to send message. Please try again");

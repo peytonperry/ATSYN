@@ -20,8 +20,16 @@ import ProductDetailPage from "./pages/Products/ProductDetail.tsx";
 import { MantineProvider } from "@mantine/core";
 // Admin Routes
 import AppShell from "./pages/admin/admincomponents/Appshell.tsx";
-import OrderManagement from "./pages/admin/adminpages/OrderManagement.tsx";
-import OrderManagementDetail from "./pages/admin/adminpages/OrderDetailPage.tsx";
+import OrderManagement from "./pages/admin/adminpages/OrderManagement/OrderManagement.tsx";
+import OrderManagementDetail from "./pages/admin/adminpages/OrderManagement/OrderDetailPage.tsx";
+import PendingOrders from "./pages/admin/adminpages/OrderManagement/PendingOrders.tsx";
+import ProcessingOrders from "./pages/admin/adminpages/OrderManagement/ProcessingOrders.tsx";
+import ConfirmedOrders from "./pages/admin/adminpages/OrderManagement/ConfirmedOrders.tsx";
+import ShippedOrders from "./pages/admin/adminpages/OrderManagement/ShippedOrders.tsx";
+import DeliveredOrders from "./pages/admin/adminpages/OrderManagement/DeliveredOrders.tsx";
+import ReturnedOrders from "./pages/admin/adminpages/OrderManagement/ReturnedOrders.tsx";
+import RefundedOrders from "./pages/admin/adminpages/OrderManagement/RefundedOrders.tsx";
+import CancelledOrders from "./pages/admin/adminpages/OrderManagement/CancelledOrders.tsx";
 import Reports from "./pages/admin/adminpages/Reports.tsx";
 import ProductManagement from "./pages/admin/adminpages/ProductManagement.tsx";
 import AllProducts from "./pages/admin/adminpages/AllProducts.tsx";
@@ -110,6 +118,14 @@ function AppContent() {
           <Route index element={<AdminProfile />} />
           <Route path="productmanagement" element={<ProductManagement />} />
           <Route path="order-management" element={<OrderManagement />} />
+          <Route path="pending-orders" element={<PendingOrders/>}/>
+          <Route path = "processing-orders" element={<ProcessingOrders/>}/>
+          <Route path = "confirmed-orders" element={<ConfirmedOrders/>}/>
+          <Route path = "shipped-orders" element={<ShippedOrders/>}/>
+          <Route path = "delivered-orders" element={<DeliveredOrders/>}/>
+          <Route path = "returned-orders" element={<ReturnedOrders/>}/>
+          <Route path = "refunded-orders" element={<RefundedOrders/>}/>
+          <Route path = "cancelled-orders" element={<CancelledOrders/>}/>
           <Route path="order-detail/:id" element = {<OrderManagementDetail />} />
           <Route path="Reports" element={<Reports />} />
           <Route path ="Contacts" element ={<Contacts/>} />

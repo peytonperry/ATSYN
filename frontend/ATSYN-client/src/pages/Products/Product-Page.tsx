@@ -85,28 +85,31 @@ export default function ProductPage() {
 
   //filtering products
   useEffect(() => {
-    let filtered = products;
+    const timer = setTimeout(() => {
+      let filtered = products;
 
-    if (searchTerm) {
+      if (searchTerm) {
+        filtered = filtered.filter(
+          (product) =>
+            product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            product.description.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+
+      if (selectedCategory) {
+        filtered = filtered.filter(
+          (product) => product.category.name === selectedCategory
+        );
+      }
+
       filtered = filtered.filter(
         (product) =>
-          product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchTerm.toLowerCase())
+          product.price >= priceRange[0] && product.price <= priceRange[1]
       );
-    }
 
-    if (selectedCategory) {
-      filtered = filtered.filter(
-        (product) => product.category.name === selectedCategory
-      );
-    }
-
-    filtered = filtered.filter(
-      (product) =>
-        product.price >= priceRange[0] && product.price <= priceRange[1]
-    );
-
-    setFilteredProducts(filtered);
+      setFilteredProducts(filtered);
+    }, 300);
+    return () => clearTimeout(timer);
   }, [products, searchTerm, selectedCategory, priceRange]);
 
   //get data from backend
