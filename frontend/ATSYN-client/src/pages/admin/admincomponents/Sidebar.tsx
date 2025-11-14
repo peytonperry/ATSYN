@@ -7,10 +7,14 @@ import "./Sidebar.css";
 const Sidebar = () => {
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
   const [isBlogDropdownOpen, setIsBlogDropdownOpen] = useState(false);
+  const [isAttributeDropdownOpen, setIsAttributeDropdownOpen] = useState(false);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
   const navItems = [
     { name: "Profile", path: "/admin" },
     { name: "Product Management", path: "/admin/all-products" },
+    { name: "Category Management", path: "/admin/manage-categories" },
+    { name: "Attribute Management", path: "/admin/manage-attributes" },
     { name: "Blog Management", path: "/admin/all-blogs" },
     { name: "Order Management", path: "/admin/order-management" },
     { name: "Contacts", path: "/admin/contacts" },
@@ -18,15 +22,25 @@ const Sidebar = () => {
   ];
 
   const productSubItems = [
-    { name: "Add New Product", path: "/admin/create-product" }
+    { name: "Add New Product", path: "/admin/create-product" },
   ];
 
   const blogSubItems = [
-    { name: "Create New Blog", path: "/admin/create-blog" }
+    { name: "Create New Blog", path: "/admin/create-blog" },
+  ];
+
+  const attributeSubItems = [
+    { name: "Create New Attribute", path: "/admin/create-attribute" },
+  ];
+
+  const categorySubItems = [
+    { name: "Create New Category", path: "/admin/create-category" },
   ];
 
   const isProductManagement = "Product Management";
   const isBlogManagement = "Blog Management";
+  const isAttributeManagement = "Attribute Management";
+  const isCategoryManagement = "Category Management";
 
   return (
     <aside className="sidebar">
@@ -38,7 +52,9 @@ const Sidebar = () => {
               {item.name === isProductManagement ? (
                 <>
                   <UnstyledButton
-                    onClick={() => setIsProductDropdownOpen(!isProductDropdownOpen)}
+                    onClick={() =>
+                      setIsProductDropdownOpen(!isProductDropdownOpen)
+                    }
                     style={{ width: "100%" }}
                   >
                     <Group justify="space-between">
@@ -54,7 +70,9 @@ const Sidebar = () => {
                       <IconChevronDown
                         size={16}
                         style={{
-                          transform: isProductDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+                          transform: isProductDropdownOpen
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
                           transition: "transform 200ms ease",
                         }}
                       />
@@ -64,6 +82,100 @@ const Sidebar = () => {
                   <Collapse in={isProductDropdownOpen}>
                     <ul className="sidebar-subnav">
                       {productSubItems.map((subItem) => (
+                        <li key={subItem.name} className="sidebar-subitem">
+                          <NavLink
+                            to={subItem.path}
+                            className={({ isActive }) =>
+                              `sidebar-sublink ${isActive ? "active" : ""}`
+                            }
+                          >
+                            {subItem.name}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </Collapse>
+                </>
+              ) : item.name === isAttributeManagement ? (
+                <>
+                  <UnstyledButton
+                    onClick={() =>
+                      setIsAttributeDropdownOpen(!isAttributeDropdownOpen)
+                    }
+                    style={{ width: "100%" }}
+                  >
+                    <Group justify="space-between">
+                      <NavLink
+                        to={item.path}
+                        className={({ isActive }) =>
+                          `sidebar-link ${isActive ? "active" : ""}`
+                        }
+                        style={{ flex: 1 }}
+                      >
+                        {item.name}
+                      </NavLink>
+                      <IconChevronDown
+                        size={16}
+                        style={{
+                          transform: isAttributeDropdownOpen
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                          transition: "transform 200ms ease",
+                        }}
+                      />
+                    </Group>
+                  </UnstyledButton>
+
+                  <Collapse in={isAttributeDropdownOpen}>
+                    <ul className="sidebar-subnav">
+                      {attributeSubItems.map((subItem) => (
+                        <li key={subItem.name} className="sidebar-subitem">
+                          <NavLink
+                            to={subItem.path}
+                            className={({ isActive }) =>
+                              `sidebar-sublink ${isActive ? "active" : ""}`
+                            }
+                          >
+                            {subItem.name}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </Collapse>
+                </>
+              ) : item.name === isCategoryManagement ? (
+                <>
+                  <UnstyledButton
+                    onClick={() =>
+                      setIsCategoryDropdownOpen(!isCategoryDropdownOpen)
+                    }
+                    style={{ width: "100%" }}
+                  >
+                    <Group justify="space-between">
+                      <NavLink
+                        to={item.path}
+                        className={({ isActive }) =>
+                          `sidebar-link ${isActive ? "active" : ""}`
+                        }
+                        style={{ flex: 1 }}
+                      >
+                        {item.name}
+                      </NavLink>
+                      <IconChevronDown
+                        size={16}
+                        style={{
+                          transform: isCategoryDropdownOpen
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                          transition: "transform 200ms ease",
+                        }}
+                      />
+                    </Group>
+                  </UnstyledButton>
+
+                  <Collapse in={isCategoryDropdownOpen}>
+                    <ul className="sidebar-subnav">
+                      {categorySubItems.map((subItem) => (
                         <li key={subItem.name} className="sidebar-subitem">
                           <NavLink
                             to={subItem.path}
@@ -97,7 +209,9 @@ const Sidebar = () => {
                       <IconChevronDown
                         size={16}
                         style={{
-                          transform: isBlogDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+                          transform: isBlogDropdownOpen
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
                           transition: "transform 200ms ease",
                         }}
                       />

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import "./AllProducts.css";
-import { apiService } from "../../../config/api";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -12,6 +11,7 @@ import {
   Stack,
   Table,
 } from "@mantine/core";
+import { apiService } from "../../../../config/api";
 
 interface Category {
   id: number;

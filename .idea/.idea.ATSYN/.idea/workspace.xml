@@ -14,7 +14,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f1b6c2bb-3028-4c33-aefb-425564ed5242" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Products/Product-Page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Products/Product-Page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ATSYN.Api/Controllers/CategoryController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Api/Controllers/CategoryController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ATSYN.Api/Controllers/ProductAttributeController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Api/Controllers/ProductAttributeController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ATSYN.Api/Controllers/ProductController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Api/Controllers/ProductController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ATSYN.Data/Data/Entities/Products/Category.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Data/Data/Entities/Products/Category.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ATSYN.Data/Migrations/ApplicationDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Data/Migrations/ApplicationDbContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/admincomponents/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/admincomponents/Sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/adminpages/AllProducts.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/adminpages/AllProducts.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/adminpages/CategorySelect.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/adminpages/CreateProduct.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/adminpages/CreateProduct.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/adminpages/ProductDetailAdminPage.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/adminpages/ProductDetailAdminPage.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/adminpages/ProductManagement.tsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +54,9 @@
     &quot;accountId&quot;: &quot;3a29b9b3-b385-4a15-967d-5ab0eeb62387&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bf9021a960b74107a7e141aa06bc9d8a0a53c929178c2fb95b1597be8af8dc/ExceptionDispatchInfo.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -58,7 +76,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "fix/debounce-search",
+    "git-widget-placeholder": "feat/category-management",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
