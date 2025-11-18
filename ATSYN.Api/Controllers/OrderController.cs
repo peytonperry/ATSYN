@@ -1,9 +1,11 @@
 using ATSYN.Api.Features;
 using ATSYN.Data.Data;
 using ATSYN.Data.Data.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace ATSYN.Api.Controllers;
 
@@ -90,8 +92,12 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<ActionResult<OrderDto>> GetOrder(int id)
     {
+        // Get the authenticated user's email from the JWT token claims
+        var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
         var order = await _context.Orders
             .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Product)
@@ -101,6 +107,13 @@ public class OrdersController : ControllerBase
         if (order == null)
         {
             return NotFound($"Order with ID {id} not found.");
+        }
+
+        // Check if user is admin OR if the order belongs to them
+        var isAdmin = User.IsInRole("Admin");
+        if (!isAdmin && order.CustomerEmail != userEmail)
+        {
+            return Forbid(); // Returns 403 Forbidden
         }
 
         var orderDto = new OrderDto
@@ -347,14 +360,15 @@ public class OrdersController : ControllerBase
     [HttpGet("customer/{customerEmail}")]
     public async Task<ActionResult<IEnumerable<OrderDto>>> GetCustomerOrders(string customerEmail)
     {
+        var projection = MapToOrderDtoExpression();
         var orders = await _context.Orders
-            .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Product)
-                    .ThenInclude(p => p.Category)
-            .Where(o => o.CustomerEmail == customerEmail)
-            .OrderByDescending(o => o.CreatedAt)
-            .Select(o => MapToOrderDtoExpression().Compile()(o))
-            .ToListAsync();
+    .Include(o => o.OrderItems)
+        .ThenInclude(oi => oi.Product)
+            .ThenInclude(p => p.Category)
+    .Where(o => o.CustomerEmail == customerEmail)
+    .OrderByDescending(o => o.CreatedAt)
+    .Select(projection)
+    .ToListAsync();
 
         return Ok(orders);
     }
@@ -443,8 +457,9 @@ public class OrdersController : ControllerBase
             OrderStatus.Pending => to is OrderStatus.Confirmed or OrderStatus.Cancelled,
             OrderStatus.Confirmed => to is OrderStatus.Processing or OrderStatus.Cancelled,
             OrderStatus.Processing => to is OrderStatus.Shipped or OrderStatus.Cancelled,
-            OrderStatus.Shipped => to is OrderStatus.Delivered,
-            OrderStatus.Delivered => to is OrderStatus.Refunded,
+            OrderStatus.Shipped => to is OrderStatus.Delivered or OrderStatus.Returned,
+            OrderStatus.Delivered => to is OrderStatus.Returned,
+            OrderStatus.Returned => to is OrderStatus.Refunded,
             OrderStatus.Cancelled => to is OrderStatus.Refunded,
             OrderStatus.Refunded => false, 
             _ => false

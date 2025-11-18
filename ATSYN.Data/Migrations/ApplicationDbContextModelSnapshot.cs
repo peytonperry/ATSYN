@@ -218,6 +218,33 @@ namespace ATSYN.Data.Migrations
                     b.ToTable("ProductAttributeValues", (string)null);
                 });
 
+            modelBuilder.Entity("ATSYN.Data.Data.Entities.News.News", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("News", (string)null);
+                });
+
             modelBuilder.Entity("ATSYN.Data.Data.Entities.Photo.Photo", b =>
                 {
                     b.Property<int>("Id")
@@ -272,6 +299,44 @@ namespace ATSYN.Data.Migrations
                         .HasDatabaseName("IX_Photos_ProductId_IsPrimary");
 
                     b.ToTable("Photos", (string)null);
+                });
+
+            modelBuilder.Entity("ATSYN.Data.Data.Entities.Products.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -694,6 +759,25 @@ namespace ATSYN.Data.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("ATSYN.Data.Data.Entities.Products.Review", b =>
+                {
+                    b.HasOne("ATSYN.Api.Features.Product", "Product")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -792,6 +876,8 @@ namespace ATSYN.Data.Migrations
                     b.Navigation("AttributeValues");
 
                     b.Navigation("Photos");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("ATSYN.Api.Features.ProductAttribute", b =>

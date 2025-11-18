@@ -17,10 +17,12 @@ import {
   Paper,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { apiService } from "../../../../../config/api";
+import { apiService } from "../../../config/api";
 import { useParams, useNavigate } from "react-router-dom";
 import "./ProductDetailAdminPage.css";
 import { CategorySelect } from "./CategorySelect";
+//port { CategorySelect } from "CategorySelect";
+
 
 interface Category {
   id: number;
@@ -108,7 +110,8 @@ const ProductDetailAdminPage = () => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
         await apiService.delete(`/Product/${product.id}`);
-        navigate("/admin/products");
+        navigate("/admin/all-products");
+        setMessage("Product deleted successfully!");
       } catch (error) {
         console.error("Error deleting product:", error);
         setMessage("Failed to delete product.");
@@ -130,6 +133,13 @@ const ProductDetailAdminPage = () => {
 
   return (
     <Container my="md" className="admin-product-container">
+        <Button 
+        className="button"
+        variant="subtle"
+        onClick={() => navigate("/admin/all-products")}
+        >
+        ← Back to View All Products
+      </Button>
       {message && (
         <Notification
           color={message.includes("successfully") ? "green" : "red"}

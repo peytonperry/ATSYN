@@ -16,8 +16,9 @@ import {
   Select,
 } from "@mantine/core";
 import { IconUpload, IconCheck, IconAlertCircle } from "@tabler/icons-react";
-import { apiService } from "../../../../../config/api";
+import { apiService } from "../../../config/api";
 import { CategorySelect } from "./CategorySelect";
+import { useNavigate } from "react-router-dom";
 
 interface Category {
   id: number;
@@ -52,6 +53,7 @@ const CreateProduct: React.FC = () => {
     categoryId: 0,
     brandId: null as number | null,
     stockAmount: 0,
+    inStock: true,
     isVisible: true,
     shippingTypeId: 0,
     imageUrl: "",
@@ -64,6 +66,7 @@ const CreateProduct: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -145,6 +148,7 @@ const CreateProduct: React.FC = () => {
         categoryId: 0,
         brandId: null,
         stockAmount: 0,
+        inStock: true,
         isVisible: true,
         shippingTypeId: 0,
         imageUrl: "",
@@ -159,8 +163,16 @@ const CreateProduct: React.FC = () => {
     }
   };
 
+  {console.log(formData.stockAmount, formData.inStock)}
+
   return (
     <Container size="md" py="xl">
+      <Button
+        variant="subtle"
+        onClick={() => navigate("/admin/all-products")}
+        >
+        ← Back to View All Products
+      </Button>
       <Paper shadow="sm" p="xl" radius="md" withBorder>
         <Title order={2} mb="xl">
           Create Product
@@ -288,7 +300,16 @@ const CreateProduct: React.FC = () => {
               }
             />
 
-            <Checkbox label="In Stock" checked={formData.stockAmount > 0} />
+            <Checkbox
+              label="In Stock"
+              checked={formData.stockAmount > 0}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  stockAmount: e.currentTarget.checked ? 1 : 0,
+                })
+              }
+            />
 
             {successMsg && (
               <Alert

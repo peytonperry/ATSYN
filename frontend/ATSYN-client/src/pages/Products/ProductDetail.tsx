@@ -4,7 +4,6 @@ import {
   Image,
   Title,
   Text,
-  Select,
   Stack,
   Paper,
   Radio,
@@ -12,12 +11,24 @@ import {
   Accordion,
   AccordionControl,
   AccordionPanel,
+  Rating,
+  Group,
+  Center,
+  Loader,
+  ActionIcon,
+  NumberInput,
+  Pagination,
 } from "@mantine/core";
+
 import { useEffect, useState } from "react";
 import { apiService } from "../../config/api";
 import { useParams } from "react-router-dom";
 import { useCart } from "../../components/Cart/CartContext";
 import CartToast from "../../components/Cart/CartToast";
+import { useAuth } from "../../components/Auth/AuthContext";
+import WriteReviewModal from "../Write-Review-Modal";
+import { IconMinus, IconPlus } from "@tabler/icons-react";
+import "./ProductDetail.css";
 
 interface Category {
   id: number;
@@ -40,6 +51,8 @@ interface Product {
   title: string;
   description: string;
   price: number;
+  reviewCount: number;
+  averageRating: number;
   categoryId: number;
   stockAmount: number;
   isVisible: boolean;
@@ -48,6 +61,16 @@ interface Product {
   imageUrl: string;
   category: Category;
   photos: Photo[];
+  reviews: Review[];
+}
+
+interface Review {
+  id: number;
+  productId: number;
+  rating: number;
+  title: string;
+  comment: string;
+  userName: string;
 }
 
 const shippingInfo =
@@ -61,23 +84,48 @@ function ProductDetailPage() {
   const [shippingOption, setShippingOption] = useState("shipping");
   const [showToast, setShowToast] = useState(false);
   const [toastProduct, setToastProduct] = useState("");
-  const [quantity, setQuantity] = useState<string | null>("1");
+  const [quantity, setQuantity] = useState(1);
+  const [reviewModalOpened, setReviewModalOpened] = useState(false);
+  const [reviewPage, setReviewPage] = useState(1);
   const { id } = useParams();
   const { addToCart } = useCart();
+  const { user } = useAuth();
+
+  const reviewsPerPage = 4;
+
+  const totalReviewPages = product?.reviews
+    ? Math.ceil(product.reviews.length / reviewsPerPage)
+    : 0;
+
+  const startIndex = (reviewPage - 1) * reviewsPerPage;
+  const endIndex = startIndex + reviewsPerPage;
+  const paginatedReviews = product?.reviews.slice(startIndex, endIndex) || [];
 
   const handleAddToCart = () => {
     if (product && quantity) {
-      addToCart(product, parseInt(quantity));
+      addToCart(product, quantity);
       setToastProduct(product.title);
       setShowToast(true);
     }
   };
 
-  const fetchData = async () => {
+  const handleQuantityChange = (change: number) => {
+    setQuantity((prev) => {
+      const newQuantity = prev + change;
+
+      if (newQuantity < 1) return 1;
+
+      if (product && newQuantity > product.stockAmount) {
+        return product.stockAmount;
+      }
+      return newQuantity;
+    });
+  };
+
+  const fetchProduct = async () => {
     try {
-      const data: Product = await apiService.get(`/Product/${id}`);
-      console.log(data);
-      setProduct(data);
+      const productData: Product = await apiService.get(`/Product/${id}`);
+      setProduct(productData);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -90,21 +138,28 @@ function ProductDetailPage() {
     ? apiService.getImageUrl(primaryPhoto.id)
     : product?.imageUrl || "";
 
-  const quantityOptions = product
-    ? Array.from({ length: product.stockAmount }, (_, i) => ({
-        value: String(i + 1),
-        label: String(i + 1),
-      }))
-    : [];
-
   useEffect(() => {
-    fetchData();
-  }, [id]);
+    fetchProduct();
+  }, [id, product?.reviewCount]);
+
+  if (loading) {
+    return (
+      <Container size="xl" py="xl">
+        <Center h={400}>
+          <Stack align="center" gap="md">
+            <Title order={2}>Loading Product...</Title>
+            <Loader size="lg" />
+          </Stack>
+        </Center>
+      </Container>
+    );
+  }
 
   return (
-    <Container size="lg">
+    <Container size="lg" py="xl">
       <Grid>
         {/* Left */}
+
         <Grid.Col span={{ base: 12, md: 5 }}>
           <Image src={imageUrl} radius="sm" fit="contain" h={400} />
         </Grid.Col>
@@ -113,6 +168,10 @@ function ProductDetailPage() {
         <Grid.Col span={{ base: 12, md: 4 }}>
           <Stack gap="md">
             <Title order={1}>{product?.title}</Title>
+            <Group>
+              <Rating value={product?.averageRating} fractions={2} readOnly />
+              <Text>{product?.reviewCount} Reviews</Text>
+            </Group>
             <Text size="md">{product?.description}</Text>
           </Stack>
         </Grid.Col>
@@ -124,14 +183,26 @@ function ProductDetailPage() {
               <Text size="xl" fw={700}>
                 ${product?.price}
               </Text>
-              <div>
-                <Text size="sm">Quantity:</Text>
-                <Select
+              <Group>
+                <ActionIcon onClick={() => handleQuantityChange(-1)}>
+                  <IconMinus size={16} />
+                </ActionIcon>
+
+                <NumberInput
+                  className="wrapper"
                   value={quantity}
-                  onChange={setQuantity}
-                  data={quantityOptions}
+                  onChange={(val) => setQuantity(Number(val))}
+                  min={1}
+                  max={product?.stockAmount}
+                  clampBehavior="strict"
+                  hideControls
+                  allowDecimal={false}
+                  allowNegative={false}
                 />
-              </div>
+                <ActionIcon onClick={() => handleQuantityChange(1)}>
+                  <IconPlus size={16} />
+                </ActionIcon>
+              </Group>
               <div>
                 <Text size="sm" mb="xs">
                   Shipping:
@@ -146,7 +217,6 @@ function ProductDetailPage() {
                     <Radio value="pickup" label="Store Pickup" />
                   </Stack>
                 </Radio.Group>
-                {/* Quantity of items and shipping option will need to be in a form?*/}
               </div>
               <Button
                 className="btn"
@@ -172,6 +242,53 @@ function ProductDetailPage() {
               </AccordionPanel>
             </Accordion.Item>
           </Accordion>
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <Paper p="md" radius="md" mt="xl">
+            <Group justify="space-between">
+              <Title order={2}>{product?.reviewCount || 0} Reviews</Title>
+
+              {user && (
+                <Button onClick={() => setReviewModalOpened(true)}>
+                  Write a Review
+                </Button>
+              )}
+              <WriteReviewModal
+                productId={id ? Number(id) : undefined}
+                opened={reviewModalOpened}
+                onClose={() => setReviewModalOpened(false)}
+              />
+            </Group>
+
+            {paginatedReviews.map((review) => (
+              <div key={review.id}>
+                <Paper withBorder p="md" radius="md" mt="xl">
+                  <Text fw={500}>{review.userName}</Text>
+                  <Group>
+                    <Text fw={700}>{review.title}</Text>
+                    <Rating value={review.rating} readOnly />
+                  </Group>
+                  <Text>{review.comment}</Text>
+                </Paper>
+              </div>
+            ))}
+
+            {paginatedReviews.length === 0 && (
+              <Text c="dimmed" ta="center" py="xl">
+                No reviews yet for this product.
+              </Text>
+            )}
+
+            {totalReviewPages > 1 && (
+              <Group mt="lg">
+                <Pagination
+                  value={reviewPage}
+                  onChange={setReviewPage}
+                  total={totalReviewPages}
+                />
+              </Group>
+            )}
+          </Paper>
         </Grid.Col>
       </Grid>
       <CartToast

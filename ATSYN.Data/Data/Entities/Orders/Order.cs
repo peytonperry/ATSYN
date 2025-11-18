@@ -11,7 +11,8 @@ public enum OrderStatus
     Shipped = 4,
     Delivered = 5,
     Cancelled = 6,
-    Refunded = 7
+    Returned = 7,
+    Refunded = 8
 }
 public class Order
 {

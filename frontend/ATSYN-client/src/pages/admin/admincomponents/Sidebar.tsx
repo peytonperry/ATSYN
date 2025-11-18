@@ -1,37 +1,142 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { Collapse, UnstyledButton, Group } from "@mantine/core";
+import { IconChevronDown } from "@tabler/icons-react";
 import "./Sidebar.css";
 
-const Sidebar = () =>{
+const Sidebar = () => {
+  const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
+  const [isBlogDropdownOpen, setIsBlogDropdownOpen] = useState(false);
 
-    const navItems = [
-        { name: "Dashboard", path: "/admin" },
-        { name: "Customers", path: "/admin/customers" },
-        { name: "Reports", path: "/admin/reports" },
-        { name: "Settings", path: "/admin/settings" },
-    ]
+  const navItems = [
+    { name: "Profile", path: "/admin" },
+    { name: "Product Management", path: "/admin/all-products" },
+    { name: "Blog Management", path: "/admin/all-blogs" },
+    { name: "Order Management", path: "/admin/order-management" },
+    { name: "Contacts", path: "/admin/contacts" },
+    { name: "Reports", path: "/admin/reports" },
+  ];
 
+  const productSubItems = [
+    { name: "Add New Product", path: "/admin/create-product" }
+  ];
 
+  const blogSubItems = [
+    { name: "Create New Blog", path: "/admin/create-blog" }
+  ];
 
-    return (
-      <aside className="sidebar">
-      <h2 className="sidebar-title">Admin Portal</h2>
+  const isProductManagement = "Product Management";
+  const isBlogManagement = "Blog Management";
+
+  return (
+    <aside className="sidebar">
+      <h2 className="sidebar-title">Dashboard</h2>
       <nav>
         <ul className="sidebar-nav">
           {navItems.map((item) => (
-            <li key={item.name} className="sidebar-item">
-              <NavLink
-                to={item.path}
-                className={({ isActive }) =>
-                  `sidebar-link ${isActive ? "active" : ""}`
-                }
-              >
-                {item.name}
-              </NavLink>
+            <li key={item.name} className="sidebar-itemNew">
+              {item.name === isProductManagement ? (
+                <>
+                  <UnstyledButton
+                    onClick={() => setIsProductDropdownOpen(!isProductDropdownOpen)}
+                    style={{ width: "100%" }}
+                  >
+                    <Group justify="space-between">
+                      <NavLink
+                        to={item.path}
+                        className={({ isActive }) =>
+                          `sidebar-link ${isActive ? "active" : ""}`
+                        }
+                        style={{ flex: 1 }}
+                      >
+                        {item.name}
+                      </NavLink>
+                      <IconChevronDown
+                        size={16}
+                        style={{
+                          transform: isProductDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+                          transition: "transform 200ms ease",
+                        }}
+                      />
+                    </Group>
+                  </UnstyledButton>
+
+                  <Collapse in={isProductDropdownOpen}>
+                    <ul className="sidebar-subnav">
+                      {productSubItems.map((subItem) => (
+                        <li key={subItem.name} className="sidebar-subitem">
+                          <NavLink
+                            to={subItem.path}
+                            className={({ isActive }) =>
+                              `sidebar-sublink ${isActive ? "active" : ""}`
+                            }
+                          >
+                            {subItem.name}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </Collapse>
+                </>
+              ) : item.name === isBlogManagement ? (
+                <>
+                  <UnstyledButton
+                    onClick={() => setIsBlogDropdownOpen(!isBlogDropdownOpen)}
+                    style={{ width: "100%" }}
+                  >
+                    <Group justify="space-between">
+                      <NavLink
+                        to={item.path}
+                        className={({ isActive }) =>
+                          `sidebar-link ${isActive ? "active" : ""}`
+                        }
+                        style={{ flex: 1 }}
+                      >
+                        {item.name}
+                      </NavLink>
+                      <IconChevronDown
+                        size={16}
+                        style={{
+                          transform: isBlogDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+                          transition: "transform 200ms ease",
+                        }}
+                      />
+                    </Group>
+                  </UnstyledButton>
+
+                  <Collapse in={isBlogDropdownOpen}>
+                    <ul className="sidebar-subnav">
+                      {blogSubItems.map((subItem) => (
+                        <li key={subItem.name} className="sidebar-subitem">
+                          <NavLink
+                            to={subItem.path}
+                            className={({ isActive }) =>
+                              `sidebar-sublink ${isActive ? "active" : ""}`
+                            }
+                          >
+                            {subItem.name}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </Collapse>
+                </>
+              ) : (
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `sidebar-link ${isActive ? "active" : ""}`
+                  }
+                >
+                  {item.name}
+                </NavLink>
+              )}
             </li>
           ))}
         </ul>
       </nav>
     </aside>
-    ) ;
-}
+  );
+};
+
 export default Sidebar;

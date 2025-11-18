@@ -8,62 +8,55 @@ const Header= () => {
 
     const routeTitles: Record<string, string> = {
         "/admin": "Dashboard",
-        "/admin/customers": "Customers",
         "/admin/reports": "Reports",
-        "/admin/settings": "Settings",
+        "/admin/contacts": "Contacts",
         "/admin/productmanagement": "Product Management",
         "/admin/all-products": "View All Products",
         "/admin/create-product": "Add New Product",
+        "/admin/order-management": "Order Management",
+        "/admin/all-blogs": "Blog Management",
+        "/admin/create-blog": "Create Blog",
+        "/admin/processing-orders": "Processing Orders",
+        "/admin/pending-orders": "Pending Orders",
+        "/admin/confirmed-orders": "Confirmed Orders",
+        "/admin/shipped-orders": "Shipped Orders",
+        "/admin/delivered-orders": "Delivered Orders",
+        "/admin/returned-orders": "Returned Orders",
+        "/admin/refunded-orders": "Refunded Orders",
+        "/admin/cancelled-orders": "Cancelled Orders",
     };
     
-    const subRouteTitlesPM: Record<string, string> = {
-        "/admin/all-products": "View All Products",
-        "/admin/create-product": "Add New Product",
-    };
 
     const isProductDetailPage = () => {
         return /^\/admin\/products\/\d+$/.test(location.pathname);
     };
+    const isOrderDetailPage = () => {
+        return /^\/admin\/order-detail\/\d+$/.test(location.pathname);
+    };
+    const isBlogDetailPage = () => {
+        return /^\/admin\/edit-blog\/\d+$/.test(location.pathname)
+    }
 
     const getSettingName = () => {
         if (isProductDetailPage()) {
             return "Product Details";
+        } 
+
+        if(isOrderDetailPage()){
+            return "Order Details"
+        }
+        if(isBlogDetailPage()){
+            return "Blog Details"
         }
         return routeTitles[location.pathname] || "Admin Panel";
     };
 
     const settingName = getSettingName();
 
-    // Check if we're in any Product Management related page
-    const isProductManagementSection = 
-        settingName === 'Product Management' || 
-        settingName === 'View All Products' || 
-        settingName === 'Add New Product' || 
-        settingName === 'Product Details';
-
     return (
        <div className="header-container">
-        {isProductManagementSection ? (
-            <div className="header-group"> 
-                <button className="pm-subroute-button" onClick={() => navigate("/admin/productmanagement")}>
-                    <h1 className="header-title">Product Management -</h1>
-                </button>
-                {Object.entries(subRouteTitlesPM).map(([path, title]: [string, string]) => (
-                    <Button
-                        key={path} 
-                        variant="outline"
-                        size="sm"
-                        radius="md"
-                        className="add-product-button"
-                        onClick={() => navigate(path)}
-                    >
-                        {title}
-                    </Button>
-                ))}
-            </div>
-        ): (
             <h1 className="header-title">{settingName}</h1>
-        )}
+
        </div> 
     );
 }
