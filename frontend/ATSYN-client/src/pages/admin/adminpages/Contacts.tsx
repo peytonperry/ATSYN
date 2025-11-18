@@ -9,6 +9,7 @@ import {
   Divider,
   Group,
   Modal,
+  Pagination,
   Paper,
   Stack,
   Text,
@@ -29,6 +30,15 @@ function AdminContacts() {
   const [loading, setLoading] = useState(true);
   const [deleteModalOpened, setDeleteModalOpened] = useState(false);
   const [contactToDelete, setContactToDelete] = useState<number | null>(null);
+  const [messagePage, setMessagePage] = useState(1);
+
+  const messagesPerPage = 5;
+  const totalMessagePages = contacts
+    ? Math.ceil(contacts.length / messagesPerPage)
+    : 0;
+  const startIndex = (messagePage - 1) * messagesPerPage;
+  const endIndex = startIndex + messagesPerPage;
+  const paginatedContacts = contacts.slice(startIndex, endIndex) || [];
 
   const markAsRead = async (id: number) => {
     await apiService.put(`/Contact/toggle-read-unread/${id}`, {});
@@ -70,7 +80,7 @@ function AdminContacts() {
   return (
     <Container size="lg" py="xl">
       <Stack gap="md">
-        {contacts.map((contact) => (
+        {paginatedContacts.map((contact) => (
           <Paper key={contact.id} withBorder p="md" radius="md" shadow="sm">
             <Group justify="space-between" mb="sm" wrap="wrap">
               <Group gap="xs" wrap="wrap">
@@ -85,7 +95,10 @@ function AdminContacts() {
                   {new Date(contact.submittedAt).toLocaleDateString()}
                 </Text>
               </Group>
-              <ActionIcon color="red" onClick={() => handleDeleteClick(contact.id)}>
+              <ActionIcon
+                color="red"
+                onClick={() => handleDeleteClick(contact.id)}
+              >
                 <TbTrash />
               </ActionIcon>
             </Group>
@@ -118,6 +131,12 @@ function AdminContacts() {
             </Stack>
           </Paper>
         ))}
+
+        {paginatedContacts.length === 0 && (
+          <Text c="dimmed" ta="center" py="xl">
+            No messages yet
+          </Text>
+        )}
       </Stack>
       <Modal
         opened={deleteModalOpened}
@@ -139,6 +158,15 @@ function AdminContacts() {
           </Button>
         </Group>
       </Modal>
+      {totalMessagePages > 1 && (
+        <Group mt="lg">
+          <Pagination
+            value={messagePage}
+            onChange={setMessagePage}
+            total={totalMessagePages}
+          />
+        </Group>
+      )}
     </Container>
   );
 }
