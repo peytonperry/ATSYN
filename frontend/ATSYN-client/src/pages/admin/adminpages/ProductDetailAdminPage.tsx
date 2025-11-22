@@ -105,19 +105,26 @@ const ProductDetailAdminPage = () => {
     }
   };
 
-  const handleDelete = async () => {
-    if (!product) return;
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      try {
-        await apiService.delete(`/Product/${product.id}`);
-        navigate("/admin/all-products");
-        setMessage("Product deleted successfully!");
-      } catch (error) {
-        console.error("Error deleting product:", error);
-        setMessage("Failed to delete product.");
+const handleDelete = async () => {
+  if (!product) return;
+  if (window.confirm("Are you sure you want to delete this product?")) {
+    try {
+      await apiService.delete(`/Product/${product.id}`);
+      navigate("/admin/all-products");
+      setMessage("Product deleted successfully!");
+    } catch (error: any) {
+      console.error("Error deleting product:", error);
+      
+      const errorMessage = error?.response?.data?.message;
+      
+      if (errorMessage) {
+        setMessage(errorMessage);
+      } else {
+        setMessage("Failed to delete product. Please try again.");
       }
     }
-  };
+  }
+};
 
   if (loading) {
     return (
@@ -142,11 +149,14 @@ const ProductDetailAdminPage = () => {
       </Button>
       {message && (
         <Notification
-          color={message.includes("successfully") ? "green" : "red"}
-          onClose={() => setMessage(null)}
-          className="admin-product-notification"
+            color={message.includes("successfully") ? "green" : 
+              message.includes("Cannot delete") ? "yellow" : "red"}
+            onClose={() => setMessage(null)}
+            className="admin-product-notification"
+            title={message.includes("Cannot delete") ? "⚠️ Delete Restricted" : undefined}
+            withCloseButton
         >
-          {message}
+            {message}
         </Notification>
       )}
 

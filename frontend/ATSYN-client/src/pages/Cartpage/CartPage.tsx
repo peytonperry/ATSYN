@@ -75,7 +75,35 @@ const CartPage: React.FC = () => {
       : product.imageUrl || "";
   };
 
-  const handleProceedToCheckout = () => {
+  const validateCartItems = async () => {
+    const invalidProducts: any[] = [];
+  
+    for (const item of state.items) {
+      try {
+        await apiService.get(`/Product/${item.product.id}`);
+      } catch (error) {
+        invalidProducts.push(item);
+      }
+    }
+  
+    if (invalidProducts.length > 0) {
+      invalidProducts.forEach(item => removeFromCart(item.product.id));
+      return {
+        isValid: false,
+        message: `${invalidProducts.length} item(s) are no longer available and have been removed from your cart.`
+      };
+    }
+  
+    return { isValid: true };
+  };
+
+  const handleProceedToCheckout = async  () => {
+    const validation = await validateCartItems();
+  
+    if (!validation.isValid) {
+      alert(validation.message);
+    return;
+  }
   if (user) {
     setShowAddressForm(true); // Show address form for logged-in users
   } else {
