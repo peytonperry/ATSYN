@@ -29,6 +29,7 @@ public class ProductController : ControllerBase
             .Include(p => p.Photos)
             .Include(p => p.Reviews)
             .ThenInclude(p => p.User)
+            .Include(p => Sales)
             .Select(p => new ProductDto
             {
                 Id = p.Id,
