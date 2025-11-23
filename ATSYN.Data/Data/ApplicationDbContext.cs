@@ -26,6 +26,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
     public DbSet<Photo> Photos { get; set; }
     public DbSet<News> News { get; set; }
+    public DbSet<Sale> Sales { get; set; }
 
     public DbSet<ContactSubmission> ContactSubmissions { get; set; }
 

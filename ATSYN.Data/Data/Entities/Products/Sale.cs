@@ -47,4 +47,6 @@ namespace ATSYN.Data.Data.Entities.Products
         public string? Description { get; set; }
     }
 
+
+
 }
