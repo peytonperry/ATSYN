@@ -47,6 +47,11 @@ public class ProductDto
     public int ShippingTypeId { get; set; }
     public bool InStock { get; set; }
 
+    public bool IsOnSale { get; set; }
+    public decimal? SalePrice {  get; set; }
+    public decimal CurrentPrice { get; set; }
+    public string? SaleName { get; set; }
+
     public string ImageUrl { get; set; } = string.Empty;
     public CategoryDto Category { get; init; } = null!;
     public BrandDto? Brand { get; init; }
