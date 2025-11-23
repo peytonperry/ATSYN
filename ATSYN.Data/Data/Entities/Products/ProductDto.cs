@@ -25,6 +25,9 @@ public class Product
     public ICollection<Review> Reviews { get; set; } = new List<Review>();
 
     public ICollection<Photo> Photos { get; set; } = new List<Photo>();
+
+    public ICollection<Sale> Sales { get; set; } = new List<Sale>();
+
     public Photo? PrimaryPhoto => Photos.FirstOrDefault(p => p.IsPrimary)
                                 ?? Photos.OrderBy(p => p.DisplayOrder).FirstOrDefault();
 }

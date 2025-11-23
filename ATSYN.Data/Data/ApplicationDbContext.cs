@@ -37,5 +37,15 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(ApplicationDbContext))!);
+
+        modelBuilder.Entity<Sale>()
+            .HasOne(s => s.Product)
+            .WithMany(p => p.Sales)
+            .HasForeignKey(s => s.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Sale>()
+            .HasIndex(s => new { s.ProductId, s.IsActive });
     }
+
 }
