@@ -1,0 +1,22 @@
+
+ .modal-container {
+  position: fixed; /* Ensures the modal covers the entire viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+  background-color: rgba(0, 0, 0, 0.5); /* Optional: Adds a semi-transparent overlay */
+  z-index: 1000; /* Ensures the modal is on top of other content */
+}
+
+.modal {
+  /* Your modal's specific styles (width, height, background, etc.) */
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 50%;
+  height: 50%
+}
