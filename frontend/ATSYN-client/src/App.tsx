@@ -18,6 +18,7 @@ import { CartProvider } from "./components/Cart/CartContext.tsx";
 import CartPage from "./pages/Cartpage/CartPage.tsx";
 import ProductDetailPage from "./pages/Products/ProductDetail.tsx";
 import { MantineProvider } from "@mantine/core";
+import {ComputerVis} from "./components/CV.tsx";
 // Admin Routes
 import AppShell from "./pages/admin/admincomponents/Appshell.tsx";
 import OrderManagement from "./pages/admin/adminpages/OrderManagement/OrderManagement.tsx";
@@ -45,9 +46,10 @@ import EditBlog from "./pages/admin/adminpages/Admin Blog Pages/EditBlog.tsx";
 import { StripeProvider } from "./components/Stripe/StripeProvider.tsx";
 import OrderSuccessPage from "./pages/Cartpage/OrderSuccess.tsx";
 
+
 function AppContent() {
   const location = useLocation();
-
+  
   const routesWithoutHeader = ["/login", "/signup", "/auth"];
 
   const shouldHideHeader = routesWithoutHeader.includes(location.pathname);
@@ -168,12 +170,14 @@ function App() {
         <StripeProvider>
           <CartProvider>
             <Router>
+              <ComputerVis></ComputerVis>
               <AppContent />
             </Router>
           </CartProvider>
         </StripeProvider>
       </AuthProvider>
     </MantineProvider>
+    
   );
 }
 
