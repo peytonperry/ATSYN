@@ -6,6 +6,7 @@ using ATSYN.Data.Data.Entities.News;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ATSYN.Data.Data.Entities;
 
 
 namespace ATSYN.Data.Data;  
@@ -25,6 +26,8 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
     public DbSet<Photo> Photos { get; set; }
     public DbSet<News> News { get; set; }
+
+    public DbSet<ContactSubmission> ContactSubmissions { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
