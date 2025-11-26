@@ -14,16 +14,17 @@ import './CVModal.css';
 export function ComputerVis(){
 
   const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState('');
 
-  const handleButtonClick = () => {
-    setMessage('hi');
-  }
-    // const Modal: React.FC<ModalProps> = ({ showModal, onClose, children }) => {
-    //   if (!showModal) {
-    //     return null; // Don't render if not shown
-    //   }
-    // }
+  const closeButtonStyles: React.CSSProperties = {
+    position: 'relative',
+    bottom: '10px',   // Adjust these values to move the X closer or further
+    left: '710px', // Adjust these values to move the X closer or further
+    background: 'none',
+    border: 'none',
+    fontSize: '20px',
+    cursor: 'pointer',
+    color: '#333',
+  };
 
     return (
     <div>
@@ -43,19 +44,13 @@ export function ComputerVis(){
       {isOpen && (
         <div className="modal-container">
           <div className="modal">
-            <button onClick={handleButtonClick}>
-              Click Me
-            </button>
-            {message && <p>{message}</p>}
-            <button onClick={() => setIsOpen(false)}>
-              Close
-            </button>
+            {/* <div className="close-button"> */}
             {/* <Affix position={{ bottom: 500, right: 500 }}> */}
-              <button onClick={() => setIsOpen(false)}>
+              <button onClick={() => setIsOpen(false)} style={closeButtonStyles}>
                 <IconX />
-                
               </button>
             {/* </Affix> */}
+            {/* </div> */}
           </div>
         </div>
       )}
