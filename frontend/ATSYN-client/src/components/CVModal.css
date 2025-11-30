@@ -18,9 +18,17 @@
   padding: 20px;
   border-radius: 8px;
   width: 50%;
-  height: 50%
+  height: 70%
+}
+.container img {
+  max-width: 30%;  /* Ensures the image doesn't exceed the container's width */
+  height: auto;     /* Automatically adjusts height to maintain aspect ratio */
+  
+  display: block;   /* Optional: Helps with centering or layout issues */
 }
 
-.close-button {
-  
+.image {
+  width: 100%;      /* Image takes the full width of the container */
+  height: 100%;     /* Image takes the full height of the container */
+  object-fit: cover; /* or contain, see options below */
 }

@@ -1,4 +1,4 @@
-import { ActionIcon, Affix, Button } from '@mantine/core';
+import { ActionIcon, Affix, Button, Space } from '@mantine/core';
 import { IconHeart, IconX } from '@tabler/icons-react';
 //import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { useState } from 'react';
@@ -10,6 +10,7 @@ import './CVModal.css';
 //   onClose: () => void;
 //   children: React.ReactNode;
 // }
+
 
 export function ComputerVis(){
 
@@ -24,6 +25,39 @@ export function ComputerVis(){
     fontSize: '20px',
     cursor: 'pointer',
     color: '#333',
+  };
+
+  // const [preview, setPreview] = useState<string>('');
+
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     setPreview(URL.createObjectURL(file));
+  //   }
+  // };
+
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      // Create preview URL
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  };
+
+  const handleDelete = () => {
+    // Clean up the preview URL to free memory
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    // Clear the image
+    setSelectedImage(null);
+    setPreviewUrl(null);
   };
 
     return (
@@ -44,13 +78,27 @@ export function ComputerVis(){
       {isOpen && (
         <div className="modal-container">
           <div className="modal">
-            {/* <div className="close-button"> */}
-            {/* <Affix position={{ bottom: 500, right: 500 }}> */}
               <button onClick={() => setIsOpen(false)} style={closeButtonStyles}>
                 <IconX />
               </button>
-            {/* </Affix> */}
-            {/* </div> */}
+              <div className="container img">
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                />
+                {previewUrl && (
+                  <div>
+                    <img src={previewUrl} alt="Preview" />
+                    <button onClick={handleDelete}>Clear</button>
+                  </div>
+                )}
+                {/* <input type="file" accept="image/*" onChange={handleChange} />
+                {preview && 
+                <div>
+                  <img src={preview} alt="Preview" className="image" /> */}
+                {/* </div>} */}
+              </div>
           </div>
         </div>
       )}
