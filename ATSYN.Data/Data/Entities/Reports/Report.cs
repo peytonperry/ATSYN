@@ -130,7 +130,7 @@ namespace ATSYN.Data.Data.Entities.Reports
         public int MonthReturnedOrders { get; set; }
         public int MonthRefundedOrders { get; set; }
 
-        public int YearRevenue { get; set; }
+        public decimal YearRevenue { get; set; }
         public int YearOrders { get; set; }
         public decimal AverageOrderValue { get; set; }
 
