@@ -18,7 +18,7 @@ import { CartProvider } from "./components/Cart/CartContext.tsx";
 import CartPage from "./pages/Cartpage/CartPage.tsx";
 import ProductDetailPage from "./pages/Products/ProductDetail.tsx";
 import { MantineProvider } from "@mantine/core";
-import {ComputerVis} from "./components/CV.tsx";
+import {ComputerVis} from "./components/CVModal.tsx";
 // Admin Routes
 import AppShell from "./pages/admin/admincomponents/Appshell.tsx";
 import OrderManagement from "./pages/admin/adminpages/OrderManagement/OrderManagement.tsx";
