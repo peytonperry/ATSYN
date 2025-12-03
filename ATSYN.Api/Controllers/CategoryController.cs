@@ -21,7 +21,6 @@ public class CategoryController : ControllerBase
     public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories([FromQuery] bool includeSubCategories = false)
     {
         var query = _context.Categories
-            .Where(c => c.IsActive)
             .Include(c => c.ParentCategory)
             .OrderBy(c => c.DisplayOrder)
             .ThenBy(c => c.Name);
@@ -201,7 +200,7 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> UpdateCategory(int id, UpdateCategoryDto updateDto)
     {
         var category = await _context.Categories.FindAsync(id);
-        if (category == null || !category.IsActive)
+        if (category == null)
         {
             return NotFound();
         }
@@ -265,7 +264,7 @@ public class CategoryController : ControllerBase
             .Include(c => c.SubCategories)
             .FirstOrDefaultAsync(c => c.Id == id);
 
-        if (category == null || !category.IsActive)
+        if (category == null)
         {
             return NotFound();
         }
