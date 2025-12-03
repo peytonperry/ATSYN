@@ -3,50 +3,84 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ATSYN.Api.Features;
 
-public sealed class Category
+public class Category
 {
     public int Id { get; init; }
-    public required string Name { get; init; }
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public int? ParentCategoryId { get; set; }
+    public int DisplayOrder { get; set; }
+    public bool IsActive { get; set; } = true;
+
+    public Category? ParentCategory { get; set; }
+    public ICollection<Category> SubCategories { get; set; } = new List<Category>();
     public ICollection<Product> Products { get; set; } = new List<Product>();
     public ICollection<ProductAttribute> Attributes { get; set; } = new List<ProductAttribute>();
 }
-public sealed class CategoryDto
+
+public class CategoryDto
 {
     public int Id { get; init; }
-    public required string Name { get; init; }
-    public List<ProductAttributeDto> Attributes { get; init; } = new();
-}
-public sealed class CreateCategoryDto
-{
-    public required string Name { get; init; }
-}
-
-public sealed class UpdateCategoryDto
-{
-    public required string Name { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
+    public int? ParentCategoryId { get; init; }
+    public string? ParentCategoryName { get; init; }
+    public int DisplayOrder { get; init; }
+    public bool IsActive { get; init; }
+    public List<CategoryDto> SubCategories { get; init; } = new();
 }
 
-public sealed class CategoryWithProductsDto
+public class CreateCategoryDto
 {
-    public int Id { get; init; }
     public required string Name { get; init; }
-    public List<ProductDto> Products { get; init; } = new();
+    public string Description { get; init; } = string.Empty;
+    public int? ParentCategoryId { get; init; }
+    public int DisplayOrder { get; init; }
+    public bool IsActive { get; init; } = true;
 }
 
-public sealed class CategoryProductCountDto
+public class UpdateCategoryDto
 {
-    public int Id { get; init; }
-    public required string Name { get; init; }
-    public int TotalProducts { get; init; }
-    public int VisibleProducts { get; init; }
-    public int InStockProducts { get; init; }
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public int? ParentCategoryId { get; set; }
+    public int DisplayOrder { get; set; }
+    public bool IsActive { get; set; }
 }
 
-public sealed class CategoryConfiguration : IEntityTypeConfiguration<Category>
+public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
     public void Configure(EntityTypeBuilder<Category> builder)
     {
         builder.ToTable("Categories");
-        builder.HasIndex(x => x.Name).IsUnique();
+
+        builder.HasKey(c => c.Id);
+
+        builder.Property(c => c.Name)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(c => c.Description)
+            .HasMaxLength(500);
+
+        builder.Property(c => c.IsActive)
+            .IsRequired()
+            .HasDefaultValue(true);
+
+        builder.HasOne(c => c.ParentCategory)
+            .WithMany(c => c.SubCategories)
+            .HasForeignKey(c => c.ParentCategoryId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired(false);
+
+        builder.HasIndex(c => c.Name)
+            .IsUnique()
+            .HasDatabaseName("IX_Categories_Name");
+
+        builder.HasIndex(c => c.ParentCategoryId)
+            .HasDatabaseName("IX_Categories_ParentCategoryId");
+
+        builder.HasIndex(c => c.DisplayOrder)
+            .HasDatabaseName("IX_Categories_DisplayOrder");
     }
 }

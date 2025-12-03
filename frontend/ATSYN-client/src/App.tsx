@@ -32,11 +32,7 @@ import ReturnedOrders from "./pages/admin/adminpages/OrderManagement/ReturnedOrd
 import RefundedOrders from "./pages/admin/adminpages/OrderManagement/RefundedOrders.tsx";
 import CancelledOrders from "./pages/admin/adminpages/OrderManagement/CancelledOrders.tsx";
 import Reports from "./pages/admin/adminpages/Reports.tsx";
-import ProductManagement from "./pages/admin/adminpages/ProductManagement.tsx";
-import AllProducts from "./pages/admin/adminpages/AllProducts.tsx";
-import CreateProduct from "./pages/admin/adminpages/CreateProduct.tsx";
-import ProductDetailAdminPage from "./pages/admin/adminpages/ProductDetailAdminPage.tsx";
-import Contacts from "./pages/admin/adminpages/Contacts.tsx"
+import Contacts from "./pages/admin/adminpages/Contacts.tsx";
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoutes.tsx";
 import AdminProfile from "./pages/admin/adminpages/AdminProfile.tsx";
@@ -45,6 +41,14 @@ import AllBlogs from "./pages/admin/adminpages/Admin Blog Pages/AllBlogs.tsx";
 import EditBlog from "./pages/admin/adminpages/Admin Blog Pages/EditBlog.tsx";
 import { StripeProvider } from "./components/Stripe/StripeProvider.tsx";
 import OrderSuccessPage from "./pages/Cartpage/OrderSuccess.tsx";
+import ManageAttributes from "./pages/admin/adminpages/AttributeManagement/ManageAttributes.tsx";
+import CreateAttribute from "./pages/admin/adminpages/AttributeManagement/CreateAttribute.tsx";
+import ManageCategories from "./pages/admin/adminpages/CategoryManagement/ManageCategories.tsx";
+import CreateCategory from "./pages/admin/adminpages/CategoryManagement/CreateCategory.tsx";
+import ProductManagement from "./pages/admin/adminpages/ProductManagement/ProductManagement.tsx";
+import AllProducts from "./pages/admin/adminpages/ProductManagement/AllProducts.tsx";
+import ProductDetailAdminPage from "./pages/admin/adminpages/ProductManagement/ProductDetailAdminPage.tsx";
+import CreateProduct from "./pages/admin/adminpages/ProductManagement/CreateProduct.tsx";
 
 
 function AppContent() {
@@ -81,7 +85,7 @@ function AppContent() {
         <Route path="/blog" element={<News />} />
         <Route path="/blog/:id" element={<NewsDetail />} />
         <Route path="/order-success" element={<OrderSuccessPage />} />
-        
+
         {/* Protected Routes - Require Login */}
         <Route
           path="/orders"
@@ -120,23 +124,27 @@ function AppContent() {
           <Route index element={<AdminProfile />} />
           <Route path="productmanagement" element={<ProductManagement />} />
           <Route path="order-management" element={<OrderManagement />} />
-          <Route path="pending-orders" element={<PendingOrders/>}/>
-          <Route path = "processing-orders" element={<ProcessingOrders/>}/>
-          <Route path = "confirmed-orders" element={<ConfirmedOrders/>}/>
-          <Route path = "shipped-orders" element={<ShippedOrders/>}/>
-          <Route path = "delivered-orders" element={<DeliveredOrders/>}/>
-          <Route path = "returned-orders" element={<ReturnedOrders/>}/>
-          <Route path = "refunded-orders" element={<RefundedOrders/>}/>
-          <Route path = "cancelled-orders" element={<CancelledOrders/>}/>
-          <Route path="order-detail/:id" element = {<OrderManagementDetail />} />
+          <Route path="pending-orders" element={<PendingOrders />} />
+          <Route path="processing-orders" element={<ProcessingOrders />} />
+          <Route path="confirmed-orders" element={<ConfirmedOrders />} />
+          <Route path="shipped-orders" element={<ShippedOrders />} />
+          <Route path="delivered-orders" element={<DeliveredOrders />} />
+          <Route path="returned-orders" element={<ReturnedOrders />} />
+          <Route path="refunded-orders" element={<RefundedOrders />} />
+          <Route path="cancelled-orders" element={<CancelledOrders />} />
+          <Route path="order-detail/:id" element={<OrderManagementDetail />} />
           <Route path="Reports" element={<Reports />} />
-          <Route path ="Contacts" element ={<Contacts/>} />
+          <Route path="Contacts" element={<Contacts />} />
           <Route path="all-products" element={<AllProducts />} />
           <Route path="products/:id" element={<ProductDetailAdminPage />} />
           <Route path="create-product" element={<CreateProduct />} />
-          <Route path="all-blogs" element={<AllBlogs/>} />
+          <Route path="all-blogs" element={<AllBlogs />} />
           <Route path="create-blog" element={<CreateNewsForm />} />
           <Route path="edit-blog/:id" element={<EditBlog />} />
+          <Route path="manage-attributes" element={<ManageAttributes />} />
+          <Route path="create-attribute" element={<CreateAttribute />} />
+          <Route path="manage-categories" element={<ManageCategories />} />
+          <Route path="create-category" element={<CreateCategory />} />
         </Route>
       </Routes>
     </>

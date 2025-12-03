@@ -14,10 +14,11 @@ import {
   Text,
   Paper,
   Select,
+  MultiSelect,
 } from "@mantine/core";
 import { IconUpload, IconCheck, IconAlertCircle } from "@tabler/icons-react";
-import { apiService } from "../../../config/api";
-import { CategorySelect } from "./CategorySelect";
+import { apiService } from "../../../../config/api";
+import { CategorySelect } from "../CategoryManagement/CategorySelect";
 import { useNavigate } from "react-router-dom";
 
 interface Category {
@@ -28,6 +29,27 @@ interface Category {
 interface Brand {
   id: number;
   name: string;
+}
+
+interface AttributeOption {
+  id: number;
+  value: string;
+  displayOrder: number;
+}
+
+interface CategoryAttribute {
+  id: number;
+  name: string;
+  type: string;
+  categoryId: number;
+  isRequired: boolean;
+  displayOrder: number;
+  options: AttributeOption[];
+}
+
+interface ProductAttributeValue {
+  attributeId: number;
+  values: string[];
 }
 
 interface Product {
@@ -66,6 +88,12 @@ const CreateProduct: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [categoryAttributes, setCategoryAttributes] = useState<
+    CategoryAttribute[]
+  >([]);
+  const [selectedAttributes, setSelectedAttributes] = useState<
+    ProductAttributeValue[]
+  >([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -95,6 +123,40 @@ const CreateProduct: React.FC = () => {
     fetchBrands();
   }, []);
 
+  useEffect(() => {
+    if (formData.categoryId > 0) {
+      fetchCategoryAttributes(formData.categoryId);
+    } else {
+      setCategoryAttributes([]);
+      setSelectedAttributes([]);
+    }
+  }, [formData.categoryId]);
+
+  const fetchCategoryAttributes = async (categoryId: number) => {
+    try {
+      const response = await apiService.get(
+        `/ProductAttribute/category/${categoryId}`
+      );
+      setCategoryAttributes(response || []);
+      setSelectedAttributes([]);
+    } catch (error) {
+      console.error("Error fetching category attributes:", error);
+      setCategoryAttributes([]);
+    }
+  };
+
+  const handleAttributeChange = (attributeId: number, values: string[]) => {
+    setSelectedAttributes((prev) => {
+      const existing = prev.findIndex((a) => a.attributeId === attributeId);
+      if (existing >= 0) {
+        const updated = [...prev];
+        updated[existing] = { attributeId, values };
+        return updated;
+      }
+      return [...prev, { attributeId, values }];
+    });
+  };
+
   const uploadPhotos = async (productId: number) => {
     if (photos.length === 0) return;
 
@@ -122,10 +184,34 @@ const CreateProduct: React.FC = () => {
     setErrorMsg("");
     setSuccessMsg("");
 
+    const requiredAttributes = categoryAttributes.filter(
+      (attr) => attr.isRequired
+    );
+    for (const attr of requiredAttributes) {
+      const selected = selectedAttributes.find(
+        (a) => a.attributeId === attr.id
+      );
+      if (!selected || selected.values.length === 0) {
+        setErrorMsg(
+          `Please select at least one value for required attribute: ${attr.name}`
+        );
+        setLoading(false);
+        return;
+      }
+    }
+
+    const attributeValuesFlattened = selectedAttributes.flatMap((attr) =>
+      attr.values.map((value) => ({
+        attributeId: attr.attributeId,
+        value: value,
+      }))
+    );
+
     const productData = {
       ...formData,
       price: Number(formData.price),
       stockAmount: Number(formData.stockAmount),
+      attributeValues: attributeValuesFlattened,
     };
 
     try {
@@ -155,6 +241,7 @@ const CreateProduct: React.FC = () => {
         category: { id: 0, name: "" },
       });
       setPhotos([]);
+      setSelectedAttributes([]);
     } catch (error) {
       console.error("Error creating product:", error);
       setErrorMsg("Failed to create product. Please try again.");
@@ -163,14 +250,13 @@ const CreateProduct: React.FC = () => {
     }
   };
 
-  {console.log(formData.stockAmount, formData.inStock)}
+  {
+    console.log(formData.stockAmount, formData.inStock);
+  }
 
   return (
     <Container size="md" py="xl">
-      <Button
-        variant="subtle"
-        onClick={() => navigate("/admin/all-products")}
-        >
+      <Button variant="subtle" onClick={() => navigate("/admin/all-products")}>
         ← Back to View All Products
       </Button>
       <Paper shadow="sm" p="xl" radius="md" withBorder>
@@ -265,6 +351,36 @@ const CreateProduct: React.FC = () => {
               clearable
               searchable
             />
+
+            {categoryAttributes.length > 0 && (
+              <>
+                <Title order={4} mt="md">
+                  Product Attributes
+                </Title>
+                {categoryAttributes.map((attr) => (
+                  <MultiSelect
+                    key={attr.id}
+                    label={attr.name}
+                    placeholder={`Select ${attr.name.toLowerCase()} options`}
+                    description={`This product is available in these ${attr.name.toLowerCase()} options`}
+                    data={attr.options.map((opt) => ({
+                      value: opt.value,
+                      label: opt.value,
+                    }))}
+                    value={
+                      selectedAttributes.find((a) => a.attributeId === attr.id)
+                        ?.values || []
+                    }
+                    onChange={(values) =>
+                      handleAttributeChange(attr.id, values)
+                    }
+                    required={attr.isRequired}
+                    searchable
+                    clearable
+                  />
+                ))}
+              </>
+            )}
 
             <FileInput
               label="Product Photos"
