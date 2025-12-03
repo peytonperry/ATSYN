@@ -4,6 +4,7 @@ import { IconHeart, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
 import React from 'react';
 import './CVModal.css';
+import { PyBridge } from 'pybridge';
 
 // interface ModalProps {
 //   showModal: boolean;
@@ -11,8 +12,11 @@ import './CVModal.css';
 //   children: React.ReactNode;
 // }
 
+//child_process.spawn('python', ['script.py'])
 
 export function ComputerVis(){
+
+  const color = new PyBridge({ python: 'python3', cwd: 'CVWork.py' });
 
   const [isOpen, setIsOpen] = useState(false);
 
