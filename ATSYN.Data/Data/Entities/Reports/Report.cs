@@ -195,7 +195,7 @@ namespace ATSYN.Data.Data.Entities.Reports
                 .IsRequired();
 
             builder.Property(r => r.ReportData)
-                .HasColumnType("nvarchar(max)"); // Store JSON
+                .HasColumnType("nvarchar(max)"); 
 
             builder.Property(r => r.GeneratedBy)
                 .HasMaxLength(100);

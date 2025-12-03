@@ -1,11 +1,11 @@
-﻿using ATSYN.Api.Features;
-using ATSYN.Data.Data;
+﻿using ATSYN.Data.Data;
 using ATSYN.Data.Data.Entities.Reports;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 
-namespace ATSYN.Api.Controllers;
+namespace ATSYN.Api.Controllers
+{
 
 [ApiController]
 [Route("api/[controller]")]
@@ -61,7 +61,6 @@ public class ReportController : ControllerBase
             .OrderBy(m => DateTime.ParseExact(m.Month, "MMMM", null).Month)
             .ToList();
 
-        // Try to get Stripe data for comparison
         decimal stripeFees = 0;
         decimal stripeRevenue = 0;
         int stripeTransactionCount = 0;
@@ -249,3 +248,5 @@ public class ReportController : ControllerBase
 
 
 }
+}
+
