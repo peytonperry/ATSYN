@@ -87,6 +87,10 @@ public class CreateProductAttributeValueDto
 {
     public required int AttributeId { get; init; }
     public required string Value { get; init; }
+    
+    public int? StockAmount { get; init; }
+    public decimal? Price { get; init; }
+
 }
 
 public class ProductConfiguration : IEntityTypeConfiguration<Product>

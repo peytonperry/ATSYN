@@ -17,10 +17,10 @@ import {
   Paper,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { apiService } from "../../../config/api";
 import { useParams, useNavigate } from "react-router-dom";
 import "./ProductDetailAdminPage.css";
-import { CategorySelect } from "./CategorySelect";
+import { apiService } from "../../../../config/api";
+import { CategorySelect } from "../CategoryManagement/CategorySelect";
 //port { CategorySelect } from "CategorySelect";
 
 

@@ -14,7 +14,6 @@ import {
   Badge,
   Box,
   TextInput,
-  Collapse,
   SegmentedControl,
   NumberInput,
 } from "@mantine/core";
@@ -33,7 +32,6 @@ import { PaymentForm } from "../../components/Stripe/PaymentForm";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/Auth/AuthContext";
 import { useField } from "@mantine/form";
-
 
 const CartPage: React.FC = () => {
   const { state, removeFromCart, updateQuantity, clearCart } = useCart();
@@ -59,11 +57,15 @@ const CartPage: React.FC = () => {
     initialValue: "",
   });
 
-  const handleQuantityChange = (productId: number, newQuantity: number) => {
+  const handleQuantityChange = (
+    productId: number,
+    newQuantity: number,
+    attributeValueId?: number
+  ) => {
     if (newQuantity < 1) {
-      removeFromCart(productId);
+      removeFromCart(productId, attributeValueId);
     } else {
-      updateQuantity(productId, newQuantity);
+      updateQuantity(productId, newQuantity, attributeValueId);
     }
   };
 
@@ -75,110 +77,85 @@ const CartPage: React.FC = () => {
       : product.imageUrl || "";
   };
 
-  const validateCartItems = async () => {
-    const invalidProducts: any[] = [];
-  
-    for (const item of state.items) {
-      try {
-        await apiService.get(`/Product/${item.product.id}`);
-      } catch (error) {
-        invalidProducts.push(item);
+  const handleProceedToCheckout = () => {
+    if (user) {
+      setShowAddressForm(true);
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!guestEmail) {
+        setEmailError("Email is required");
+        return;
       }
+
+      if (!emailRegex.test(guestEmail)) {
+        setEmailError("Please enter a valid email address");
+        return;
+      }
+
+      setEmailError("");
+      setShowAddressForm(true);
     }
-  
-    if (invalidProducts.length > 0) {
-      invalidProducts.forEach(item => removeFromCart(item.product.id));
-      return {
-        isValid: false,
-        message: `${invalidProducts.length} item(s) are no longer available and have been removed from your cart.`
-      };
-    }
-  
-    return { isValid: true };
   };
-
-  const handleProceedToCheckout = async  () => {
-    const validation = await validateCartItems();
-  
-    if (!validation.isValid) {
-      alert(validation.message);
-    return;
-  }
-  if (user) {
-    setShowAddressForm(true); // Show address form for logged-in users
-  } else {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!guestEmail) {
-      setEmailError("Email is required");
-      return;
-    }
-
-    if (!emailRegex.test(guestEmail)) {
-      setEmailError("Please enter a valid email address");
-      return;
-    }
-
-    setEmailError("");
-    setShowAddressForm(true); // Show address form for guests
-  }
-
-  };
-
 
   const handlePaymentSuccess = async () => {
+    const newOrder = {
+      id: 0,
+      orderNumber: `ORD-${Date.now()}`,
+      orderDate: new Date().toISOString(),
+      customerName:
+        customerName.trim() || user?.email?.split("@")[0] || "Guest",
+      customerEmail: user?.email || guestEmail,
+      shippingAddress: shippingAddress.trim() || "Pick Up In Store",
+      isPickup: false,
+      billingAddress: billingAddress.trim() || "Address to be provided",
+      subTotal: subtotal,
+      taxAmount: tax,
+      shippingCost: shipping,
+      totalAmount: total,
+      status: 1,
+      statusName: "Pending",
+      notes: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      orderItems: state.items.map((item) => {
+        const itemPrice = item.selectedPrice ?? item.product.price;
+        return {
+          id: 0,
+          productId: item.product.id,
+          productName:
+            item.product.title +
+            (item.selectedVariantLabel
+              ? ` (${item.selectedVariantLabel})`
+              : ""),
+          unitPrice: itemPrice,
+          quantity: item.quantity,
+          totalPrice: itemPrice * item.quantity,
+        };
+      }),
+    };
 
-  const newOrder = {
-    id: 0,
-    orderNumber: `ORD-${Date.now()}`, // Temporary order number
-    orderDate: new Date().toISOString(),
-    customerName: customerName.trim() || user?.email?.split('@')[0] || "Guest",
-    customerEmail: user?.email || guestEmail,
-    shippingAddress: shippingAddress.trim() || "Pick Up In Store",
-    isPickup: false,
-    billingAddress: billingAddress.trim() || "Address to be provided",
-    subTotal: subtotal,
-    taxAmount: tax,
-    shippingCost: shipping,
-    totalAmount: total,
-    status: 1, 
-    statusName: "Pending",
-    notes: null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    orderItems: state.items.map((item) => ({
-      id: 0, //temporary 
-      productId: item.product.id,
-      productName: item.product.title,
-      unitPrice: item.product.price,
-      quantity: item.quantity,
-      totalPrice: item.product.price * item.quantity,
-    })),
+    try {
+      const response = await apiService.post("/Orders", newOrder);
+
+      console.log("Order created successfully:", response);
+
+      navigate("/order-success", {
+        state: {
+          order: response,
+          email: newOrder.customerEmail,
+        },
+      });
+
+      clearCart();
+    } catch (error) {
+      console.error("Order creation failed:", error);
+      handlePaymentError("Failed to create order. Please contact support.");
+    }
   };
-
-  try {
-    const response = await apiService.post('/Orders', newOrder);
-    
-    console.log('Order created successfully:', response);
-
-    navigate("/order-success", {
-      state: {
-        order: response,
-        email: newOrder.customerEmail,
-      },
-    });
-
-    clearCart();
-  } catch (error) {
-    console.error('Order creation failed:', error);
-    // TODO: Show error notification to user
-    handlePaymentError('Failed to create order. Please contact support.');
-  }
-};
 
   const handlePaymentError = (error: string) => {
     console.log(error);
-    // TODO: Add toast notification
   };
 
   if (state.items.length === 0) {
@@ -230,11 +207,20 @@ const CartPage: React.FC = () => {
         <Grid gutter={24}>
           <Grid.Col span={{ base: 12, md: 8 }}>
             <Stack gap={16}>
-              {state.items.map((item) => {
+              {state.items.map((item, index) => {
                 const imageUrl = getProductImageUrl(item.product);
+                const itemPrice = item.selectedPrice ?? item.product.price;
+                const itemTotal = itemPrice * item.quantity;
 
                 return (
-                  <Paper key={item.product.id} p={20} withBorder radius="md">
+                  <Paper
+                    key={`${item.product.id}-${
+                      item.selectedAttributeValueId || "no-variant"
+                    }-${index}`}
+                    p={20}
+                    withBorder
+                    radius="md"
+                  >
                     <Group align="flex-start" wrap="nowrap" gap={20}>
                       <Box style={{ width: 120, flexShrink: 0 }}>
                         {imageUrl ? (
@@ -279,6 +265,12 @@ const CartPage: React.FC = () => {
                           >
                             {item.product.category.name}
                           </Badge>
+                          {/* Show variant label if available */}
+                          {item.selectedVariantLabel && (
+                            <Text size="sm" c="dimmed" mt={4}>
+                              {item.selectedVariantLabel}
+                            </Text>
+                          )}
                         </div>
 
                         <Group
@@ -288,11 +280,10 @@ const CartPage: React.FC = () => {
                         >
                           <div>
                             <Text size="xl" fw={700} c="purple">
-                              ${item.product.price.toFixed(2)}
+                              ${itemPrice.toFixed(2)}
                             </Text>
                             <Text size="sm" c="dimmed">
-                              Total: $
-                              {(item.product.price * item.quantity).toFixed(2)}
+                              Total: ${itemTotal.toFixed(2)}
                             </Text>
                           </div>
 
@@ -303,7 +294,8 @@ const CartPage: React.FC = () => {
                               onClick={() =>
                                 handleQuantityChange(
                                   item.product.id,
-                                  item.quantity - 1
+                                  item.quantity - 1,
+                                  item.selectedAttributeValueId
                                 )
                               }
                               radius="md"
@@ -329,7 +321,8 @@ const CartPage: React.FC = () => {
                                     : parseInt(value) || 1;
                                 handleQuantityChange(
                                   item.product.id,
-                                  newQuantity
+                                  newQuantity,
+                                  item.selectedAttributeValueId
                                 );
                               }}
                             />
@@ -340,7 +333,8 @@ const CartPage: React.FC = () => {
                               onClick={() =>
                                 handleQuantityChange(
                                   item.product.id,
-                                  item.quantity + 1
+                                  item.quantity + 1,
+                                  item.selectedAttributeValueId
                                 )
                               }
                               radius="md"
@@ -355,7 +349,12 @@ const CartPage: React.FC = () => {
                           color="red"
                           size="xs"
                           leftSection={<IconTrash size={14} />}
-                          onClick={() => removeFromCart(item.product.id)}
+                          onClick={() =>
+                            removeFromCart(
+                              item.product.id,
+                              item.selectedAttributeValueId
+                            )
+                          }
                           radius="md"
                           style={{ width: "fit-content" }}
                         >
@@ -384,16 +383,29 @@ const CartPage: React.FC = () => {
                 <Divider />
 
                 <Stack gap={8}>
-                  {state.items.map((item) => (
-                    <Group key={item.product.id} justify="space-between">
-                      <Text size="sm" c="dimmed">
-                        {item.product.title} x{item.quantity}
-                      </Text>
-                      <Text size="sm" fw={500}>
-                        ${(item.product.price * item.quantity).toFixed(2)}
-                      </Text>
-                    </Group>
-                  ))}
+                  {state.items.map((item, index) => {
+                    const itemPrice = item.selectedPrice ?? item.product.price;
+                    const itemTotal = itemPrice * item.quantity;
+                    const label = item.selectedVariantLabel
+                      ? `${item.product.title} (${item.selectedVariantLabel})`
+                      : item.product.title;
+
+                    return (
+                      <Group
+                        key={`summary-${item.product.id}-${
+                          item.selectedAttributeValueId || "no-variant"
+                        }-${index}`}
+                        justify="space-between"
+                      >
+                        <Text size="sm" c="dimmed">
+                          {label} x{item.quantity}
+                        </Text>
+                        <Text size="sm" fw={500}>
+                          ${itemTotal.toFixed(2)}
+                        </Text>
+                      </Group>
+                    );
+                  })}
                 </Stack>
 
                 <Divider />
@@ -422,7 +434,7 @@ const CartPage: React.FC = () => {
                     Total:
                   </Text>
                   <Text size="xl" fw={700} c="purple">
-                    ${isPickup? (total-5.99).toFixed(2):total.toFixed(2)}
+                    ${isPickup ? (total - 5.99).toFixed(2) : total.toFixed(2)}
                   </Text>
                 </Group>
 
@@ -478,7 +490,9 @@ const CartPage: React.FC = () => {
                   <>
                     <Divider />
                     <Stack gap="xs">
-                      <Text size="sm" fw={500}>Delivery Method</Text>
+                      <Text size="sm" fw={500}>
+                        Delivery Method
+                      </Text>
                       <SegmentedControl
                         value={isPickup ? "pickup" : "delivery"}
                         onChange={(value) => setIsPickup(value === "pickup")}
@@ -507,10 +521,12 @@ const CartPage: React.FC = () => {
                     </Stack>
 
                     <Divider />
-                    
+
                     <Stack gap="xs">
                       <Text size="sm" fw={500}>
-                        {isPickup ? "Pickup Information" : "Shipping Information"}
+                        {isPickup
+                          ? "Pickup Information"
+                          : "Shipping Information"}
                       </Text>
                       <TextInput
                         placeholder="Full Name"
@@ -530,27 +546,27 @@ const CartPage: React.FC = () => {
                         value={billingAddress}
                         onChange={(e) => setBillingAddress(e.target.value)}
                         required
-                      />  
+                      />
                     </Stack>
-    
+
                     <Divider />
-    
+
                     <PaymentForm
                       amount={totalInCents}
                       onSuccess={handlePaymentSuccess}
                       onError={handlePaymentError}
                     />
                   </>
-                  ) : (
-                    <Button
-                      size="lg"
-                      fullWidth
-                      radius="md"
-                      onClick={handleProceedToCheckout}
-                    >
-                      Proceed to Checkout
-                    </Button>
-              )}
+                ) : (
+                  <Button
+                    size="lg"
+                    fullWidth
+                    radius="md"
+                    onClick={handleProceedToCheckout}
+                  >
+                    Proceed to Checkout
+                  </Button>
+                )}
 
                 <Button
                   component="a"

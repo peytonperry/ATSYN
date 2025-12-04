@@ -1,8 +1,8 @@
 using ATSYN.Api.Features;
+using ATSYN.Data;
 using ATSYN.Data.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace ATSYN.Api.Controllers;
 
@@ -23,6 +23,8 @@ public class ProductAttributeController : ControllerBase
         var attributes = await _context.ProductAttributes
             .Include(pa => pa.Options)
             .Include(pa => pa.Category)
+            .OrderBy(pa => pa.CategoryId)
+            .ThenBy(pa => pa.DisplayOrder)
             .Select(pa => new ProductAttributeDto
             {
                 Id = pa.Id,
@@ -31,32 +33,34 @@ public class ProductAttributeController : ControllerBase
                 CategoryId = pa.CategoryId,
                 IsRequired = pa.IsRequired,
                 DisplayOrder = pa.DisplayOrder,
-                Options = pa.Options.OrderBy(o => o.DisplayOrder).Select(o => new AttributeOptionDto
-                {
-                    Id = o.Id,
-                    Value = o.Value,
-                    DisplayOrder = o.DisplayOrder
-                }).ToList()
+                Options = pa.Options
+                    .OrderBy(o => o.DisplayOrder)
+                    .Select(o => new AttributeOptionDto
+                    {
+                        Id = o.Id,
+                        Value = o.Value,
+                        DisplayOrder = o.DisplayOrder
+                    })
+                    .ToList()
             })
-            .OrderBy(pa => pa.CategoryId)
-            .ThenBy(pa => pa.DisplayOrder)
             .ToListAsync();
 
-        return attributes;
+        return Ok(attributes);
     }
 
     [HttpGet("category/{categoryId}")]
     public async Task<ActionResult<IEnumerable<ProductAttributeDto>>> GetAttributesByCategory(int categoryId)
     {
-        var category = await _context.Categories.FindAsync(categoryId);
-        if (category == null)
+        var categoryExists = await _context.Categories.AnyAsync(c => c.Id == categoryId);
+        if (!categoryExists)
         {
-            return NotFound("Category not found.");
+            return NotFound($"Category with ID {categoryId} not found.");
         }
 
         var attributes = await _context.ProductAttributes
-            .Where(pa => pa.CategoryId == categoryId)
             .Include(pa => pa.Options)
+            .Where(pa => pa.CategoryId == categoryId)
+            .OrderBy(pa => pa.DisplayOrder)
             .Select(pa => new ProductAttributeDto
             {
                 Id = pa.Id,
@@ -65,17 +69,19 @@ public class ProductAttributeController : ControllerBase
                 CategoryId = pa.CategoryId,
                 IsRequired = pa.IsRequired,
                 DisplayOrder = pa.DisplayOrder,
-                Options = pa.Options.OrderBy(o => o.DisplayOrder).Select(o => new AttributeOptionDto
-                {
-                    Id = o.Id,
-                    Value = o.Value,
-                    DisplayOrder = o.DisplayOrder
-                }).ToList()
+                Options = pa.Options
+                    .OrderBy(o => o.DisplayOrder)
+                    .Select(o => new AttributeOptionDto
+                    {
+                        Id = o.Id,
+                        Value = o.Value,
+                        DisplayOrder = o.DisplayOrder
+                    })
+                    .ToList()
             })
-            .OrderBy(pa => pa.DisplayOrder)
             .ToListAsync();
 
-        return attributes;
+        return Ok(attributes);
     }
 
     [HttpGet("{id}")]
@@ -98,72 +104,90 @@ public class ProductAttributeController : ControllerBase
             CategoryId = attribute.CategoryId,
             IsRequired = attribute.IsRequired,
             DisplayOrder = attribute.DisplayOrder,
-            Options = attribute.Options.OrderBy(o => o.DisplayOrder).Select(o => new AttributeOptionDto
-            {
-                Id = o.Id,
-                Value = o.Value,
-                DisplayOrder = o.DisplayOrder
-            }).ToList()
+            Options = attribute.Options
+                .OrderBy(o => o.DisplayOrder)
+                .Select(o => new AttributeOptionDto
+                {
+                    Id = o.Id,
+                    Value = o.Value,
+                    DisplayOrder = o.DisplayOrder
+                })
+                .ToList()
         };
 
-        return attributeDto;
+        return Ok(attributeDto);
     }
 
     [HttpPost]
-    public async Task<ActionResult<ProductAttributeDto>> PostProductAttribute(CreateProductAttributeDto createAttributeDto)
+    public async Task<ActionResult<ProductAttributeDto>> CreateProductAttribute(CreateProductAttributeDto createDto)
     {
-        var category = await _context.Categories.FindAsync(createAttributeDto.CategoryId);
-        if (category == null)
+        var categoryExists = await _context.Categories.AnyAsync(c => c.Id == createDto.CategoryId);
+        if (!categoryExists)
         {
-            return BadRequest("Category not found.");
+            return BadRequest($"Category with ID {createDto.CategoryId} does not exist.");
         }
 
         var existingAttribute = await _context.ProductAttributes
-            .FirstOrDefaultAsync(pa => pa.CategoryId == createAttributeDto.CategoryId && pa.Name == createAttributeDto.Name);
+            .AnyAsync(pa => pa.CategoryId == createDto.CategoryId && pa.Name == createDto.Name);
 
-        if (existingAttribute != null)
+        if (existingAttribute)
         {
-            return Conflict($"Attribute with name '{createAttributeDto.Name}' already exists in this category.");
-        }
-
-        var validTypes = new[] { "text", "number", "select", "multiselect" };
-        if (!validTypes.Contains(createAttributeDto.Type.ToLower()))
-        {
-            return BadRequest("Invalid attribute type. Valid types are: text, number, select, multiselect");
+            return BadRequest($"An attribute with name '{createDto.Name}' already exists for this category.");
         }
 
         var attribute = new ProductAttribute
         {
-            Name = createAttributeDto.Name,
-            Type = createAttributeDto.Type.ToLower(),
-            CategoryId = createAttributeDto.CategoryId,
-            IsRequired = createAttributeDto.IsRequired,
-            DisplayOrder = createAttributeDto.DisplayOrder
+            Name = createDto.Name,
+            Type = createDto.Type,
+            CategoryId = createDto.CategoryId,
+            IsRequired = createDto.IsRequired,
+            DisplayOrder = createDto.DisplayOrder
         };
 
         _context.ProductAttributes.Add(attribute);
         await _context.SaveChangesAsync();
-        
-        if ((createAttributeDto.Type.ToLower() == "select" || createAttributeDto.Type.ToLower() == "multiselect") 
-            && createAttributeDto.Options.Any())
+
+        if (createDto.Options.Any())
         {
-            var options = createAttributeDto.Options.Select(optionDto => new AttributeOption
+            var options = createDto.Options.Select(o => new AttributeOption
             {
                 AttributeId = attribute.Id,
-                Value = optionDto.Value,
-                DisplayOrder = optionDto.DisplayOrder
+                Value = o.Value,
+                DisplayOrder = o.DisplayOrder
             }).ToList();
 
             _context.AttributeOptions.AddRange(options);
             await _context.SaveChangesAsync();
         }
 
-        var result = await GetProductAttribute(attribute.Id);
-        return CreatedAtAction("GetProductAttribute", new { id = attribute.Id }, result.Value);
+        var createdAttribute = await _context.ProductAttributes
+            .Include(pa => pa.Options)
+            .FirstAsync(pa => pa.Id == attribute.Id);
+
+        var responseDto = new ProductAttributeDto
+        {
+            Id = createdAttribute.Id,
+            Name = createdAttribute.Name,
+            Type = createdAttribute.Type,
+            CategoryId = createdAttribute.CategoryId,
+            IsRequired = createdAttribute.IsRequired,
+            DisplayOrder = createdAttribute.DisplayOrder,
+            Options = createdAttribute.Options
+                .OrderBy(o => o.DisplayOrder)
+                .Select(o => new AttributeOptionDto
+                {
+                    Id = o.Id,
+                    Value = o.Value,
+                    DisplayOrder = o.DisplayOrder
+                })
+                .ToList()
+        };
+
+        return CreatedAtAction(nameof(GetProductAttribute), new { id = attribute.Id }, responseDto);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutProductAttribute(int id, UpdateProductAttributeDto updateAttributeDto)
+    public async Task<IActionResult> UpdateProductAttribute(int id, UpdateProductAttributeDto updateDto)
     {
         var attribute = await _context.ProductAttributes
             .Include(pa => pa.Options)
@@ -174,37 +198,31 @@ public class ProductAttributeController : ControllerBase
             return NotFound();
         }
 
-        var existingAttribute = await _context.ProductAttributes
-            .FirstOrDefaultAsync(pa => pa.CategoryId == attribute.CategoryId && 
-                                     pa.Name == updateAttributeDto.Name && 
-                                     pa.Id != id);
+        var duplicateExists = await _context.ProductAttributes
+            .AnyAsync(pa => pa.CategoryId == attribute.CategoryId && pa.Name == updateDto.Name && pa.Id != id);
 
-        if (existingAttribute != null)
+        if (duplicateExists)
         {
-            return Conflict($"Attribute with name '{updateAttributeDto.Name}' already exists in this category.");
+            return BadRequest($"An attribute with name '{updateDto.Name}' already exists for this category.");
         }
 
-        attribute.Name = updateAttributeDto.Name;
-        attribute.Type = updateAttributeDto.Type.ToLower();
-        attribute.IsRequired = updateAttributeDto.IsRequired;
-        attribute.DisplayOrder = updateAttributeDto.DisplayOrder;
+        attribute.Name = updateDto.Name;
+        attribute.Type = updateDto.Type;
+        attribute.IsRequired = updateDto.IsRequired;
+        attribute.DisplayOrder = updateDto.DisplayOrder;
 
-        if (updateAttributeDto.Type.ToLower() == "select" || updateAttributeDto.Type.ToLower() == "multiselect")
+        _context.AttributeOptions.RemoveRange(attribute.Options);
+
+        if (updateDto.Options.Any())
         {
-            _context.AttributeOptions.RemoveRange(attribute.Options);
-
-            var newOptions = updateAttributeDto.Options.Select(optionDto => new AttributeOption
+            var newOptions = updateDto.Options.Select(o => new AttributeOption
             {
                 AttributeId = attribute.Id,
-                Value = optionDto.Value,
-                DisplayOrder = optionDto.DisplayOrder
+                Value = o.Value,
+                DisplayOrder = o.DisplayOrder
             }).ToList();
 
             _context.AttributeOptions.AddRange(newOptions);
-        }
-        else
-        {
-            _context.AttributeOptions.RemoveRange(attribute.Options);
         }
 
         try
@@ -213,14 +231,11 @@ public class ProductAttributeController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!ProductAttributeExists(id))
+            if (!await ProductAttributeExists(id))
             {
                 return NotFound();
             }
-            else
-            {
-                throw;
-            }
+            throw;
         }
 
         return NoContent();
@@ -229,18 +244,10 @@ public class ProductAttributeController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProductAttribute(int id)
     {
-        var attribute = await _context.ProductAttributes
-            .Include(pa => pa.ProductAttributeValues)
-            .FirstOrDefaultAsync(pa => pa.Id == id);
-
+        var attribute = await _context.ProductAttributes.FindAsync(id);
         if (attribute == null)
         {
             return NotFound();
-        }
-
-        if (attribute.ProductAttributeValues.Any())
-        {
-            return BadRequest("Cannot delete attribute because it is being used by one or more products.");
         }
 
         _context.ProductAttributes.Remove(attribute);
@@ -249,8 +256,8 @@ public class ProductAttributeController : ControllerBase
         return NoContent();
     }
 
-    private bool ProductAttributeExists(int id)
+    private async Task<bool> ProductAttributeExists(int id)
     {
-        return _context.ProductAttributes.Any(e => e.Id == id);
+        return await _context.ProductAttributes.AnyAsync(e => e.Id == id);
     }
 }

@@ -22,13 +22,14 @@ public class ProductController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
     {
-
         var products = await _context.Products
             .Include(p => p.Category)
             .Include(p => p.Brand)
             .Include(p => p.Photos)
             .Include(p => p.Reviews)
             .ThenInclude(p => p.User)
+            .Include(p => p.AttributeValues)
+            .ThenInclude(av => av.Attribute)
             .Select(p => new ProductDto
             {
                 Id = p.Id,
@@ -54,6 +55,17 @@ public class ProductController : ControllerBase
                     Id = p.Brand.Id,
                     Name = p.Brand.Name
                 } : null,
+                AttributeValues = p.AttributeValues.Select(av => new ProductAttributeValueDto
+                {
+                    Id = av.Id,
+                    AttributeId = av.AttributeId,
+                    AttributeName = av.Attribute.Name,
+                    Value = av.Value,
+                    AttributeType = av.Attribute.Type,
+                    IsVisibleToCustomers = av.Attribute.IsVisibleToCustomers,
+                    Price = av.Price,
+                    StockAmount = av.StockAmount
+                }).ToList(),
                 Photos = p.Photos
                     .OrderByDescending(ph => ph.IsPrimary)
                     .ThenBy(ph => ph.DisplayOrder)
@@ -102,6 +114,8 @@ public class ProductController : ControllerBase
             .Include(p => p.Photos)
             .Include(p => p.Reviews)
             .ThenInclude(p => p.User)
+            .Include(p => p.AttributeValues)
+            .ThenInclude(av => av.Attribute)
             .Where(p => p.CategoryId == categoryId)
             .Select(p => new ProductDto
             {
@@ -128,6 +142,17 @@ public class ProductController : ControllerBase
                     Id = p.Brand.Id,
                     Name = p.Brand.Name
                 } : null,
+                AttributeValues = p.AttributeValues.Select(av => new ProductAttributeValueDto
+                {
+                    Id = av.Id,
+                    AttributeId = av.AttributeId,
+                    AttributeName = av.Attribute.Name,
+                    Value = av.Value,
+                    AttributeType = av.Attribute.Type,
+                    IsVisibleToCustomers = av.Attribute.IsVisibleToCustomers,
+                    Price = av.Price,
+                    StockAmount = av.StockAmount
+                }).ToList(),
                 Photos = p.Photos
                     .OrderByDescending(ph => ph.IsPrimary)
                     .ThenBy(ph => ph.DisplayOrder)
@@ -170,6 +195,8 @@ public class ProductController : ControllerBase
             .Include(p => p.Photos)
             .Include(p => p.Reviews)
             .ThenInclude(p => p.User)
+            .Include(p => p.AttributeValues)
+            .ThenInclude(av => av.Attribute)
             .FirstOrDefaultAsync(p => p.Id == id);
 
         if (product == null)
@@ -202,6 +229,17 @@ public class ProductController : ControllerBase
                 Id = product.Brand.Id,
                 Name = product.Brand.Name
             } : null,
+            AttributeValues = product.AttributeValues.Select(av => new ProductAttributeValueDto
+            {
+                Id = av.Id,
+                AttributeId = av.AttributeId,
+                AttributeName = av.Attribute.Name,
+                Value = av.Value,
+                AttributeType = av.Attribute.Type,
+                IsVisibleToCustomers = av.Attribute.IsVisibleToCustomers,
+                Price = av.Price,
+                StockAmount = av.StockAmount
+            }).ToList(),
             Photos = product.Photos
                 .OrderByDescending(ph => ph.IsPrimary)
                 .ThenBy(ph => ph.DisplayOrder)
@@ -235,48 +273,95 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ProductDto>> CreateProduct(ProductDto productDto)
+    public async Task<ActionResult<ProductDto>> CreateProduct(CreateProductDto createDto)
     {
         var categoryExists = await _context.Categories
-            .AnyAsync(c => c.Id == productDto.CategoryId);
+            .AnyAsync(c => c.Id == createDto.CategoryId);
 
         if (!categoryExists)
         {
-            return BadRequest($"Category with ID {productDto.CategoryId} does not exist.");
+            return BadRequest($"Category with ID {createDto.CategoryId} does not exist.");
         }
 
-        if (productDto.BrandId.HasValue)
+        if (createDto.BrandId.HasValue)
         {
             var brandExists = await _context.Brands
-                .AnyAsync(b => b.Id == productDto.BrandId.Value);
+                .AnyAsync(b => b.Id == createDto.BrandId.Value);
 
             if (!brandExists)
             {
-                return BadRequest($"Brand with ID {productDto.BrandId} does not exist.");
+                return BadRequest($"Brand with ID {createDto.BrandId} does not exist.");
+            }
+        }
+
+        if (createDto.AttributeValues.Any())
+        {
+            var attributeIds = createDto.AttributeValues.Select(av => av.AttributeId).Distinct().ToList();
+            var validAttributes = await _context.ProductAttributes
+                .Where(pa => attributeIds.Contains(pa.Id) && pa.CategoryId == createDto.CategoryId)
+                .ToListAsync();
+
+            if (validAttributes.Count != attributeIds.Count)
+            {
+                return BadRequest("One or more attributes do not belong to the selected category.");
+            }
+
+            var requiredAttributes = await _context.ProductAttributes
+                .Where(pa => pa.CategoryId == createDto.CategoryId && pa.IsRequired)
+                .Select(pa => pa.Id)
+                .ToListAsync();
+
+            var providedAttributeIds = createDto.AttributeValues.Select(av => av.AttributeId).ToList();
+            var missingRequired = requiredAttributes.Except(providedAttributeIds).ToList();
+
+            if (missingRequired.Any())
+            {
+                var missingNames = await _context.ProductAttributes
+                    .Where(pa => missingRequired.Contains(pa.Id))
+                    .Select(pa => pa.Name)
+                    .ToListAsync();
+                return BadRequest($"Missing required attributes: {string.Join(", ", missingNames)}");
             }
         }
 
         var product = new Product
         {
-            Title = productDto.Title,
-            Description = productDto.Description,
-            Price = productDto.Price,
-            CategoryId = productDto.CategoryId,
-            BrandId = productDto.BrandId,
-            StockAmount = productDto.StockAmount,
-            IsVisible = productDto.IsVisible,
-            ShippingTypeId = productDto.ShippingTypeId,
-            ImageUrl = productDto.ImageUrl,
-            InStock = productDto.InStock
+            Title = createDto.Title,
+            Description = createDto.Description,
+            Price = createDto.Price,
+            CategoryId = createDto.CategoryId,
+            BrandId = createDto.BrandId,
+            StockAmount = createDto.StockAmount,
+            IsVisible = createDto.IsVisible,
+            ShippingTypeId = createDto.ShippingTypeId,
+            ImageUrl = createDto.ImageUrl,
+            InStock = createDto.StockAmount > 0
         };
 
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
 
+        if (createDto.AttributeValues.Any())
+        {
+            var attributeValues = createDto.AttributeValues.Select(av => new ProductAttributeValue
+            {
+                ProductId = product.Id,
+                AttributeId = av.AttributeId,
+                Value = av.Value,
+                Price = av.Price,
+                StockAmount = av.StockAmount
+            }).ToList();
+
+            _context.ProductAttributeValues.AddRange(attributeValues);
+            await _context.SaveChangesAsync();
+        }
+
         var createdProduct = await _context.Products
             .Include(p => p.Category)
             .Include(p => p.Brand)
             .Include(p => p.Photos)
+            .Include(p => p.AttributeValues)
+            .ThenInclude(av => av.Attribute)
             .FirstAsync(p => p.Id == product.Id);
 
         var responseDto = new ProductDto
@@ -304,6 +389,17 @@ public class ProductController : ControllerBase
                 Id = createdProduct.Brand.Id,
                 Name = createdProduct.Brand.Name
             } : null,
+            AttributeValues = createdProduct.AttributeValues.Select(av => new ProductAttributeValueDto
+            {
+                Id = av.Id,
+                AttributeId = av.AttributeId,
+                AttributeName = av.Attribute.Name,
+                Value = av.Value,
+                AttributeType = av.Attribute.Type,
+                IsVisibleToCustomers = av.Attribute.IsVisibleToCustomers,
+                Price = av.Price,
+                StockAmount = av.StockAmount
+            }).ToList(),
             Photos = createdProduct.Photos
                 .OrderByDescending(ph => ph.IsPrimary)
                 .ThenBy(ph => ph.DisplayOrder)
@@ -331,59 +427,101 @@ public class ProductController : ControllerBase
                 Comment = r.Comment,
                 CreatedAt = r.CreatedAt
             }).ToList()
-
         };
 
         return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, responseDto);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateProduct(int id, ProductDto productDto)
+    public async Task<IActionResult> UpdateProduct(int id, UpdateProductDto updateDto)
     {
-        if (id != productDto.Id)
-        {
-            return BadRequest("ID mismatch");
-        }
+        var product = await _context.Products
+            .Include(p => p.AttributeValues)
+            .FirstOrDefaultAsync(p => p.Id == id);
 
-        var product = await _context.Products.FindAsync(id);
         if (product == null)
         {
             return NotFound();
         }
 
-        if (product.CategoryId != productDto.CategoryId)
+        if (product.CategoryId != updateDto.CategoryId)
         {
             var categoryExists = await _context.Categories
-                .AnyAsync(c => c.Id == productDto.CategoryId);
+                .AnyAsync(c => c.Id == updateDto.CategoryId);
 
             if (!categoryExists)
             {
-                return BadRequest($"Category with ID {productDto.CategoryId} does not exist.");
+                return BadRequest($"Category with ID {updateDto.CategoryId} does not exist.");
             }
         }
 
-        // Validate brand if provided
-        if (productDto.BrandId.HasValue && product.BrandId != productDto.BrandId)
+        if (updateDto.BrandId.HasValue && product.BrandId != updateDto.BrandId)
         {
             var brandExists = await _context.Brands
-                .AnyAsync(b => b.Id == productDto.BrandId.Value);
+                .AnyAsync(b => b.Id == updateDto.BrandId.Value);
 
             if (!brandExists)
             {
-                return BadRequest($"Brand with ID {productDto.BrandId} does not exist.");
+                return BadRequest($"Brand with ID {updateDto.BrandId} does not exist.");
             }
         }
 
-        product.Title = productDto.Title;
-        product.Description = productDto.Description;
-        product.Price = productDto.Price;
-        product.CategoryId = productDto.CategoryId;
-        product.BrandId = productDto.BrandId;
-        product.StockAmount = productDto.StockAmount;
-        product.IsVisible = productDto.IsVisible;
-        product.ShippingTypeId = productDto.ShippingTypeId;
-        product.ImageUrl = productDto.ImageUrl;
-        product.InStock = productDto.InStock;
+        if (updateDto.AttributeValues.Any())
+        {
+            var attributeIds = updateDto.AttributeValues.Select(av => av.AttributeId).Distinct().ToList();
+            var validAttributes = await _context.ProductAttributes
+                .Where(pa => attributeIds.Contains(pa.Id) && pa.CategoryId == updateDto.CategoryId)
+                .ToListAsync();
+
+            if (validAttributes.Count != attributeIds.Count)
+            {
+                return BadRequest("One or more attributes do not belong to the selected category.");
+            }
+
+            var requiredAttributes = await _context.ProductAttributes
+                .Where(pa => pa.CategoryId == updateDto.CategoryId && pa.IsRequired)
+                .Select(pa => pa.Id)
+                .ToListAsync();
+
+            var providedAttributeIds = updateDto.AttributeValues.Select(av => av.AttributeId).ToList();
+            var missingRequired = requiredAttributes.Except(providedAttributeIds).ToList();
+
+            if (missingRequired.Any())
+            {
+                var missingNames = await _context.ProductAttributes
+                    .Where(pa => missingRequired.Contains(pa.Id))
+                    .Select(pa => pa.Name)
+                    .ToListAsync();
+                return BadRequest($"Missing required attributes: {string.Join(", ", missingNames)}");
+            }
+        }
+
+        product.Title = updateDto.Title;
+        product.Description = updateDto.Description;
+        product.Price = updateDto.Price;
+        product.CategoryId = updateDto.CategoryId;
+        product.BrandId = updateDto.BrandId;
+        product.StockAmount = updateDto.StockAmount;
+        product.IsVisible = updateDto.IsVisible;
+        product.ShippingTypeId = updateDto.ShippingTypeId;
+        product.ImageUrl = updateDto.ImageUrl;
+        product.InStock = updateDto.InStock;
+
+        _context.ProductAttributeValues.RemoveRange(product.AttributeValues);
+
+        if (updateDto.AttributeValues.Any())
+        {
+            var newAttributeValues = updateDto.AttributeValues.Select(av => new ProductAttributeValue
+            {
+                ProductId = product.Id,
+                AttributeId = av.AttributeId,
+                Value = av.Value,
+                Price = av.Price,
+                StockAmount = av.StockAmount
+            }).ToList();
+
+            _context.ProductAttributeValues.AddRange(newAttributeValues);
+        }
 
         try
         {
