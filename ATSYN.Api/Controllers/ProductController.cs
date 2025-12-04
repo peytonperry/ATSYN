@@ -542,33 +542,44 @@ public class ProductController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
-        var product = await _context.Products.FindAsync(id);
-        if (product == null)
+        try
         {
-            return NotFound();
-        }
+            var product = await _context.Products.FindAsync(id);
 
-        // Check if product is attached to any incomplete orders
-        var hasIncompleteOrders = await _context.OrderItems
-            .Include(oi => oi.Order)
-            .AnyAsync(oi => oi.ProductId == id &&
-                           oi.Order.Status != OrderStatus.Delivered &&
-                           oi.Order.Status != OrderStatus.Cancelled &&
-                           oi.Order.Status != OrderStatus.Refunded);
-
-        if (hasIncompleteOrders)
-        {
-            return BadRequest(new
+            if (product == null)
             {
-                message = "Cannot delete product because it is attached to one or more incomplete orders.",
-                productId = id,
-                productTitle = product.Title
-            });
-        }
+                return NotFound();
+            }
 
-        _context.Products.Remove(product);
-        await _context.SaveChangesAsync();
-        return NoContent();
+            var hasOrderItems = await _context.OrderItems
+                .AnyAsync(oi => oi.ProductId == id);
+
+            if (hasOrderItems)
+            {
+                return Conflict(new
+                {
+                    message = "Cannot delete this product because it exists in customer order history."
+                });
+            }
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+        catch (DbUpdateException ex)
+        {
+            if (ex.InnerException?.Message.Contains("FK_OrderItems_Products") == true ||
+                ex.InnerException?.Message.Contains("REFERENCE constraint") == true)
+            {
+                return Conflict(new
+                {
+                    message = "Cannot delete this product because it exists in customer order history."
+                });
+            }
+
+            return StatusCode(500, new { message = "An error occurred while deleting the product." });
+        }
     }
 
     private async Task<bool> ProductExists(int id)

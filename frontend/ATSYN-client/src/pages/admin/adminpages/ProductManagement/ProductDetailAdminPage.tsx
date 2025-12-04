@@ -105,7 +105,7 @@ const ProductDetailAdminPage = () => {
     }
   };
 
-  const handleDelete = async () => {
+const handleDelete = async () => {
   if (!product) return;
   if (window.confirm("Are you sure you want to delete this product?")) {
     try {
@@ -115,15 +115,12 @@ const ProductDetailAdminPage = () => {
     } catch (error: any) {
       console.error("Error deleting product:", error);
       
-      // Check if it's the specific error about incomplete orders
-      if (error.response?.status === 400) {
-        const errorData = error.response?.data;
-        setMessage(
-          errorData?.message || 
-          "Cannot delete product because it is attached to one or more incomplete orders."
-        );
+      const errorMessage = error?.response?.data?.message;
+      
+      if (errorMessage) {
+        setMessage(errorMessage);
       } else {
-        setMessage("Failed to delete product.");
+        setMessage("Failed to delete product. Please try again.");
       }
     }
   }
@@ -152,11 +149,14 @@ const ProductDetailAdminPage = () => {
       </Button>
       {message && (
         <Notification
-          color={message.includes("successfully") ? "green" : "red"}
-          onClose={() => setMessage(null)}
-          className="admin-product-notification"
+            color={message.includes("successfully") ? "green" : 
+              message.includes("Cannot delete") ? "yellow" : "red"}
+            onClose={() => setMessage(null)}
+            className="admin-product-notification"
+            title={message.includes("Cannot delete") ? "⚠️ Delete Restricted" : undefined}
+            withCloseButton
         >
-          {message}
+            {message}
         </Notification>
       )}
 

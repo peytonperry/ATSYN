@@ -6,13 +6,39 @@ import {
   Stack,
   TextInput,
   Grid,
-  GridCol,
   Button,
   Textarea,
 } from "@mantine/core";
+import { apiService } from "../config/api";
+import { useState } from "react";
 
 function ContactPage() {
   const SPACING = "lg";
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+    format: "",
+  });
+
+  const handleChange = (field: string, value: string | number) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      await apiService.post("/Contact/submit-contact", formData);
+      alert("Success! Your message has been sent");
+      setFormData({ name: "", email: "", subject: "", message: "", format: ""});
+      window.location.reload();
+    } catch (error) {
+      alert("Failed to send message. Please try again");
+      console.error(error);
+    }
+  };
 
   return (
     <Container size="xl" py="xl">
@@ -154,27 +180,58 @@ function ContactPage() {
             <Text fw={700} size="xl" ta="center" mb="lg">
               Contact Us
             </Text>
-            <Stack gap="md">
-              <TextInput label="Name" placeholder="Your name" required />
-              <TextInput
-                label="Email"
-                placeholder="your@email.com"
-                type="email"
-                required
-              />
-              <TextInput
-                label="Subject"
-                placeholder="What's this about?"
-                required
-              />
-              <Textarea
-                label="Message"
-                placeholder="Your message..."
-                minRows={4}
-                required
-              />
-              <Button fullWidth>Send Message</Button>
-            </Stack>
+            <form onSubmit={handleSubmit}>
+              <Stack gap="md">
+                <TextInput
+                  label="Name"
+                  placeholder="Your name"
+                  onChange={(e) => handleChange("name", e.currentTarget.value)}
+                  maxLength={50}
+                  required
+                />
+                <TextInput
+                  label="Email"
+                  placeholder="your@email.com"
+                  type="email"
+                  maxLength={100}
+                  onChange={(e) => handleChange("email", e.currentTarget.value)}
+                  required
+                />
+                <TextInput
+                  label="Subject"
+                  placeholder="What's this about?"
+                  maxLength={200}
+                  required
+                  onChange={(e) =>
+                    handleChange("subject", e.currentTarget.value)
+                  }
+                />
+                <Textarea
+                  label="Message"
+                  placeholder="Your message..."
+                  minRows={4}
+                  maxLength={250}
+                  required
+                  onChange={(e) =>
+                    handleChange("message", e.currentTarget.value)
+                  }
+                />
+                <input
+                  type="text"
+                  name="format"
+                  value={formData.format}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, format: e.target.value }))
+                  }
+                  style={{ display: "none" }}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+                <Button fullWidth type="submit">
+                  Send Message
+                </Button>
+              </Stack>
+            </form>
           </Paper>
         </Grid.Col>
       </Grid>

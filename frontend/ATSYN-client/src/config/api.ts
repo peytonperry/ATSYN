@@ -55,17 +55,24 @@ export const apiService = {
     return text ? JSON.parse(text) : null;
   },
 
-  async delete(endpoint: string) {
+  delete: async (endpoint: string) => {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'DELETE',
       credentials: 'include',
     });
+  
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      const error: any = new Error(`HTTP error! status: ${response.status}`);
+      error.response = {
+        status: response.status,
+        data: errorData
+      };
+      throw error;
     }
-    const text = await response.text();
-    return text ? JSON.parse(text) : null;
-  },
+  
+    return response;
+  },  
 
   async uploadFile(endpoint: string, formData: FormData){
     console.log('Uploading to:', `${API_BASE_URL}${endpoint}`); // Temporary debug
