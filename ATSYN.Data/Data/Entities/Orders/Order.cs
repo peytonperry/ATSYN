@@ -99,6 +99,10 @@ public class CreateOrderItemDto
     
     [Range(1, int.MaxValue)]
     public int Quantity { get; set; }
+    
+    public string ProductName { get; set; } = string.Empty;
+    public decimal UnitPrice { get; set; }
+    public int? SelectedAttributeValueId { get; set; }
 }
 
 public class UpdateOrderStatusDto
