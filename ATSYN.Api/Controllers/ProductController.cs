@@ -548,9 +548,26 @@ public class ProductController : ControllerBase
             return NotFound();
         }
 
+        // Check if product is attached to any incomplete orders
+        var hasIncompleteOrders = await _context.OrderItems
+            .Include(oi => oi.Order)
+            .AnyAsync(oi => oi.ProductId == id &&
+                           oi.Order.Status != OrderStatus.Delivered &&
+                           oi.Order.Status != OrderStatus.Cancelled &&
+                           oi.Order.Status != OrderStatus.Refunded);
+
+        if (hasIncompleteOrders)
+        {
+            return BadRequest(new
+            {
+                message = "Cannot delete product because it is attached to one or more incomplete orders.",
+                productId = id,
+                productTitle = product.Title
+            });
+        }
+
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
-
         return NoContent();
     }
 

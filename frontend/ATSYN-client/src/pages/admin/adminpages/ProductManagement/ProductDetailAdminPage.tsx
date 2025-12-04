@@ -106,18 +106,28 @@ const ProductDetailAdminPage = () => {
   };
 
   const handleDelete = async () => {
-    if (!product) return;
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      try {
-        await apiService.delete(`/Product/${product.id}`);
-        navigate("/admin/all-products");
-        setMessage("Product deleted successfully!");
-      } catch (error) {
-        console.error("Error deleting product:", error);
+  if (!product) return;
+  if (window.confirm("Are you sure you want to delete this product?")) {
+    try {
+      await apiService.delete(`/Product/${product.id}`);
+      navigate("/admin/all-products");
+      setMessage("Product deleted successfully!");
+    } catch (error: any) {
+      console.error("Error deleting product:", error);
+      
+      // Check if it's the specific error about incomplete orders
+      if (error.response?.status === 400) {
+        const errorData = error.response?.data;
+        setMessage(
+          errorData?.message || 
+          "Cannot delete product because it is attached to one or more incomplete orders."
+        );
+      } else {
         setMessage("Failed to delete product.");
       }
     }
-  };
+  }
+};
 
   if (loading) {
     return (
