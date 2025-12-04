@@ -171,6 +171,13 @@ function ProductDetailPage() {
 
   const handleAddToCart = () => {
     if (product && quantity && allAttributesSelected) {
+      if (quantity > currentStock) {
+        console.error(
+          `Cannot add ${quantity} items. Only ${currentStock} in stock.`
+        );
+        return;
+      }
+
       const selectedAttributeIds = Object.values(selectedAttributes);
       const selectedAttributeValueId =
         selectedAttributeIds.length > 0 ? selectedAttributeIds[0] : undefined;
@@ -331,7 +338,16 @@ function ProductDetailPage() {
                 <NumberInput
                   className="wrapper"
                   value={quantity}
-                  onChange={(val) => setQuantity(Number(val))}
+                  onChange={(val) => {
+                    const newQty = Number(val) || 1;
+                    if (newQty > currentStock) {
+                      setQuantity(currentStock);
+                    } else if (newQty < 1) {
+                      setQuantity(1);
+                    } else {
+                      setQuantity(newQty);
+                    }
+                  }}
                   min={1}
                   max={currentStock}
                   clampBehavior="strict"
@@ -371,7 +387,10 @@ function ProductDetailPage() {
                 variant="outline"
                 onClick={handleAddToCart}
                 disabled={
-                  !allAttributesSelected || currentStock === 0 || !quantity
+                  !allAttributesSelected ||
+                  currentStock === 0 ||
+                  !quantity ||
+                  quantity > currentStock
                 }
               >
                 {!allAttributesSelected

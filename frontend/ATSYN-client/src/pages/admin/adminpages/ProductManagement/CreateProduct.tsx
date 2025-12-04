@@ -17,7 +17,12 @@ import {
   Divider,
   ActionIcon,
 } from "@mantine/core";
-import { IconUpload, IconCheck, IconAlertCircle, IconTrash } from "@tabler/icons-react";
+import {
+  IconUpload,
+  IconCheck,
+  IconAlertCircle,
+  IconTrash,
+} from "@tabler/icons-react";
 import { apiService } from "../../../../config/api";
 import { CategorySelect } from "../CategoryManagement/CategorySelect";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -93,8 +98,12 @@ const CreateProduct: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [categoryAttributes, setCategoryAttributes] = useState<CategoryAttribute[]>([]);
-  const [selectedAttributes, setSelectedAttributes] = useState<ProductAttributeValue[]>([]);
+  const [categoryAttributes, setCategoryAttributes] = useState<
+    CategoryAttribute[]
+  >([]);
+  const [selectedAttributes, setSelectedAttributes] = useState<
+    ProductAttributeValue[]
+  >([]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -161,7 +170,7 @@ const CreateProduct: React.FC = () => {
     // Immediately clear attributes when category changes
     setCategoryAttributes([]);
     setSelectedAttributes([]);
-    
+
     if (formData.categoryId > 0) {
       fetchCategoryAttributes(formData.categoryId);
     }
@@ -237,13 +246,17 @@ const CreateProduct: React.FC = () => {
     setSuccessMsg("");
 
     // Validate required attributes
-    const requiredAttributes = categoryAttributes.filter((attr) => attr.isRequired);
+    const requiredAttributes = categoryAttributes.filter(
+      (attr) => attr.isRequired
+    );
     for (const attr of requiredAttributes) {
       const hasValue = selectedAttributes.some(
         (a) => a.attributeId === attr.id && a.value
       );
       if (!hasValue) {
-        setErrorMsg(`Please add at least one value for required attribute: ${attr.name}`);
+        setErrorMsg(
+          `Please add at least one value for required attribute: ${attr.name}`
+        );
         setLoading(false);
         return;
       }
@@ -266,7 +279,8 @@ const CreateProduct: React.FC = () => {
         attributeId: attr.attributeId,
         value: attr.value,
         price: attr.price !== undefined ? Number(attr.price) : null,
-        stockAmount: attr.stockAmount !== undefined ? Number(attr.stockAmount) : null,
+        stockAmount:
+          attr.stockAmount !== undefined ? Number(attr.stockAmount) : null,
       })),
     };
 
@@ -412,7 +426,8 @@ const CreateProduct: React.FC = () => {
                 <Divider my="md" />
                 <Title order={4}>Product Variants (with Pricing)</Title>
                 <Text size="sm" c="dimmed">
-                  Add different variations of this product (e.g., different sizes) with their own prices
+                  Add different variations of this product (e.g., different
+                  sizes) with their own prices
                 </Text>
 
                 {categoryAttributes.map((attr) => {
@@ -492,7 +507,9 @@ const CreateProduct: React.FC = () => {
                               <ActionIcon
                                 color="red"
                                 variant="light"
-                                onClick={() => removeAttributeVariant(globalIndex)}
+                                onClick={() =>
+                                  removeAttributeVariant(globalIndex)
+                                }
                                 style={{ alignSelf: "flex-end" }}
                               >
                                 <IconTrash size={16} />
@@ -503,7 +520,8 @@ const CreateProduct: React.FC = () => {
 
                         {attributeVariants.length === 0 && attr.isRequired && (
                           <Text size="sm" c="red">
-                            This attribute is required. Please add at least one option.
+                            This attribute is required. Please add at least one
+                            option.
                           </Text>
                         )}
                       </Stack>
