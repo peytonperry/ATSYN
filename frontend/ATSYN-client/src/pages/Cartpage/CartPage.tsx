@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Grid,
@@ -16,6 +16,8 @@ import {
   TextInput,
   SegmentedControl,
   NumberInput,
+  Alert,
+  Notification,
 } from "@mantine/core";
 import {
   IconTrash,
@@ -25,6 +27,9 @@ import {
   IconMail,
   IconTruck,
   IconBuilding,
+  IconAlertCircle,
+  IconX,
+  IconCheck,
 } from "@tabler/icons-react";
 import { useCart } from "../../components/Cart/CartContext";
 import { apiService } from "../../config/api";
@@ -46,6 +51,12 @@ const CartPage: React.FC = () => {
   const [billingAddress, setBillingAddress] = useState("");
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [isPickup, setIsPickup] = useState(false);
+  const [stockWarnings, setStockWarnings] = useState<Record<string, string>>({});
+  const [notification, setNotification] = useState<{
+    show: boolean;
+    message: string;
+    type: "success" | "error";
+  }>({ show: false, message: "", type: "success" });
 
   const subtotal = state.totalPrice;
   const shipping = 5.99;
@@ -57,15 +68,92 @@ const CartPage: React.FC = () => {
     initialValue: "",
   });
 
-  const handleQuantityChange = (
+  // Check stock availability for all items
+  useEffect(() => {
+    checkStockAvailability();
+  }, [state.items]);
+
+  const checkStockAvailability = async () => {
+    const warnings: Record<string, string> = {};
+
+    for (const item of state.items) {
+      try {
+        const product = await apiService.get(`/Product/${item.product.id}`);
+        
+        let availableStock = product.stockAmount;
+        
+        // Check if item has a selected variant
+        if (item.selectedAttributeValueId) {
+          const attributeValue = product.attributeValues?.find(
+            (av: any) => av.id === item.selectedAttributeValueId
+          );
+          if (attributeValue && attributeValue.stockAmount !== null) {
+            availableStock = attributeValue.stockAmount;
+          }
+        }
+
+        const itemKey = `${item.product.id}-${item.selectedAttributeValueId || "no-variant"}`;
+
+        // Check stock conditions
+        if (availableStock === 0) {
+          warnings[itemKey] = "Out of stock";
+        } else if (item.quantity > availableStock) {
+          warnings[itemKey] = `Only ${availableStock} available`;
+        } else if (availableStock <= 5) {
+          warnings[itemKey] = `Only ${availableStock} left in stock`;
+        }
+      } catch (error) {
+        console.error(`Error checking stock for product ${item.product.id}:`, error);
+      }
+    }
+
+    setStockWarnings(warnings);
+  };
+
+  const handleQuantityChange = async (
     productId: number,
     newQuantity: number,
     attributeValueId?: number
   ) => {
     if (newQuantity < 1) {
       removeFromCart(productId, attributeValueId);
-    } else {
+      return;
+    }
+
+    try {
+      // Fetch fresh product data to check stock
+      const product = await apiService.get(`/Product/${productId}`);
+      
+      let availableStock = product.stockAmount;
+      
+      // Check variant stock if applicable
+      if (attributeValueId) {
+        const attributeValue = product.attributeValues?.find(
+          (av: any) => av.id === attributeValueId
+        );
+        if (attributeValue && attributeValue.stockAmount !== null) {
+          availableStock = attributeValue.stockAmount;
+        }
+      }
+
+      // Validate stock
+      if (newQuantity > availableStock) {
+        setNotification({
+          show: true,
+          message: `Cannot add ${newQuantity} items. Only ${availableStock} in stock.`,
+          type: "error",
+        });
+        return;
+      }
+
       updateQuantity(productId, newQuantity, attributeValueId);
+    } catch (error) {
+      console.error("Error validating stock:", error);
+      setNotification({
+        show: true,
+        message: "Failed to update quantity. Please try again.",
+        type: "error",
+      });
     }
   };
 
@@ -79,37 +167,83 @@ const CartPage: React.FC = () => {
 
   const validateCartItems = async () => {
     const invalidProducts: any[] = [];
-  
+    const stockIssues: any[] = [];
+
     for (const item of state.items) {
       try {
-        await apiService.get(`/Product/${item.product.id}`);
+        const product = await apiService.get(`/Product/${item.product.id}`);
+        
+        let availableStock = product.stockAmount;
+        
+        if (item.selectedAttributeValueId) {
+          const attributeValue = product.attributeValues?.find(
+            (av: any) => av.id === item.selectedAttributeValueId
+          );
+          if (attributeValue && attributeValue.stockAmount !== null) {
+            availableStock = attributeValue.stockAmount;
+          }
+        }
+
+        // Check if out of stock or insufficient stock
+        if (availableStock === 0) {
+          invalidProducts.push(item);
+        } else if (item.quantity > availableStock) {
+          stockIssues.push({
+            ...item,
+            availableStock,
+          });
+        }
       } catch (error) {
         invalidProducts.push(item);
       }
     }
-  
+
+    // Remove out of stock items
     if (invalidProducts.length > 0) {
-      invalidProducts.forEach(item => removeFromCart(item.product.id));
+      invalidProducts.forEach(item => 
+        removeFromCart(item.product.id, item.selectedAttributeValueId)
+      );
+      setNotification({
+        show: true,
+        message: `${invalidProducts.length} item(s) are no longer available and have been removed from your cart.`,
+        type: "error",
+      });
       return {
         isValid: false,
         message: `${invalidProducts.length} item(s) are no longer available and have been removed from your cart.`
       };
     }
-  
+
+    // Check for insufficient stock
+    if (stockIssues.length > 0) {
+      const issueMessages = stockIssues.map(
+        item => `${item.product.title}: requested ${item.quantity}, but only ${item.availableStock} available`
+      );
+      setNotification({
+        show: true,
+        message: `Stock issues found. Please adjust quantities before checkout.`,
+        type: "error",
+      });
+      return {
+        isValid: false,
+        message: `Stock issues found:\n${issueMessages.join('\n')}\n\nPlease adjust quantities before checkout.`
+      };
+    }
+
     return { isValid: true };
   };
 
-  const handleProceedToCheckout = async  () => {
+  const handleProceedToCheckout = async () => {
     const validation = await validateCartItems();
-  
+
     if (!validation.isValid) {
-      alert(validation.message);
-    return;
-  }
-  if (user) {
-    setShowAddressForm(true); // Show address form for logged-in users
-  } else {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return;
+    }
+
+    if (user) {
+      setShowAddressForm(true);
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       if (!guestEmail) {
         setEmailError("Email is required");
@@ -127,6 +261,13 @@ const CartPage: React.FC = () => {
   };
 
   const handlePaymentSuccess = async () => {
+    // Final stock validation before order creation
+    const validation = await validateCartItems();
+
+    if (!validation.isValid) {
+      return;
+    }
+
     const newOrder = {
       customerName:
         customerName.trim() || user?.email?.split("@")[0] || "Guest",
@@ -199,8 +340,31 @@ const CartPage: React.FC = () => {
     );
   }
 
+  // Check if any items have stock issues
+  const hasStockIssues = Object.values(stockWarnings).some(
+    warning => warning === "Out of stock" || warning.includes("Only") && !warning.includes("left in stock")
+  );
+
   return (
     <Container size="xl" py={40}>
+      {notification.show && (
+        <Notification
+          icon={notification.type === "success" ? <IconCheck size={18} /> : <IconX size={18} />}
+          color={notification.type === "success" ? "green" : "red"}
+          title={notification.type === "success" ? "Success" : "Error"}
+          onClose={() => setNotification({ show: false, message: "", type: "success" })}
+          style={{
+            position: "fixed",
+            top: 20,
+            right: 20,
+            zIndex: 1000,
+            maxWidth: 400,
+          }}
+        >
+          {notification.message}
+        </Notification>
+      )}
+      
       <Stack gap={32}>
         <Group justify="space-between" wrap="nowrap">
           <div>
@@ -222,6 +386,17 @@ const CartPage: React.FC = () => {
           </Button>
         </Group>
 
+        {hasStockIssues && (
+          <Alert
+            icon={<IconAlertCircle size={16} />}
+            title="Stock Issues Detected"
+            color="red"
+          >
+            Some items in your cart have stock availability issues. Please
+            review and adjust quantities before checkout.
+          </Alert>
+        )}
+
         <Grid gutter={24}>
           <Grid.Col span={{ base: 12, md: 8 }}>
             <Stack gap={16}>
@@ -229,6 +404,8 @@ const CartPage: React.FC = () => {
                 const imageUrl = getProductImageUrl(item.product);
                 const itemPrice = item.selectedPrice ?? item.product.price;
                 const itemTotal = itemPrice * item.quantity;
+                const itemKey = `${item.product.id}-${item.selectedAttributeValueId || "no-variant"}`;
+                const stockWarning = stockWarnings[itemKey];
 
                 return (
                   <Paper
@@ -238,6 +415,9 @@ const CartPage: React.FC = () => {
                     p={20}
                     withBorder
                     radius="md"
+                    style={{
+                      borderColor: stockWarning === "Out of stock" ? "#fa5252" : undefined,
+                    }}
                   >
                     <Group align="flex-start" wrap="nowrap" gap={20}>
                       <Box style={{ width: 120, flexShrink: 0 }}>
@@ -283,11 +463,26 @@ const CartPage: React.FC = () => {
                           >
                             {item.product.category.name}
                           </Badge>
-                          {/* Show variant label if available */}
                           {item.selectedVariantLabel && (
                             <Text size="sm" c="dimmed" mt={4}>
                               {item.selectedVariantLabel}
                             </Text>
+                          )}
+                          {stockWarning && (
+                            <Badge
+                              variant="filled"
+                              color={
+                                stockWarning === "Out of stock"
+                                  ? "red"
+                                  : stockWarning.includes("Only") && !stockWarning.includes("left in stock")
+                                  ? "orange"
+                                  : "yellow"
+                              }
+                              size="sm"
+                              mt={6}
+                            >
+                              {stockWarning}
+                            </Badge>
                           )}
                         </div>
 
@@ -317,6 +512,7 @@ const CartPage: React.FC = () => {
                                 )
                               }
                               radius="md"
+                              disabled={stockWarning === "Out of stock"}
                             >
                               <IconMinus size={16} />
                             </ActionIcon>
@@ -343,6 +539,7 @@ const CartPage: React.FC = () => {
                                   item.selectedAttributeValueId
                                 );
                               }}
+                              disabled={stockWarning === "Out of stock"}
                             />
 
                             <ActionIcon
@@ -356,6 +553,7 @@ const CartPage: React.FC = () => {
                                 )
                               }
                               radius="md"
+                              disabled={stockWarning === "Out of stock"}
                             >
                               <IconPlus size={16} />
                             </ActionIcon>
@@ -581,6 +779,7 @@ const CartPage: React.FC = () => {
                     fullWidth
                     radius="md"
                     onClick={handleProceedToCheckout}
+                    disabled={hasStockIssues}
                   >
                     Proceed to Checkout
                   </Button>
