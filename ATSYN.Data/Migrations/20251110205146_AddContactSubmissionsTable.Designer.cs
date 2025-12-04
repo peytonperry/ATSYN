@@ -4,6 +4,7 @@ using ATSYN.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ATSYN.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251110205146_AddContactSubmissionsTable")]
+    partial class AddContactSubmissionsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,38 +82,14 @@ namespace ATSYN.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("ParentCategoryId")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DisplayOrder")
-                        .HasDatabaseName("IX_Categories_DisplayOrder");
-
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Categories_Name");
-
-                    b.HasIndex("ParentCategoryId")
-                        .HasDatabaseName("IX_Categories_ParentCategoryId");
+                        .IsUnique();
 
                     b.ToTable("Categories", (string)null);
                 });
@@ -193,11 +172,6 @@ namespace ATSYN.Data.Migrations
                     b.Property<bool>("IsRequired")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsVisibleToCustomers")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -228,13 +202,7 @@ namespace ATSYN.Data.Migrations
                     b.Property<int>("AttributeId")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("StockAmount")
                         .HasColumnType("int");
 
                     b.Property<string>("Value")
@@ -246,9 +214,9 @@ namespace ATSYN.Data.Migrations
 
                     b.HasIndex("AttributeId");
 
-                    b.HasIndex("ProductId", "AttributeId", "Value")
+                    b.HasIndex("ProductId", "AttributeId")
                         .IsUnique()
-                        .HasDatabaseName("IX_ProductAttributeValues_ProductId_AttributeId_Value");
+                        .HasDatabaseName("IX_ProductAttributeValues_ProductId_AttributeId");
 
                     b.ToTable("ProductAttributeValues", (string)null);
                 });
@@ -770,16 +738,6 @@ namespace ATSYN.Data.Migrations
                     b.Navigation("Attribute");
                 });
 
-            modelBuilder.Entity("ATSYN.Api.Features.Category", b =>
-                {
-                    b.HasOne("ATSYN.Api.Features.Category", "ParentCategory")
-                        .WithMany("SubCategories")
-                        .HasForeignKey("ParentCategoryId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("ParentCategory");
-                });
-
             modelBuilder.Entity("ATSYN.Api.Features.Product", b =>
                 {
                     b.HasOne("ATSYN.Api.Features.Brand", "Brand")
@@ -949,8 +907,6 @@ namespace ATSYN.Data.Migrations
                     b.Navigation("Attributes");
 
                     b.Navigation("Products");
-
-                    b.Navigation("SubCategories");
                 });
 
             modelBuilder.Entity("ATSYN.Api.Features.Product", b =>
