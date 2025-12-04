@@ -14,12 +14,13 @@ import {
   Text,
   Paper,
   Select,
-  MultiSelect,
+  Divider,
+  ActionIcon,
 } from "@mantine/core";
-import { IconUpload, IconCheck, IconAlertCircle } from "@tabler/icons-react";
+import { IconUpload, IconCheck, IconAlertCircle, IconTrash } from "@tabler/icons-react";
 import { apiService } from "../../../../config/api";
 import { CategorySelect } from "../CategoryManagement/CategorySelect";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface Category {
   id: number;
@@ -44,12 +45,16 @@ interface CategoryAttribute {
   categoryId: number;
   isRequired: boolean;
   displayOrder: number;
+  isVisibleToCustomers: boolean;
   options: AttributeOption[];
 }
 
+// Updated to include price and stock for each attribute value
 interface ProductAttributeValue {
   attributeId: number;
-  values: string[];
+  value: string;
+  price?: number;
+  stockAmount?: number;
 }
 
 interface Product {
@@ -88,13 +93,42 @@ const CreateProduct: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [categoryAttributes, setCategoryAttributes] = useState<
-    CategoryAttribute[]
-  >([]);
-  const [selectedAttributes, setSelectedAttributes] = useState<
-    ProductAttributeValue[]
-  >([]);
+  const [categoryAttributes, setCategoryAttributes] = useState<CategoryAttribute[]>([]);
+  const [selectedAttributes, setSelectedAttributes] = useState<ProductAttributeValue[]>([]);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Reset all state when navigating to this page
+  useEffect(() => {
+    // This runs whenever the location changes (i.e., navigating back to this page)
+    setFormData({
+      title: "",
+      description: "",
+      price: 0,
+      categoryId: 0,
+      brandId: null,
+      stockAmount: 0,
+      inStock: true,
+      isVisible: true,
+      shippingTypeId: 0,
+      imageUrl: "",
+      category: { id: 0, name: "" },
+    });
+    setPhotos([]);
+    setSelectedAttributes([]);
+    setCategoryAttributes([]);
+    setSuccessMsg("");
+    setErrorMsg("");
+  }, [location.pathname]);
+
+  // Reset state when component mounts (navigating back to this page)
+  useEffect(() => {
+    return () => {
+      // Cleanup when component unmounts
+      setCategoryAttributes([]);
+      setSelectedAttributes([]);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -124,11 +158,12 @@ const CreateProduct: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // Immediately clear attributes when category changes
+    setCategoryAttributes([]);
+    setSelectedAttributes([]);
+    
     if (formData.categoryId > 0) {
       fetchCategoryAttributes(formData.categoryId);
-    } else {
-      setCategoryAttributes([]);
-      setSelectedAttributes([]);
     }
   }, [formData.categoryId]);
 
@@ -137,23 +172,40 @@ const CreateProduct: React.FC = () => {
       const response = await apiService.get(
         `/ProductAttribute/category/${categoryId}`
       );
-      setCategoryAttributes(response || []);
+      // Ensure response is an array
+      const attributes = Array.isArray(response) ? response : [];
+      setCategoryAttributes(attributes);
       setSelectedAttributes([]);
     } catch (error) {
       console.error("Error fetching category attributes:", error);
       setCategoryAttributes([]);
+      setSelectedAttributes([]);
     }
   };
 
-  const handleAttributeChange = (attributeId: number, values: string[]) => {
+  // Add a new attribute value variant
+  const addAttributeVariant = (attributeId: number) => {
+    setSelectedAttributes((prev) => [
+      ...prev,
+      { attributeId, value: "", price: undefined, stockAmount: undefined },
+    ]);
+  };
+
+  // Remove an attribute value variant
+  const removeAttributeVariant = (index: number) => {
+    setSelectedAttributes((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Update a specific attribute variant
+  const updateAttributeVariant = (
+    index: number,
+    field: keyof ProductAttributeValue,
+    value: string | number | undefined
+  ) => {
     setSelectedAttributes((prev) => {
-      const existing = prev.findIndex((a) => a.attributeId === attributeId);
-      if (existing >= 0) {
-        const updated = [...prev];
-        updated[existing] = { attributeId, values };
-        return updated;
-      }
-      return [...prev, { attributeId, values }];
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
     });
   };
 
@@ -184,34 +236,38 @@ const CreateProduct: React.FC = () => {
     setErrorMsg("");
     setSuccessMsg("");
 
-    const requiredAttributes = categoryAttributes.filter(
-      (attr) => attr.isRequired
-    );
+    // Validate required attributes
+    const requiredAttributes = categoryAttributes.filter((attr) => attr.isRequired);
     for (const attr of requiredAttributes) {
-      const selected = selectedAttributes.find(
-        (a) => a.attributeId === attr.id
+      const hasValue = selectedAttributes.some(
+        (a) => a.attributeId === attr.id && a.value
       );
-      if (!selected || selected.values.length === 0) {
-        setErrorMsg(
-          `Please select at least one value for required attribute: ${attr.name}`
-        );
+      if (!hasValue) {
+        setErrorMsg(`Please add at least one value for required attribute: ${attr.name}`);
         setLoading(false);
         return;
       }
     }
 
-    const attributeValuesFlattened = selectedAttributes.flatMap((attr) =>
-      attr.values.map((value) => ({
-        attributeId: attr.attributeId,
-        value: value,
-      }))
-    );
+    // Validate all attribute values are filled
+    for (const attr of selectedAttributes) {
+      if (!attr.value) {
+        setErrorMsg("Please fill in all attribute values or remove empty ones");
+        setLoading(false);
+        return;
+      }
+    }
 
     const productData = {
       ...formData,
       price: Number(formData.price),
       stockAmount: Number(formData.stockAmount),
-      attributeValues: attributeValuesFlattened,
+      attributeValues: selectedAttributes.map((attr) => ({
+        attributeId: attr.attributeId,
+        value: attr.value,
+        price: attr.price !== undefined ? Number(attr.price) : null,
+        stockAmount: attr.stockAmount !== undefined ? Number(attr.stockAmount) : null,
+      })),
     };
 
     try {
@@ -242,6 +298,7 @@ const CreateProduct: React.FC = () => {
       });
       setPhotos([]);
       setSelectedAttributes([]);
+      setCategoryAttributes([]); // Also clear category attributes
     } catch (error) {
       console.error("Error creating product:", error);
       setErrorMsg("Failed to create product. Please try again.");
@@ -249,10 +306,6 @@ const CreateProduct: React.FC = () => {
       setLoading(false);
     }
   };
-
-  {
-    console.log(formData.stockAmount, formData.inStock);
-  }
 
   return (
     <Container size="md" py="xl">
@@ -289,8 +342,9 @@ const CreateProduct: React.FC = () => {
 
             <Group grow>
               <NumberInput
-                label="Price"
+                label="Base Price"
                 placeholder="0.00"
+                description="Starting/lowest price (can be overridden by attribute pricing)"
                 required
                 min={0}
                 decimalScale={2}
@@ -303,8 +357,9 @@ const CreateProduct: React.FC = () => {
               />
 
               <NumberInput
-                label="Stock Amount"
+                label="Base Stock Amount"
                 placeholder="0"
+                description="Total stock (or calculated from attributes)"
                 required
                 min={0}
                 value={formData.stockAmount}
@@ -354,33 +409,111 @@ const CreateProduct: React.FC = () => {
 
             {categoryAttributes.length > 0 && (
               <>
-                <Title order={4} mt="md">
-                  Product Attributes
-                </Title>
-                {categoryAttributes.map((attr) => (
-                  <MultiSelect
-                    key={attr.id}
-                    label={attr.name}
-                    placeholder={`Select ${attr.name.toLowerCase()} options`}
-                    description={`This product is available in these ${attr.name.toLowerCase()} options`}
-                    data={attr.options.map((opt) => ({
-                      value: opt.value,
-                      label: opt.value,
-                    }))}
-                    value={
-                      selectedAttributes.find((a) => a.attributeId === attr.id)
-                        ?.values || []
-                    }
-                    onChange={(values) =>
-                      handleAttributeChange(attr.id, values)
-                    }
-                    required={attr.isRequired}
-                    searchable
-                    clearable
-                  />
-                ))}
+                <Divider my="md" />
+                <Title order={4}>Product Variants (with Pricing)</Title>
+                <Text size="sm" c="dimmed">
+                  Add different variations of this product (e.g., different sizes) with their own prices
+                </Text>
+
+                {categoryAttributes.map((attr) => {
+                  const attributeVariants = selectedAttributes.filter(
+                    (a) => a.attributeId === attr.id
+                  );
+
+                  return (
+                    <Paper key={attr.id} p="md" withBorder>
+                      <Group justify="space-between" mb="sm">
+                        <Text fw={500}>{attr.name}</Text>
+                        <Button
+                          size="xs"
+                          onClick={() => addAttributeVariant(attr.id)}
+                        >
+                          Add {attr.name} Option
+                        </Button>
+                      </Group>
+
+                      <Stack gap="sm">
+                        {attributeVariants.map((variant, index) => {
+                          const globalIndex = selectedAttributes.findIndex(
+                            (a) => a === variant
+                          );
+
+                          return (
+                            <Group key={globalIndex} grow>
+                              <Select
+                                label="Value"
+                                placeholder={`Select ${attr.name.toLowerCase()}`}
+                                data={attr.options.map((opt) => ({
+                                  value: opt.value,
+                                  label: opt.value,
+                                }))}
+                                value={variant.value}
+                                onChange={(value) =>
+                                  updateAttributeVariant(
+                                    globalIndex,
+                                    "value",
+                                    value || ""
+                                  )
+                                }
+                                required={attr.isRequired}
+                                searchable
+                              />
+
+                              <NumberInput
+                                label="Price (Optional)"
+                                placeholder="0.00"
+                                min={0}
+                                decimalScale={2}
+                                prefix="$"
+                                value={variant.price}
+                                onChange={(value) =>
+                                  updateAttributeVariant(
+                                    globalIndex,
+                                    "price",
+                                    value !== "" ? Number(value) : undefined
+                                  )
+                                }
+                              />
+
+                              <NumberInput
+                                label="Stock (Optional)"
+                                placeholder="0"
+                                min={0}
+                                value={variant.stockAmount}
+                                onChange={(value) =>
+                                  updateAttributeVariant(
+                                    globalIndex,
+                                    "stockAmount",
+                                    value !== "" ? Number(value) : undefined
+                                  )
+                                }
+                              />
+
+                              <ActionIcon
+                                color="red"
+                                variant="light"
+                                onClick={() => removeAttributeVariant(globalIndex)}
+                                style={{ alignSelf: "flex-end" }}
+                              >
+                                <IconTrash size={16} />
+                              </ActionIcon>
+                            </Group>
+                          );
+                        })}
+
+                        {attributeVariants.length === 0 && attr.isRequired && (
+                          <Text size="sm" c="red">
+                            This attribute is required. Please add at least one option.
+                          </Text>
+                        )}
+                      </Stack>
+                    </Paper>
+                  );
+                })}
               </>
             )}
+
+            <Divider my="md" />
 
             <FileInput
               label="Product Photos"

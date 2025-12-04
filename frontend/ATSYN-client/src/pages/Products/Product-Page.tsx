@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   Container,
   Title,
@@ -19,8 +19,6 @@ import {
   RangeSlider,
 } from "@mantine/core";
 import {
-  IconHeart,
-  IconHeartBroken,
   IconSearch,
   IconX,
 } from "@tabler/icons-react";
@@ -33,6 +31,7 @@ interface Category {
   id: number;
   name: string;
 }
+
 interface Photo {
   id: number;
   fileName: string;
@@ -43,6 +42,16 @@ interface Photo {
   displayOrder: number;
   altText: string;
   imageUrl: string;
+}
+
+interface ProductAttributeValue {
+  id: number;
+  attributeId: number;
+  attributeName: string;
+  value: string;
+  isVisibleToCustomers: boolean;
+  price?: number;
+  stockAmount?: number;
 }
 
 interface Product {
@@ -58,9 +67,11 @@ interface Product {
   imageUrl: string;
   category: Category;
   photos: Photo[];
+  attributeValues: ProductAttributeValue[];
 }
 
 export default function ProductPage() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -165,10 +176,19 @@ export default function ProductPage() {
   const ProductCard = ({ product }: { product: Product }) => {
     const { addToCart } = useCart();
 
+    // NEW: Check if product has visible attribute values (variants)
+    const hasVisibleVariants = product.attributeValues?.some(
+      (av) => av.isVisibleToCustomers
+    ) || false;
+
     const handleAddToCart = (p: Product) => {
       addToCart(p, 1);
       setToastProduct(p.title);
       setShowToast(true);
+    };
+
+    const handleViewOptions = (productId: number) => {
+      navigate(`/product/${productId}`);
     };
 
     const primaryPhoto =
@@ -254,7 +274,11 @@ export default function ProductPage() {
             )}
 
             <Group className="price-amount" mb="sm">
-              <Text>${product.price.toFixed(2)}</Text>
+              {hasVisibleVariants ? (
+                <Text>From ${product.price.toFixed(2)}</Text>
+              ) : (
+                <Text>${product.price.toFixed(2)}</Text>
+              )}
             </Group>
 
             <Group justify="space-between" mb="md">
@@ -269,17 +293,32 @@ export default function ProductPage() {
             </Group>
           </div>
 
-          <Button
-            className="add-to-cart-btn"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleAddToCart(product);
-            }}
-            disabled={!product.inStock}
-          >
-            {product.inStock ? "Add to Cart" : "Out of Stock"}
-          </Button>
+          {/* NEW: Show "View Options" for products with variants, "Add to Cart" for simple products */}
+          {hasVisibleVariants ? (
+            <Button
+              className="add-to-cart-btn"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleViewOptions(product.id);
+              }}
+              variant="outline"
+            >
+              View Options
+            </Button>
+          ) : (
+            <Button
+              className="add-to-cart-btn"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleAddToCart(product);
+              }}
+              disabled={!product.inStock}
+            >
+              {product.inStock ? "Add to Cart" : "Out of Stock"}
+            </Button>
+          )}
         </Stack>
       </Card>
     );

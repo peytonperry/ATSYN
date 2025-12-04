@@ -22,7 +22,6 @@ public class ProductController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
     {
-
         var products = await _context.Products
             .Include(p => p.Category)
             .Include(p => p.Brand)
@@ -62,7 +61,10 @@ public class ProductController : ControllerBase
                     AttributeId = av.AttributeId,
                     AttributeName = av.Attribute.Name,
                     Value = av.Value,
-                    AttributeType = av.Attribute.Type
+                    AttributeType = av.Attribute.Type,
+                    IsVisibleToCustomers = av.Attribute.IsVisibleToCustomers,
+                    Price = av.Price,
+                    StockAmount = av.StockAmount
                 }).ToList(),
                 Photos = p.Photos
                     .OrderByDescending(ph => ph.IsPrimary)
@@ -146,7 +148,10 @@ public class ProductController : ControllerBase
                     AttributeId = av.AttributeId,
                     AttributeName = av.Attribute.Name,
                     Value = av.Value,
-                    AttributeType = av.Attribute.Type
+                    AttributeType = av.Attribute.Type,
+                    IsVisibleToCustomers = av.Attribute.IsVisibleToCustomers,
+                    Price = av.Price,
+                    StockAmount = av.StockAmount
                 }).ToList(),
                 Photos = p.Photos
                     .OrderByDescending(ph => ph.IsPrimary)
@@ -230,7 +235,10 @@ public class ProductController : ControllerBase
                 AttributeId = av.AttributeId,
                 AttributeName = av.Attribute.Name,
                 Value = av.Value,
-                AttributeType = av.Attribute.Type
+                AttributeType = av.Attribute.Type,
+                IsVisibleToCustomers = av.Attribute.IsVisibleToCustomers,
+                Price = av.Price,
+                StockAmount = av.StockAmount
             }).ToList(),
             Photos = product.Photos
                 .OrderByDescending(ph => ph.IsPrimary)
@@ -339,7 +347,9 @@ public class ProductController : ControllerBase
             {
                 ProductId = product.Id,
                 AttributeId = av.AttributeId,
-                Value = av.Value
+                Value = av.Value,
+                Price = av.Price,
+                StockAmount = av.StockAmount
             }).ToList();
 
             _context.ProductAttributeValues.AddRange(attributeValues);
@@ -385,7 +395,10 @@ public class ProductController : ControllerBase
                 AttributeId = av.AttributeId,
                 AttributeName = av.Attribute.Name,
                 Value = av.Value,
-                AttributeType = av.Attribute.Type
+                AttributeType = av.Attribute.Type,
+                IsVisibleToCustomers = av.Attribute.IsVisibleToCustomers,
+                Price = av.Price,
+                StockAmount = av.StockAmount
             }).ToList(),
             Photos = createdProduct.Photos
                 .OrderByDescending(ph => ph.IsPrimary)
@@ -414,7 +427,6 @@ public class ProductController : ControllerBase
                 Comment = r.Comment,
                 CreatedAt = r.CreatedAt
             }).ToList()
-
         };
 
         return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, responseDto);
@@ -503,7 +515,9 @@ public class ProductController : ControllerBase
             {
                 ProductId = product.Id,
                 AttributeId = av.AttributeId,
-                Value = av.Value
+                Value = av.Value,
+                Price = av.Price,
+                StockAmount = av.StockAmount
             }).ToList();
 
             _context.ProductAttributeValues.AddRange(newAttributeValues);

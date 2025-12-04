@@ -37,7 +37,11 @@ public class ProductAttributeValue
     public int Id { get; init; }
     public int ProductId { get; set; }
     public int AttributeId { get; set; }
-    public string Value { get; set; } = string.Empty; 
+    public string Value { get; set; } = string.Empty;
+    
+    public decimal? Price { get; set; }
+    
+    public int? StockAmount { get; set; }
     
 
     public Product Product { get; set; } = null!;
@@ -53,7 +57,7 @@ public class ProductAttributeDto
     public int CategoryId { get; init; }
     public bool IsRequired { get; init; }
     public int DisplayOrder { get; init; }
-    public bool IsVisibleToCustomers { get; init; } = true; 
+    public bool IsVisibleToCustomers { get; init; } = true;
     public List<AttributeOptionDto> Options { get; init; } = new();
 }
 
@@ -71,7 +75,10 @@ public class ProductAttributeValueDto
     public string AttributeName { get; init; } = string.Empty;
     public string Value { get; init; } = string.Empty;
     public string AttributeType { get; init; } = string.Empty;
-    public bool IsVisibleToCustomers { get; init; } = true; 
+    public bool IsVisibleToCustomers { get; init; } = true;
+    
+    public decimal? Price { get; init; }
+    public int? StockAmount { get; init; }
 }
 
 public class CreateProductAttributeDto
@@ -81,7 +88,7 @@ public class CreateProductAttributeDto
     public required int CategoryId { get; init; }
     public bool IsRequired { get; init; }
     public int DisplayOrder { get; init; }
-    public bool IsVisibleToCustomers { get; init; } = true; 
+    public bool IsVisibleToCustomers { get; init; } = true;
     public List<CreateAttributeOptionDto> Options { get; init; } = new();
 }
 
@@ -97,7 +104,7 @@ public class UpdateProductAttributeDto
     public string Type { get; set; } = string.Empty;
     public bool IsRequired { get; set; }
     public int DisplayOrder { get; set; }
-    public bool IsVisibleToCustomers { get; set; } = true; 
+    public bool IsVisibleToCustomers { get; set; } = true;
     public List<CreateAttributeOptionDto> Options { get; set; } = new();
 }
 
@@ -118,7 +125,7 @@ public class ProductAttributeConfiguration : IEntityTypeConfiguration<ProductAtt
 
         builder.Property(x => x.IsVisibleToCustomers)
             .IsRequired()
-            .HasDefaultValue(true); // NEW FIELD CONFIG
+            .HasDefaultValue(true);
             
         builder.HasOne(x => x.Category)
             .WithMany(x => x.Attributes)
@@ -161,6 +168,9 @@ public class ProductAttributeValueConfiguration : IEntityTypeConfiguration<Produ
         builder.Property(x => x.Value)
             .IsRequired()
             .HasMaxLength(500);
+
+        builder.Property(x => x.Price)
+            .HasColumnType("decimal(18,2)");
             
         builder.HasOne(x => x.Product)
             .WithMany(x => x.AttributeValues)
@@ -172,8 +182,8 @@ public class ProductAttributeValueConfiguration : IEntityTypeConfiguration<Produ
             .HasForeignKey(x => x.AttributeId)
             .OnDelete(DeleteBehavior.Cascade);
             
-        builder.HasIndex(x => new { x.ProductId, x.AttributeId })
+        builder.HasIndex(x => new { x.ProductId, x.AttributeId, x.Value })
             .IsUnique()
-            .HasDatabaseName("IX_ProductAttributeValues_ProductId_AttributeId");
+            .HasDatabaseName("IX_ProductAttributeValues_ProductId_AttributeId_Value");
     }
 }
