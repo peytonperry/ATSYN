@@ -11,6 +11,7 @@ public class ProductAttribute
     public int CategoryId { get; set; }
     public bool IsRequired { get; set; }
     public int DisplayOrder { get; set; }
+    public bool IsVisibleToCustomers { get; set; } = true; 
     
 
     public Category Category { get; set; } = null!;
@@ -52,6 +53,7 @@ public class ProductAttributeDto
     public int CategoryId { get; init; }
     public bool IsRequired { get; init; }
     public int DisplayOrder { get; init; }
+    public bool IsVisibleToCustomers { get; init; } = true; 
     public List<AttributeOptionDto> Options { get; init; } = new();
 }
 
@@ -69,6 +71,7 @@ public class ProductAttributeValueDto
     public string AttributeName { get; init; } = string.Empty;
     public string Value { get; init; } = string.Empty;
     public string AttributeType { get; init; } = string.Empty;
+    public bool IsVisibleToCustomers { get; init; } = true; 
 }
 
 public class CreateProductAttributeDto
@@ -78,6 +81,7 @@ public class CreateProductAttributeDto
     public required int CategoryId { get; init; }
     public bool IsRequired { get; init; }
     public int DisplayOrder { get; init; }
+    public bool IsVisibleToCustomers { get; init; } = true; 
     public List<CreateAttributeOptionDto> Options { get; init; } = new();
 }
 
@@ -93,6 +97,7 @@ public class UpdateProductAttributeDto
     public string Type { get; set; } = string.Empty;
     public bool IsRequired { get; set; }
     public int DisplayOrder { get; set; }
+    public bool IsVisibleToCustomers { get; set; } = true; 
     public List<CreateAttributeOptionDto> Options { get; set; } = new();
 }
 
@@ -110,6 +115,10 @@ public class ProductAttributeConfiguration : IEntityTypeConfiguration<ProductAtt
         builder.Property(x => x.Type)
             .IsRequired()
             .HasMaxLength(20);
+
+        builder.Property(x => x.IsVisibleToCustomers)
+            .IsRequired()
+            .HasDefaultValue(true); // NEW FIELD CONFIG
             
         builder.HasOne(x => x.Category)
             .WithMany(x => x.Attributes)

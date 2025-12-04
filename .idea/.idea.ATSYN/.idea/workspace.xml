@@ -15,7 +15,7 @@
   <component name="ChangeListManager">
     <list default="true" id="f1b6c2bb-3028-4c33-aefb-425564ed5242" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ATSYN.Api/Controllers/CategoryController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Api/Controllers/CategoryController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ATSYN.Data/Data/Entities/Products/ProductAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Data/Data/Entities/Products/ProductAttribute.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +41,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/ATSYN.Api/Controllers/PaymentController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bf9021a960b74107a7e141aa06bc9d8a0a53c929178c2fb95b1597be8af8dc/ExceptionDispatchInfo.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f570ab2187b12207db0b45f8e2c689746f8a0a11df45b86159f85b498a65c/PaymentIntentCreateOptions.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -149,6 +150,7 @@
       <workItem from="1760055140203" duration="566000" />
       <workItem from="1761663797837" duration="11662000" />
       <workItem from="1764627027239" duration="3721000" />
+      <workItem from="1764809071688" duration="793000" />
     </task>
     <servers />
   </component>
