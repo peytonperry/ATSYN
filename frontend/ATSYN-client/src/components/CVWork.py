@@ -3,10 +3,10 @@ import math
 from PIL import Image
 import os
 
-# image_path = "/Users/morgm/Downloads/"
-# image = "red-and-black-tribal.jpg"
-#
-# full_image_path = os.path.join(image_path, image)
+image_path = "/Users/morgm/Downloads/"
+image = "red-and-black-tribal.jpg"
+
+full_image_path = os.path.join(image_path, image)
 # print(f"Full path to image: {full_image_path}")
 
 css3_colors = webcolors.names('css3')

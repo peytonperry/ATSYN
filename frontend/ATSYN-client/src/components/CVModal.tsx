@@ -4,19 +4,32 @@ import { IconHeart, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
 import React from 'react';
 import './CVModal.css';
-import { PyBridge } from 'pybridge';
 
+//import {execute, pythonPath} from "@d1vij/py-bridge";
 // interface ModalProps {
 //   showModal: boolean;
 //   onClose: () => void;
 //   children: React.ReactNode;
 // }
 
-//child_process.spawn('python', ['script.py'])
+
+
 
 export function ComputerVis(){
+  //child_process.spawn('python', ['script.py'])
+  // pythonPath.set("C:\\Users\\morgm\\anaconda3-new\\python");
 
-  const color = new PyBridge({ python: 'python3', cwd: 'CVWork.py' });
+  // async function main(){
+  //   const results = await execute<number>("C:\\Users\\morgm\\PycharmProjects\\ATSYN\\RGB to Name.py", "add", {
+  //       x:10, //variables retain their datatype
+  //       y:20
+  //   })
+  //   //returns payload as: 30 (int)
+  // }
+  // main().catch(console.log);
+
+  
+  
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -31,6 +44,9 @@ export function ComputerVis(){
     color: '#333',
   };
 
+  const Spacer: React.FC<{ width?: string; height?: string }> = ({ width = '10px', height = 'auto' }) => (
+    <div style={{ width, height }} />
+  );
   // const [preview, setPreview] = useState<string>('');
 
   // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,11 +62,13 @@ export function ComputerVis(){
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log(e.target.files?.[0]);
     if (file) {
       setSelectedImage(file);
       // Create preview URL
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
+      //console.log(file);
     }
   };
 
@@ -64,7 +82,9 @@ export function ComputerVis(){
     setPreviewUrl(null);
   };
 
-    return (
+ 
+
+  return (
     <div>
       <Affix position={{ bottom: 20, right: 20 }}>
         <Button
