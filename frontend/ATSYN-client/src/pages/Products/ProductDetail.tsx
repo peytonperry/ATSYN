@@ -18,6 +18,8 @@ import {
   ActionIcon,
   NumberInput,
   Pagination,
+  Select,
+  Badge,
 } from "@mantine/core";
 
 import { useEffect, useState } from "react";
@@ -34,6 +36,7 @@ interface Category {
   id: number;
   name: string;
 }
+
 interface Photo {
   id: number;
   fileName: string;
@@ -44,6 +47,17 @@ interface Photo {
   displayOrder: number;
   altText: string;
   imageUrl: string;
+}
+
+interface ProductAttributeValue {
+  id: number;
+  attributeId: number;
+  attributeName: string;
+  value: string;
+  attributeType: string;
+  isVisibleToCustomers: boolean;
+  price?: number;
+  stockAmount?: number;
 }
 
 interface Product {
@@ -62,6 +76,7 @@ interface Product {
   category: Category;
   photos: Photo[];
   reviews: Review[];
+  attributeValues: ProductAttributeValue[];
 }
 
 interface Review {
@@ -87,6 +102,13 @@ function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [reviewModalOpened, setReviewModalOpened] = useState(false);
   const [reviewPage, setReviewPage] = useState(1);
+
+  const [selectedAttributes, setSelectedAttributes] = useState<
+    Record<number, number>
+  >({});
+  const [currentPrice, setCurrentPrice] = useState<number>(0);
+  const [currentStock, setCurrentStock] = useState<number>(0);
+
   const { id } = useParams();
   const { addToCart } = useCart();
   const { user } = useAuth();
@@ -101,9 +123,83 @@ function ProductDetailPage() {
   const endIndex = startIndex + reviewsPerPage;
   const paginatedReviews = product?.reviews.slice(startIndex, endIndex) || [];
 
+  const visibleAttributes =
+    product?.attributeValues
+      .filter((av) => av.isVisibleToCustomers)
+      .reduce((acc, av) => {
+        if (!acc[av.attributeId]) {
+          acc[av.attributeId] = {
+            attributeId: av.attributeId,
+            attributeName: av.attributeName,
+            values: [],
+          };
+        }
+        acc[av.attributeId].values.push(av);
+        return acc;
+      }, {} as Record<number, { attributeId: number; attributeName: string; values: ProductAttributeValue[] }>) ||
+    {};
+
+  const attributeGroups = Object.values(visibleAttributes);
+
+  useEffect(() => {
+    if (!product) return;
+
+    if (
+      attributeGroups.length === 0 ||
+      Object.keys(selectedAttributes).length === 0
+    ) {
+      setCurrentPrice(product.price);
+      setCurrentStock(product.stockAmount);
+      return;
+    }
+
+    const selectedAttributeIds = Object.values(selectedAttributes);
+    const selectedAttributeValue = product.attributeValues.find((av) =>
+      selectedAttributeIds.includes(av.id)
+    );
+
+    if (selectedAttributeValue) {
+      setCurrentPrice(selectedAttributeValue.price ?? product.price);
+      setCurrentStock(
+        selectedAttributeValue.stockAmount ?? product.stockAmount
+      );
+    } else {
+      setCurrentPrice(product.price);
+      setCurrentStock(product.stockAmount);
+    }
+  }, [selectedAttributes, product]);
+
   const handleAddToCart = () => {
-    if (product && quantity) {
-      addToCart(product, quantity);
+    if (product && quantity && allAttributesSelected) {
+      if (quantity > currentStock) {
+        console.error(
+          `Cannot add ${quantity} items. Only ${currentStock} in stock.`
+        );
+        return;
+      }
+
+      const selectedAttributeIds = Object.values(selectedAttributes);
+      const selectedAttributeValueId =
+        selectedAttributeIds.length > 0 ? selectedAttributeIds[0] : undefined;
+
+      let variantLabel = "";
+      if (selectedAttributeValueId) {
+        const selectedAttributeValue = product.attributeValues.find(
+          (av) => av.id === selectedAttributeValueId
+        );
+        if (selectedAttributeValue) {
+          variantLabel = `${selectedAttributeValue.attributeName}: ${selectedAttributeValue.value}`;
+        }
+      }
+
+      addToCart(
+        product,
+        quantity,
+        selectedAttributeValueId,
+        currentPrice,
+        variantLabel
+      );
+
       setToastProduct(product.title);
       setShowToast(true);
     }
@@ -115,8 +211,8 @@ function ProductDetailPage() {
 
       if (newQuantity < 1) return 1;
 
-      if (product && newQuantity > product.stockAmount) {
-        return product.stockAmount;
+      if (newQuantity > currentStock) {
+        return currentStock;
       }
       return newQuantity;
     });
@@ -132,6 +228,7 @@ function ProductDetailPage() {
       console.error("API call failed:", error);
     }
   };
+
   const primaryPhoto =
     product?.photos?.find((p) => p.isPrimary) || product?.photos?.[0];
   const imageUrl = primaryPhoto
@@ -155,11 +252,14 @@ function ProductDetailPage() {
     );
   }
 
+  const allAttributesSelected =
+    attributeGroups.length === 0 ||
+    attributeGroups.every((group) => selectedAttributes[group.attributeId]);
+
   return (
     <Container size="lg" py="xl">
       <Grid>
         {/* Left */}
-
         <Grid.Col span={{ base: 12, md: 5 }}>
           <Image src={imageUrl} radius="sm" fit="contain" h={400} />
         </Grid.Col>
@@ -180,29 +280,90 @@ function ProductDetailPage() {
         <Grid.Col span={{ base: 12, md: 3 }}>
           <Paper withBorder p="md" radius="md">
             <Stack gap="md">
-              <Text size="xl" fw={700}>
-                ${product?.price}
-              </Text>
+              <Group justify="space-between" align="center">
+                <Text size="xl" fw={700}>
+                  ${currentPrice.toFixed(2)}
+                </Text>
+                {currentStock > 0 && currentStock <= 10 && (
+                  <Badge color="orange" size="sm">
+                    Only {currentStock} left!
+                  </Badge>
+                )}
+              </Group>
+
+              {/* NEW: Attribute Selection */}
+              {attributeGroups.length > 0 && (
+                <>
+                  <Text size="sm" fw={500}>
+                    Select Options:
+                  </Text>
+                  {attributeGroups.map((group) => (
+                    <Select
+                      key={group.attributeId}
+                      label={group.attributeName}
+                      placeholder={`Select ${group.attributeName.toLowerCase()}`}
+                      data={group.values.map((av) => ({
+                        value: av.id.toString(),
+                        label: av.price
+                          ? `${av.value} - $${av.price.toFixed(2)}`
+                          : av.value,
+                        disabled: av.stockAmount === 0,
+                      }))}
+                      value={
+                        selectedAttributes[group.attributeId]?.toString() ||
+                        null
+                      }
+                      onChange={(value) => {
+                        if (value) {
+                          setSelectedAttributes((prev) => ({
+                            ...prev,
+                            [group.attributeId]: parseInt(value),
+                          }));
+                        }
+                      }}
+                      required
+                    />
+                  ))}
+                </>
+              )}
+
               <Group>
-                <ActionIcon onClick={() => handleQuantityChange(-1)}>
+                <ActionIcon
+                  onClick={() => handleQuantityChange(-1)}
+                  disabled={!allAttributesSelected}
+                >
                   <IconMinus size={16} />
                 </ActionIcon>
 
                 <NumberInput
                   className="wrapper"
                   value={quantity}
-                  onChange={(val) => setQuantity(Number(val))}
+                  onChange={(val) => {
+                    const newQty = Number(val) || 1;
+                    if (newQty > currentStock) {
+                      setQuantity(currentStock);
+                    } else if (newQty < 1) {
+                      setQuantity(1);
+                    } else {
+                      setQuantity(newQty);
+                    }
+                  }}
                   min={1}
-                  max={product?.stockAmount}
+                  max={currentStock}
                   clampBehavior="strict"
                   hideControls
                   allowDecimal={false}
                   allowNegative={false}
+                  disabled={!allAttributesSelected}
                 />
-                <ActionIcon onClick={() => handleQuantityChange(1)}>
+                <ActionIcon
+                  onClick={() => handleQuantityChange(1)}
+                  disabled={!allAttributesSelected}
+                >
                   <IconPlus size={16} />
                 </ActionIcon>
               </Group>
+
               <div>
                 <Text size="sm" mb="xs">
                   Shipping:
@@ -218,15 +379,25 @@ function ProductDetailPage() {
                   </Stack>
                 </Radio.Group>
               </div>
+
               <Button
                 className="btn"
                 fullWidth
                 size="md"
                 variant="outline"
                 onClick={handleAddToCart}
-                disabled={!product?.inStock || !quantity}
+                disabled={
+                  !allAttributesSelected ||
+                  currentStock === 0 ||
+                  !quantity ||
+                  quantity > currentStock
+                }
               >
-                {product?.inStock ? "Add to Cart" : "Out of Stock"}
+                {!allAttributesSelected
+                  ? "Select Options"
+                  : currentStock === 0
+                  ? "Out of Stock"
+                  : "Add to Cart"}
               </Button>
             </Stack>
           </Paper>

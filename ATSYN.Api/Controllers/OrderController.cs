@@ -95,7 +95,6 @@ public class OrdersController : ControllerBase
     [Authorize]
     public async Task<ActionResult<OrderDto>> GetOrder(int id)
     {
-        // Get the authenticated user's email from the JWT token claims
         var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
 
         var order = await _context.Orders
@@ -109,11 +108,10 @@ public class OrdersController : ControllerBase
             return NotFound($"Order with ID {id} not found.");
         }
 
-        // Check if user is admin OR if the order belongs to them
         var isAdmin = User.IsInRole("Admin");
         if (!isAdmin && order.CustomerEmail != userEmail)
         {
-            return Forbid(); // Returns 403 Forbidden
+            return Forbid();
         }
 
         var orderDto = new OrderDto
@@ -186,38 +184,108 @@ public class OrdersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<OrderDto>> CreateOrder(CreateOrderDto createOrderDto)
     {
-        var productIds = createOrderDto.OrderItems.Select(oi => oi.ProductId).ToList();
+        Console.WriteLine($"=== CREATE ORDER DEBUG START ===");
+        Console.WriteLine($"Customer: {createOrderDto.CustomerName} ({createOrderDto.CustomerEmail})");
+        Console.WriteLine($"Shipping: {createOrderDto.ShippingAddress}");
+        Console.WriteLine($"Billing: {createOrderDto.BillingAddress}");
+        Console.WriteLine($"IsPickup: {createOrderDto.IsPickup}");
+        Console.WriteLine($"ShippingCost: {createOrderDto.ShippingCost}");
+        Console.WriteLine($"Received order items count: {createOrderDto.OrderItems?.Count ?? 0}");
+        
+        if (createOrderDto.OrderItems == null || !createOrderDto.OrderItems.Any())
+        {
+            Console.WriteLine($"ERROR: No order items provided");
+            return BadRequest("No order items provided");
+        }
+
+        foreach (var item in createOrderDto.OrderItems)
+        {
+            Console.WriteLine($"  Order Item: ProductId={item.ProductId}, Name={item.ProductName}, Price={item.UnitPrice}, Qty={item.Quantity}, AttrValueId={item.SelectedAttributeValueId}");
+        }
+        
+        var productIds = createOrderDto.OrderItems.Select(oi => oi.ProductId).Distinct().ToList();
+        Console.WriteLine($"Product IDs requested: [{string.Join(", ", productIds)}]");
+        
         var products = await _context.Products
             .Include(p => p.Category)
+            .Include(p => p.AttributeValues)
             .Where(p => productIds.Contains(p.Id))
             .ToListAsync();
+        
+        Console.WriteLine($"Products found in database: {products.Count}");
+        foreach (var p in products)
+        {
+            Console.WriteLine($"  Found Product: Id={p.Id}, Title={p.Title}, Price={p.Price}, Stock={p.StockAmount}, InStock={p.InStock}");
+        }
 
         if (products.Count != productIds.Count)
         {
             var missingIds = productIds.Except(products.Select(p => p.Id));
+            Console.WriteLine($"ERROR: Missing product IDs: [{string.Join(", ", missingIds)}]");
             return BadRequest($"Products not found: {string.Join(", ", missingIds)}");
         }
+
+        Console.WriteLine($"All products found, checking stock...");
 
         var stockIssues = new List<string>();
         foreach (var orderItem in createOrderDto.OrderItems)
         {
             var product = products.First(p => p.Id == orderItem.ProductId);
-            if (!product.InStock)
+            
+            if (orderItem.SelectedAttributeValueId.HasValue)
             {
-                stockIssues.Add($"Product '{product.Title}' is out of stock");
+                Console.WriteLine($"Checking variant stock for Product {product.Id}, AttributeValueId {orderItem.SelectedAttributeValueId}");
+                var attributeValue = product.AttributeValues
+                    .FirstOrDefault(av => av.Id == orderItem.SelectedAttributeValueId.Value);
+                
+                if (attributeValue != null)
+                {
+                    Console.WriteLine($"  Found attribute value: Id={attributeValue.Id}, Value={attributeValue.Value}, Stock={attributeValue.StockAmount}");
+                }
+                else
+                {
+                    Console.WriteLine($"  Attribute value NOT FOUND");
+                }
+                
+                if (attributeValue != null && attributeValue.StockAmount.HasValue)
+                {
+                    if (attributeValue.StockAmount < orderItem.Quantity)
+                    {
+                        stockIssues.Add($"Product '{product.Title}' variant has insufficient stock. Available: {attributeValue.StockAmount}, Requested: {orderItem.Quantity}");
+                    }
+                }
+                else if (!product.InStock)
+                {
+                    stockIssues.Add($"Product '{product.Title}' is out of stock");
+                }
+                else if (product.StockAmount < orderItem.Quantity)
+                {
+                    stockIssues.Add($"Product '{product.Title}' has insufficient stock. Available: {product.StockAmount}, Requested: {orderItem.Quantity}");
+                }
             }
-            else if (product.StockAmount < orderItem.Quantity)
+            else
             {
-                stockIssues.Add($"Product '{product.Title}' has insufficient stock. Available: {product.StockAmount}, Requested: {orderItem.Quantity}");
+                Console.WriteLine($"Checking product stock for Product {product.Id} (no variant)");
+                if (!product.InStock)
+                {
+                    stockIssues.Add($"Product '{product.Title}' is out of stock");
+                }
+                else if (product.StockAmount < orderItem.Quantity)
+                {
+                    stockIssues.Add($"Product '{product.Title}' has insufficient stock. Available: {product.StockAmount}, Requested: {orderItem.Quantity}");
+                }
             }
         }
 
         if (stockIssues.Any())
         {
+            Console.WriteLine($"ERROR: Stock issues found: {string.Join("; ", stockIssues)}");
             return BadRequest($"Stock issues: {string.Join("; ", stockIssues)}");
         }
 
+        Console.WriteLine($"Stock validation passed, generating order number...");
         var orderNumber = await GenerateOrderNumber();
+        Console.WriteLine($"Order number generated: {orderNumber}");
 
         decimal subTotal = 0;
         var orderItems = new List<OrderItem>();
@@ -225,14 +293,20 @@ public class OrdersController : ControllerBase
         foreach (var orderItemDto in createOrderDto.OrderItems)
         {
             var product = products.First(p => p.Id == orderItemDto.ProductId);
-            var itemTotal = product.Price * orderItemDto.Quantity;
+            
+            var unitPrice = orderItemDto.UnitPrice;
+            var productName = orderItemDto.ProductName;
+            
+            var itemTotal = unitPrice * orderItemDto.Quantity;
             subTotal += itemTotal;
+
+            Console.WriteLine($"Creating order item: {productName} @ ${unitPrice} x {orderItemDto.Quantity} = ${itemTotal}");
 
             orderItems.Add(new OrderItem
             {
                 ProductId = product.Id,
-                ProductName = product.Title, 
-                UnitPrice = product.Price,   
+                ProductName = productName,
+                UnitPrice = unitPrice,
                 Quantity = orderItemDto.Quantity,
                 TotalPrice = itemTotal
             });
@@ -240,6 +314,8 @@ public class OrdersController : ControllerBase
 
         var taxAmount = subTotal * 0.085m;
         var totalAmount = subTotal + taxAmount + createOrderDto.ShippingCost;
+
+        Console.WriteLine($"Order totals: SubTotal=${subTotal}, Tax=${taxAmount}, Shipping=${createOrderDto.ShippingCost}, Total=${totalAmount}");
 
         var order = new Order
         {
@@ -261,30 +337,59 @@ public class OrdersController : ControllerBase
             OrderItems = orderItems
         };
 
+        Console.WriteLine($"Adding order to database...");
         _context.Orders.Add(order);
 
+        Console.WriteLine($"Updating stock...");
         foreach (var orderItemDto in createOrderDto.OrderItems)
         {
             var product = products.First(p => p.Id == orderItemDto.ProductId);
+            
+            if (orderItemDto.SelectedAttributeValueId.HasValue)
+            {
+                var attributeValue = product.AttributeValues
+                    .FirstOrDefault(av => av.Id == orderItemDto.SelectedAttributeValueId.Value);
+                
+                if (attributeValue != null && attributeValue.StockAmount.HasValue)
+                {
+                    var oldStock = attributeValue.StockAmount;
+                    attributeValue.StockAmount -= orderItemDto.Quantity;
+                    if (attributeValue.StockAmount <= 0)
+                    {
+                        attributeValue.StockAmount = 0;
+                    }
+                    Console.WriteLine($"  Updated variant stock: Product {product.Id}, Attr {attributeValue.Id}: {oldStock} -> {attributeValue.StockAmount}");
+                }
+            }
+            
+            var oldProductStock = product.StockAmount;
             product.StockAmount -= orderItemDto.Quantity;
             if (product.StockAmount <= 0)
             {
                 product.InStock = false;
             }
+            Console.WriteLine($"  Updated product stock: Product {product.Id}: {oldProductStock} -> {product.StockAmount}, InStock={product.InStock}");
         }
 
+        Console.WriteLine($"Saving changes to database...");
         await _context.SaveChangesAsync();
+        Console.WriteLine($"Order saved successfully with ID: {order.Id}");
 
         try
         {
+            Console.WriteLine($"Sending receipt email...");
             await _emailService.SendPurchaseReceipt(order.Id);
+            Console.WriteLine($"Receipt email sent successfully");
         }catch (Exception ex)
         {
-            Console.WriteLine($"Failed to send recipt email: {ex.Message}");
+            Console.WriteLine($"Failed to send receipt email: {ex.Message}");
         }
 
+        Console.WriteLine($"Adding status history...");
         await AddStatusHistory(order.Id, OrderStatus.Pending, OrderStatus.Pending, "Order created", "System");
+        await _context.SaveChangesAsync();
 
+        Console.WriteLine($"Loading created order for response...");
         var createdOrder = await _context.Orders
             .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Product)
@@ -292,6 +397,7 @@ public class OrdersController : ControllerBase
             .FirstAsync(o => o.Id == order.Id);
 
         var responseDto = MapToOrderDto(createdOrder);
+        Console.WriteLine($"=== CREATE ORDER DEBUG END - SUCCESS ===");
         return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, responseDto);
     }
 
@@ -461,7 +567,7 @@ public class OrdersController : ControllerBase
             OrderStatus.Delivered => to is OrderStatus.Returned,
             OrderStatus.Returned => to is OrderStatus.Refunded,
             OrderStatus.Cancelled => to is OrderStatus.Refunded,
-            OrderStatus.Refunded => false, 
+            OrderStatus.Refunded => false,
             _ => false
         };
     }
