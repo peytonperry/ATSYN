@@ -10,6 +10,8 @@ import {
   Text,
   Stack,
   Table,
+  Badge,
+  SegmentedControl,
 } from "@mantine/core";
 import { apiService } from "../../../../config/api";
 
@@ -46,8 +48,17 @@ const AllProducts = () => {
   const [Products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"table" | "card">("card");
+  const [visibilityFilter, setVisibilityFilter] = useState<
+    "all" | "visible" | "hidden"
+  >("all");
   const hasFetched = useRef(false);
   const navigate = useNavigate();
+
+  const filteredProducts = Products.filter((product) => {
+    if (visibilityFilter === "visible") return product.isVisible;
+    if (visibilityFilter === "hidden") return !product.isVisible;
+    return true;
+  });
 
   const fetchData = async () => {
     try {
@@ -73,6 +84,7 @@ const AllProducts = () => {
       hasFetched.current = true;
     }
   }, []);
+
   const getProductImageUrl = (product: Product) => {
     const primaryPhoto =
       product.photos?.find((p) => p.isPrimary) || product.photos?.[0];
@@ -106,13 +118,33 @@ const AllProducts = () => {
         </Group>
       </Group>
 
+      <Group mb="md">
+        <SegmentedControl
+          value={visibilityFilter}
+          onChange={(value) =>
+            setVisibilityFilter(value as "all" | "visible" | "hidden")
+          }
+          data={[
+            { label: `All (${Products.length})`, value: "all" },
+            {
+              label: `Visible (${Products.filter((p) => p.isVisible).length})`,
+              value: "visible",
+            },
+            {
+              label: `Hidden (${Products.filter((p) => !p.isVisible).length})`,
+              value: "hidden",
+            },
+          ]}
+        />
+      </Group>
+
       {view === "card" ? (
         <SimpleGrid
           cols={{ base: 1, sm: 2, md: 3, lg: 4 }}
           spacing="lg"
           className="products-grid"
         >
-          {Products.map((p) => (
+          {filteredProducts.map((p) => (
             <Card
               key={p.id}
               shadow="sm"
@@ -136,7 +168,14 @@ const AllProducts = () => {
               </Card.Section>
 
               <Stack gap={4} mt="sm">
-                <Text fw={600}>{p.title}</Text>
+                <Group justify="space-between" align="flex-start">
+                  <Text fw={600}>{p.title}</Text>
+                  {!p.isVisible && (
+                    <Badge color="red" size="sm" variant="filled">
+                      Hidden
+                    </Badge>
+                  )}
+                </Group>
                 <Text c="#8a00c4" fw={500}>
                   ${p.price.toFixed(2)}
                 </Text>
@@ -164,19 +203,35 @@ const AllProducts = () => {
         >
           <Table.Thead>
             <Table.Tr color="#8a00c4">
-              <Table.Th bg = "#8a00c4">Name</Table.Th>
-              <Table.Th ta="right" bg = "#8a00c4">Price</Table.Th>
-              <Table.Th ta="right" bg = "#8a00c4">Stock</Table.Th>
+              <Table.Th bg="#8a00c4">Name</Table.Th>
+              <Table.Th bg="#8a00c4">Visibility</Table.Th>
+              <Table.Th ta="right" bg="#8a00c4">
+                Price
+              </Table.Th>
+              <Table.Th ta="right" bg="#8a00c4">
+                Stock
+              </Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {Products.map((p) => (
+            {filteredProducts.map((p) => (
               <Table.Tr
                 key={p.id}
                 onClick={() => navigate(`/admin/products/${p.id}`)}
                 style={{ cursor: "pointer" }}
               >
                 <Table.Td fw={500}>{p.title}</Table.Td>
+                <Table.Td>
+                  {p.isVisible ? (
+                    <Badge color="green" size="sm" variant="light">
+                      Visible
+                    </Badge>
+                  ) : (
+                    <Badge color="red" size="sm" variant="filled">
+                      Hidden
+                    </Badge>
+                  )}
+                </Table.Td>
                 <Table.Td ta="right">${p.price.toFixed(2)}</Table.Td>
                 <Table.Td ta="right">
                   <Text c={p.stockAmount > 0 ? "green" : "red"}>
@@ -189,6 +244,12 @@ const AllProducts = () => {
             ))}
           </Table.Tbody>
         </Table>
+      )}
+
+      {filteredProducts.length === 0 && (
+        <Text ta="center" c="dimmed" mt="xl">
+          No products found for the selected filter.
+        </Text>
       )}
     </Container>
   );
