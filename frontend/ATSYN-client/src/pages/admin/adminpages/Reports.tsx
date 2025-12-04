@@ -87,6 +87,8 @@ const Reports = () => {
     const [dashboardSummary, setDashboardSummary] = useState<DashboardSummary | null>(null);
     const [loading, setLoading] = useState(true);
     const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear().toString());
+    const [selectedMonth, setSelectedMonth] = useState<string>('all');
+
 
     useEffect(() => {
       fetchReportsData();
@@ -95,19 +97,17 @@ const Reports = () => {
     const fetchReportsData = async () => {
       setLoading(true);
       //await apiService.get('/Orders');
+      const year = parseInt(selectedYear);
       try {
-        const financialResponse = await apiService.get(`/Report/financial?year=${selectedYear}`);
-        const financial = await financialResponse.json();
+        const financial = await apiService.get(`/Report/financial?year=${year}`);
         setFinancialData(financial);
 
-        const orderResponse = await apiService.get(`/Report/orders?year=${selectedYear}`);
-        const orders = await orderResponse.json();
+        const orders = await apiService.get(`/Report/orders?year=${selectedYear}`);
         setOrderData(orders);
 
         if (selectedYear === new Date().getFullYear().toString()) {
-          const dashboardSummaryResponse = await apiService.get('/Report/dashboard-summary');
-          const summary = await dashboardSummaryResponse.json();
-          setDashboardSummary(summary);
+          const dashboardSummary = await apiService.get('/Report/dashboard-summary');
+          setDashboardSummary(dashboardSummary);
         } else {
           setDashboardSummary(null);
         }
@@ -120,26 +120,66 @@ const Reports = () => {
 
 
     const formatCurrency = (amount: number) => {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(amount);
-    };
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
+  };
 
-    const getCurrentMonth = () => {
+  const getCurrentMonth = () => {
     return new Date().toLocaleString('default', { month: 'long' });
-    };
+  };
 
-    const calculateOrderFulfillmentRate = () => {
-      if (!orderData) return 0;
-        const total = orderData.yearToDate;
-      return total > 0 ? parseFloat(((orderData.deliveredOrders / total) * 100).toFixed(1)) : 0;
-    };
+  const calculateOrderFulfillmentRate = (): number => {
+    if (!orderData) return 0;
+      const total = orderData.yearToDate;
+    return total > 0 ? parseFloat(((orderData.deliveredOrders / total) * 100).toFixed(1)) : 0;
+  };
 
-    const yearOptions = Array.from({ length: 5 }, (_, i) => {
-      const year = new Date().getFullYear() - i;
-      return { value: year.toString(), label: year.toString() };
-     });
+  const yearOptions = Array.from({ length: 5 }, (_, i) => {
+    const year = new Date().getFullYear() - i;
+    return { value: year.toString(), label: year.toString() };
+  });
+
+  const monthOptions = [
+    { value: 'all', label: 'All Months' },
+    { value: '1', label: 'January' },
+    { value: '2', label: 'February' },
+    { value: '3', label: 'March' },
+    { value: '4', label: 'April' },
+    { value: '5', label: 'May' },
+    { value: '6', label: 'June' },
+    { value: '7', label: 'July' },
+    { value: '8', label: 'August' },
+    { value: '9', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' },
+  ];
+
+  const getFilteredOrderData = () => {
+    if (!orderData || selectedMonth === 'all') return orderData;
+
+    const monthName = new Date(2000, parseInt(selectedMonth) - 1).toLocaleString('default', { month: 'long' });
+    const monthData = orderData.monthlyOrders.find(m => m.month === monthName);
+
+    if (!monthData) return orderData;
+
+    return {
+      ...orderData,
+      currentMonth: monthData.orders,
+      deliveredOrders: monthData.deliveredOrders,
+      yearToDate: orderData.yearToDate,
+      stripeVerifiedPayments: orderData.stripeVerifiedPayments,
+      pendingOrders: orderData.pendingOrders,
+      processingOrders: orderData.processingOrders,
+      cancelledOrders: orderData.cancelledOrders,
+      monthlyOrders: [monthData]
+    };
+  };
+
+  const filteredOrderData = getFilteredOrderData();
+
 
 
     return (
@@ -157,6 +197,7 @@ const Reports = () => {
             value={selectedYear}
             onChange={(value) => setSelectedYear(value || new Date().getFullYear().toString())}
             leftSection={<IconCalendar size={16} />}
+            placeholder="Select Year"
             style={{ width: 150 }}
           />
         </Group>
@@ -332,9 +373,19 @@ const Reports = () => {
       </Stack>
 
       <Stack gap="lg">
-        <Group>
-          <IconPackage size={28} />
-          <Title order={2}>Order Analytics</Title>
+        <Group justify="space-between">
+          <Group>
+            <IconPackage size={28} />
+            <Title order={2}>Order Analytics</Title>
+          </Group>
+          <Select
+            data={monthOptions}
+            value={selectedMonth}
+            onChange={(value) => setSelectedMonth(value || 'all')}
+            leftSection={<IconCalendar size={16} />}
+            placeholder="Filter by Month"
+            style={{ width: 180 }}
+          />
         </Group>
         
         <Grid>
@@ -342,15 +393,15 @@ const Reports = () => {
             <Card shadow="sm" padding="lg" radius="md" withBorder>
               <Group justify="space-between" mb="md">
                 <Text size="sm" c="dimmed" fw={500}>
-                  {getCurrentMonth()} Orders
+                  {selectedMonth === 'all' ? getCurrentMonth() : monthOptions.find(m => m.value === selectedMonth)?.label} Orders
                 </Text>
                 <IconShoppingCart size={24} style={{ color: 'var(--mantine-color-orange-6)' }} />
               </Group>
               <Text size="xl" fw={700}>
-                {orderData ? orderData.currentMonth : 0}
+                {filteredOrderData ? filteredOrderData.currentMonth : 0}
               </Text>
               <Text size="xs" c="dimmed" mt="xs">
-                Orders this month
+                {selectedMonth === 'all' ? 'Orders this month' : 'Orders in selected month'}
               </Text>
             </Card>
           </Grid.Col>
@@ -364,7 +415,7 @@ const Reports = () => {
                 <IconPackage size={24} style={{ color: 'var(--mantine-color-grape-6)' }} />
               </Group>
               <Text size="xl" fw={700}>
-                {orderData ? orderData.yearToDate : 0}
+                {filteredOrderData ? filteredOrderData.yearToDate : 0}
               </Text>
               <Text size="xs" c="dimmed" mt="xs">
                 Total for {selectedYear}
@@ -381,10 +432,10 @@ const Reports = () => {
                 <IconCheck size={24} style={{ color: 'var(--mantine-color-teal-6)' }} />
               </Group>
               <Text size="xl" fw={700}>
-                {orderData ? orderData.deliveredOrders : 0}
+                {filteredOrderData ? filteredOrderData.deliveredOrders : 0}
               </Text>
               <Text size="xs" c="dimmed" mt="xs">
-                Successfully completed
+                {selectedMonth === 'all' ? 'Successfully completed' : 'Delivered in month'}
               </Text>
             </Card>
           </Grid.Col>
@@ -398,7 +449,7 @@ const Reports = () => {
                 <IconCreditCard size={24} style={{ color: 'var(--mantine-color-blue-6)' }} />
               </Group>
               <Text size="xl" fw={700}>
-                {orderData ? orderData.stripeVerifiedPayments : 0}
+                {filteredOrderData ? filteredOrderData.stripeVerifiedPayments : 0}
               </Text>
               <Text size="xs" c="dimmed" mt="xs">
                 Successful payments
@@ -407,14 +458,14 @@ const Reports = () => {
           </Grid.Col>
         </Grid>
 
-        {orderData && (
+        {filteredOrderData && (
           <SimpleGrid cols={{ base: 2, sm: 4 }}>
             <Card padding="md" radius="md" withBorder>
               <Group justify="space-between">
                 <Text size="sm" c="dimmed">Pending</Text>
                 <IconClock size={18} style={{ color: 'var(--mantine-color-orange-6)' }} />
               </Group>
-              <Text size="lg" fw={600} mt="xs">{orderData.pendingOrders}</Text>
+              <Text size="lg" fw={600} mt="xs">{filteredOrderData.pendingOrders}</Text>
             </Card>
 
             <Card padding="md" radius="md" withBorder>
@@ -422,7 +473,7 @@ const Reports = () => {
                 <Text size="sm" c="dimmed">Processing</Text>
                 <IconPackage size={18} style={{ color: 'var(--mantine-color-blue-6)' }} />
               </Group>
-              <Text size="lg" fw={600} mt="xs">{orderData.processingOrders}</Text>
+              <Text size="lg" fw={600} mt="xs">{filteredOrderData.processingOrders}</Text>
             </Card>
 
             <Card padding="md" radius="md" withBorder>
@@ -430,7 +481,7 @@ const Reports = () => {
                 <Text size="sm" c="dimmed">Delivered</Text>
                 <IconCheck size={18} style={{ color: 'var(--mantine-color-teal-6)' }} />
               </Group>
-              <Text size="lg" fw={600} mt="xs">{orderData.deliveredOrders}</Text>
+              <Text size="lg" fw={600} mt="xs">{filteredOrderData.deliveredOrders}</Text>
             </Card>
 
             <Card padding="md" radius="md" withBorder>
@@ -438,16 +489,18 @@ const Reports = () => {
                 <Text size="sm" c="dimmed">Cancelled</Text>
                 <IconX size={18} style={{ color: 'var(--mantine-color-red-6)' }} />
               </Group>
-              <Text size="lg" fw={600} mt="xs">{orderData.cancelledOrders}</Text>
+              <Text size="lg" fw={600} mt="xs">{filteredOrderData.cancelledOrders}</Text>
             </Card>
           </SimpleGrid>
         )}
 
-        {orderData && orderData.monthlyOrders.length > 0 && (
+        {filteredOrderData && filteredOrderData.monthlyOrders.length > 0 && (
           <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Title order={4} mb="md">Monthly Order Volume</Title>
+            <Title order={4} mb="md">
+              {selectedMonth === 'all' ? 'Monthly Order Volume' : `${monthOptions.find(m => m.value === selectedMonth)?.label} Order Details`}
+            </Title>
             <Stack gap="xs">
-              {orderData.monthlyOrders.map((month) => (
+              {filteredOrderData.monthlyOrders.map((month) => (
                 <div key={month.month}>
                   <Group justify="space-between">
                     <div>
