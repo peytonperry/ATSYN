@@ -304,25 +304,6 @@ const Reports = () => {
             </Card>
           </Grid.Col>
 
-          <Grid.Col span={{ base: 12, md: 4 }}>
-            <Card shadow="sm" padding="lg" radius="md" withBorder h="100%">
-              <Group justify="space-between" mb="md">
-                <div>
-                  <Text size="sm" c="dimmed" fw={500}>
-                    Net Revenue (YTD)
-                  </Text>
-                  <Badge size="xs" color="violet" variant="light" mt={4}>After fees</Badge>
-                </div>
-                <IconTrendingUp size={24} style={{ color: 'var(--mantine-color-violet-6)' }} />
-              </Group>
-              <Text size="xl" fw={700}>
-                {financialData ? formatCurrency(financialData.netRevenue) : '$0.00'}
-              </Text>
-              <Text size="xs" c="dimmed" mt="xs">
-                Fees: {financialData ? formatCurrency(financialData.totalFees) : '$0.00'}
-              </Text>
-            </Card>
-          </Grid.Col>
         </Grid>
 
         {financialData && financialData.stripeTransactionCount > 0 && (
