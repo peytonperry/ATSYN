@@ -100,28 +100,17 @@ const CartPage: React.FC = () => {
 
   const handlePaymentSuccess = async () => {
     const newOrder = {
-      id: 0,
-      orderNumber: `ORD-${Date.now()}`,
-      orderDate: new Date().toISOString(),
       customerName:
         customerName.trim() || user?.email?.split("@")[0] || "Guest",
       customerEmail: user?.email || guestEmail,
       shippingAddress: shippingAddress.trim() || "Pick Up In Store",
-      isPickup: false,
+      isPickup: isPickup,
       billingAddress: billingAddress.trim() || "Address to be provided",
-      subTotal: subtotal,
-      taxAmount: tax,
       shippingCost: shipping,
-      totalAmount: total,
-      status: 1,
-      statusName: "Pending",
       notes: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
       orderItems: state.items.map((item) => {
         const itemPrice = item.selectedPrice ?? item.product.price;
         return {
-          id: 0,
           productId: item.product.id,
           productName:
             item.product.title +
@@ -130,7 +119,7 @@ const CartPage: React.FC = () => {
               : ""),
           unitPrice: itemPrice,
           quantity: item.quantity,
-          totalPrice: itemPrice * item.quantity,
+          selectedAttributeValueId: item.selectedAttributeValueId || null,
         };
       }),
     };
@@ -156,6 +145,7 @@ const CartPage: React.FC = () => {
 
   const handlePaymentError = (error: string) => {
     console.log(error);
+    // TODO: Add toast notification
   };
 
   if (state.items.length === 0) {

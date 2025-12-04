@@ -15,12 +15,9 @@
   <component name="ChangeListManager">
     <list default="true" id="f1b6c2bb-3028-4c33-aefb-425564ed5242" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ATSYN/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ATSYN.Api/Controllers/ProductController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Api/Controllers/ProductController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ATSYN.Data/Data/Entities/Products/ProductAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Data/Data/Entities/Products/ProductAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ATSYN.Data/Data/Entities/Products/ProductDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Data/Data/Entities/Products/ProductDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ATSYN.Data/Migrations/ApplicationDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Data/Migrations/ApplicationDbContextModelSnapshot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/components/Cart/CartContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/components/Cart/CartContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Products/Product-Page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Products/Product-Page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ATSYN.Api/Controllers/OrderController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Api/Controllers/OrderController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ATSYN.Data/Data/Entities/Orders/Order.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ATSYN.Data/Data/Entities/Orders/Order.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Cartpage/CartPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Cartpage/CartPage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Products/ProductDetail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/Products/ProductDetail.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/adminpages/ProductManagement/CreateProduct.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/ATSYN-client/src/pages/admin/adminpages/ProductManagement/CreateProduct.tsx" afterDir="false" />
     </list>
@@ -157,7 +154,7 @@
       <workItem from="1760055140203" duration="566000" />
       <workItem from="1761663797837" duration="11662000" />
       <workItem from="1764627027239" duration="3721000" />
-      <workItem from="1764809071688" duration="5198000" />
+      <workItem from="1764809071688" duration="7514000" />
     </task>
     <servers />
   </component>
