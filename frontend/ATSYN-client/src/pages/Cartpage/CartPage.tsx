@@ -314,7 +314,6 @@ const CartPage: React.FC = () => {
 
   const handlePaymentError = (error: string) => {
     console.log(error);
-    // TODO: Add toast notification
   };
 
   if (state.items.length === 0) {
